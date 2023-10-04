@@ -4,5 +4,5 @@ Alex Filipescu
 Igor Popov
 Alex Zeng
 Wilson Truong
-Zack Doward
+Zack Dorward
 Eric Xiong
