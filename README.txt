@@ -4,5 +4,5 @@ Alex Filipescu
 Igor Popov
 Alex Zeng
 Wilson Truong
-ZacK D
+Zack D
 Eric Xiong
