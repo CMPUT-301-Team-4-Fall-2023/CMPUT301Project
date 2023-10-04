@@ -6,6 +6,7 @@ public class Square {
 
     String color = "red";
 
+
     public Square(int x, int y){
         this.x = x;
         this. y = y;
