@@ -3,6 +3,6 @@ package com.example.cmput301project;
 public abstract class Shape {
     private int x;
     private int y;
-    private String color = "Yellow";
+    private String color = "blue";
 
 }
