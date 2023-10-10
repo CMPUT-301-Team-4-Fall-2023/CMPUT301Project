@@ -1,5 +1,9 @@
+package com.example.cmput301project;
 public class Diamond extends Shape {
-    public Shape(int x, int y) {
-        super(x, y);
+    private int x;
+    private int y;
+    public Diamond(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 }
