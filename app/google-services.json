@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369237781170",
+    "project_id": "assetarmor-147a7",
+    "storage_bucket": "assetarmor-147a7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369237781170:android:067b4649dc166acdf3b7ab",
+        "android_client_info": {
+          "package_name": "com.example.cmput301project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEnJ9YgEpTy19AvWk1GLysuVXyQRPKwSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
