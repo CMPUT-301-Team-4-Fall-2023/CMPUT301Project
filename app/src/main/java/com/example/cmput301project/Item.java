@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Item {
+    private String name;
     private Date purchaseDate;
     private String description;
     private String make;
@@ -14,7 +15,8 @@ public class Item {
     private ArrayList<Tag> tags;
     private ArrayList<Photograph> photographs;
 
-    public Item(Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment, ArrayList<Tag> tags, ArrayList<Photograph> photographs) {
+    public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
+        this.name = name;
         this.purchaseDate = purchaseDate;
         this.description = description;
         this.make = make;
@@ -25,7 +27,12 @@ public class Item {
         this.tags = tags;
         this.photographs = photographs;
     }
-
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
     public Date getPurchaseDate() {
         return purchaseDate;
     }
