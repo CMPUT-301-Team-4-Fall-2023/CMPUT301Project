@@ -94,46 +94,60 @@ public class SignUpActivity extends AppCompatActivity {
         String userEmail = emailField.getText().toString();
         String userPassword = passwordField.getText().toString();
 
-        userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign up success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser potentialUser = userAuth.getCurrentUser();
-                            DocumentReference userRef = usersRef.document(
-                                    userName);
-                            userRef.get().addOnSuccessListener(doc -> {
-                                    if (doc.exists()){
-                                        Toast.makeText(SignUpActivity.this,
-                                                "An account already exists for this username",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                    else{
-                                        HashMap<String, String> data = new HashMap<>();
-                                        data.put("username", userName);
-                                        data.put("email", userEmail);
-                                        data.put("password", userPassword);
-                                        usersRef.document(userName).set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Log.d("Firestore", "New User Created!");
-                                            }
-                                        });
-                                        setDisplayName(Objects.requireNonNull(potentialUser));
-                                        //TODO Add navigation to main page here,
-                                        // probably pass the username as well
-                                    }
-                            });
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+        DocumentReference userRef = usersRef.document(
+                userName);
+        userRef.get().addOnSuccessListener(doc -> {
+            if (doc.exists()){
+                Toast.makeText(SignUpActivity.this,
+                        "An account already exists for this username",
+                        Toast.LENGTH_SHORT).show();
+            }
+            else{
+                userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign up success, update UI with the signed-in user's information
+                                    Log.d(TAG, "createUserWithEmail:success");
+                                    FirebaseUser potentialUser = userAuth.getCurrentUser();
+                                    DocumentReference userRef = usersRef.document(
+                                            userName);
+                                    userRef.get().addOnSuccessListener(doc -> {
+                                        if (doc.exists()){
+                                            Toast.makeText(SignUpActivity.this,
+                                                    "An account already exists for this username",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                        else{
+                                            HashMap<String, String> data = new HashMap<>();
+                                            data.put("username", userName);
+                                            data.put("email", userEmail);
+                                            data.put("password", userPassword);
+                                            usersRef.document(userName)
+                                                    .set(data).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Log.d("Firestore", "New User Created!");
+                                                }
+                                            });
+                                            setDisplayName(Objects.requireNonNull(potentialUser));
+                                            //TODO Add navigation to main page here,
+                                            // probably pass the username as well
+                                        }
+                                    });
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                                    Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        });
+
+
     }
 
     private void navigateToLoginActivity(View view){
