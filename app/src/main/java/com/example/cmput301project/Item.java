@@ -30,9 +30,11 @@ public class Item {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public Date getPurchaseDate() {
         return purchaseDate;
     }
@@ -101,7 +103,5 @@ public class Item {
         return photographs;
     }
 
-    public void setPhotographs(ArrayList<Photograph> photographs) {
-        this.photographs = photographs;
-    }
+    public void setPhotographs(ArrayList<Photograph> photographs) {this.photographs = photographs;}
 }
