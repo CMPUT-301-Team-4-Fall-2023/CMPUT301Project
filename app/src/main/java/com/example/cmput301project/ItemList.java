@@ -51,7 +51,7 @@ public class ItemList extends ArrayAdapter<Item> {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
         String newDateString = df.format(item.getPurchaseDate());
         itemMonth.setText(newDateString);
-        itemCharge.setText("$" + item.getValue().toString());
+        itemCharge.setText("$" + String.format("%.2f", item.getValue()));
         itemDescription.setText(item.getDescription());
         itemSerial.setText(item.getSerialNumber().toString());
         itemModel.setText(item.getModel());

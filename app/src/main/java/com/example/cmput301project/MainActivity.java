@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         for (int i = 0; i < items.size(); i++) {
             totalCost = totalCost + items.get(i).getValue();
         }
-        totalCostView.setText("Total Valuation $" + totalCost.toString());
+        totalCostView.setText("Total Valuation $" + String.format("%.2f", totalCost));
         itemAdapter.notifyDataSetChanged();
     }
     @Override
