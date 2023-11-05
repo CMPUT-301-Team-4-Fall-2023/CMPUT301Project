@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -13,13 +14,13 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
     private ArrayList<Item> items;
     private ListView itemsView;
     private TextView totalCostView;
+    private Button filtersButton;
     private Double totalCost;
     private ArrayAdapter<Item> itemAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +29,22 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         items = new ArrayList<Item>();
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
+        filtersButton = findViewById(R.id.filter_items_button);
+
         totalCost = 0.00; //initialize costs to 0 on startup
         itemAdapter = new ItemList(this, items);
         itemsView.setAdapter(itemAdapter);
         final FloatingActionButton addButton = findViewById(R.id.add_item_button);
         addButton.setOnClickListener(v -> {
             new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM"); //add floating + button to add new expense
+        });
+
+        filtersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ItemFiltersFragment().show(getSupportFragmentManager(), "ITEM_FILTERS");
+            }
+
         });
     }
     @Override
@@ -62,4 +73,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         items.remove(item);
         itemAdapter.notifyDataSetChanged();
     }
+    @Override
+    public void onFiltersPressed() {}
+
 }
