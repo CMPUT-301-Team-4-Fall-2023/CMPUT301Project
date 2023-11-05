@@ -1,12 +1,3 @@
 <resources>
     <string name="app_name">CMPUT301Project</string>
-    <string name="sign_in">Sign In</string>
-    <string name="sign_up">Sign Up</string>
-    <string name="asset_armor">ASSET ARMOR</string>
-    <string name="username_prompt">Username</string>
-    <string name="email_prompt">Email</string>
-    <string name="username_email">Username/Email</string>
-    <string name="password">Password</string>
-    <string name="account_creation_textview">Don\'t have an account? Create one now.</string>
-    <string name="already_have_account">Already have an account?</string>
 </resources>
