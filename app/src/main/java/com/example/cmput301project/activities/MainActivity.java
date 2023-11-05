@@ -1,8 +1,10 @@
-package com.example.cmput301project;
+package com.example.cmput301project.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.cmput301project.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.cmput301project;
+package com.example.cmput301project.activities;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
@@ -13,94 +13,96 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cmput301project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
+public class LoginActivity extends AppCompatActivity {
 
-public class SignUpActivity extends AppCompatActivity {
-
-    private EditText usernameField;
     private EditText emailField;
     private EditText passwordField;
-    private Button signUpButton;
-    private TextView alreadyHaveAccountTextView;
+    private Button signInButton;
+    private TextView createAccountTextView;
     private FirebaseAuth userAuth;
 
     private void grabUIElements(){
-        usernameField = findViewById(R.id.usernameEntry);
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
-        signUpButton = findViewById(R.id.signUpButton);
-        alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
+        signInButton = findViewById(R.id.signInButton);
+        createAccountTextView = findViewById(R.id.accountCreationText);
     }
 
-    public void setDisplayName(FirebaseUser user){
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(usernameField.getText().toString())
-                .build();
+    private void checkUserLoggedOn(){
+        FirebaseUser currentUser = userAuth.getCurrentUser();
+        if(currentUser != null){
+            //TODO: Navigate to main activity
 
-        user.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User profile updated.");
-                        }
-                    }
-                });
+        }
     }
 
-    public void attemptSignUp(View v){
+    public void queryFirebase(View v){
+        if (emailField.getText().toString().equals("")){
+            Toast.makeText(LoginActivity.this,
+                    "Please enter an email",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (passwordField.getText().toString().equals("")){
+            Toast.makeText(LoginActivity.this,
+                    "Please enter a password",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         String userEmail = emailField.getText().toString();
         String userPassword = passwordField.getText().toString();
 
-        userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+        userAuth.signInWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign up success, update UI with the signed-in user's information
+                            // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = userAuth.getCurrentUser();
-                            setDisplayName(Objects.requireNonNull(user));
                             //TODO Add navigation to main page here
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+
     }
 
-    private void navigateToLoginActivity(View view){
-        finish();
+    private void navigateToSignUp(View view){
+        Intent i  = new Intent(LoginActivity.this, SignUpActivity.class);
+        startActivity(i);
     }
 
     private void addListeners(){
-        signUpButton.setOnClickListener(this::attemptSignUp);
-        alreadyHaveAccountTextView.setOnClickListener(this::navigateToLoginActivity);
+        signInButton.setOnClickListener(this::queryFirebase);
+        createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sign_up);
+        setContentView(R.layout.login);
 
         userAuth = FirebaseAuth.getInstance();
+
+        checkUserLoggedOn();
 
         grabUIElements();
         addListeners();
     }
+
 }
