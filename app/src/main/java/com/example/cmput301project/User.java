@@ -1,5 +1,7 @@
 package com.example.cmput301project;
 
+import com.example.cmput301project.ItemClasses.ItemList;
+
 public class User {
     private String username;
     private String password;
