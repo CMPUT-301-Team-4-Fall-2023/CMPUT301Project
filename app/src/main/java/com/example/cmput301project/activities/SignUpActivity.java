@@ -3,6 +3,7 @@ package com.example.cmput301project.activities;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cmput301project.MainActivity;
 import com.example.cmput301project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -132,8 +134,10 @@ public class SignUpActivity extends AppCompatActivity {
                                                 }
                                             });
                                             setDisplayName(Objects.requireNonNull(potentialUser));
-                                            //TODO Add navigation to main page here,
-                                            // probably pass the username as well
+                                            //TODO probably better way, this is just so this can be
+                                            // merged in and used
+                                            Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
+                                            startActivity(i);
                                         }
                                     });
                                 } else {

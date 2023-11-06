@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cmput301project.MainActivity;
 import com.example.cmput301project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,7 +42,10 @@ public class LoginActivity extends AppCompatActivity {
     private void checkUserLoggedOn(){
         FirebaseUser currentUser = userAuth.getCurrentUser();
         if(currentUser != null){
-            //TODO: Navigate to main activity
+            //TODO probably better way, this is just so this can be
+            // merged in and used
+            Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(i);
 
         }
     }
@@ -70,7 +74,10 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = userAuth.getCurrentUser();
-                            //TODO Add navigation to main page here
+                            //TODO probably better way, this is just so this can be
+                            // merged in and used
+                            Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(i);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
