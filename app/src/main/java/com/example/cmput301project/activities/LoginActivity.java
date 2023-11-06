@@ -12,14 +12,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cmput301project.MainActivity;
 import com.example.cmput301project.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -39,54 +35,25 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTextView = findViewById(R.id.accountCreationText);
     }
 
-    private void checkUserLoggedOn(){
-        FirebaseUser currentUser = userAuth.getCurrentUser();
-        if(currentUser != null){
-            //TODO probably better way, this is just so this can be
-            // merged in and used
-            Intent i  = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(i);
-
-        }
+    private void showToast(String msg){
+        Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    public void queryFirebase(View v){
+    private void checkUserLoggedOn(){
+        FirebaseUser currentUser = userAuth.getCurrentUser();
+        if(currentUser != null) navigateToMainPage();
+    }
+
+    private boolean checkForInvalidInputs() {
         if (emailField.getText().toString().equals("")){
-            Toast.makeText(LoginActivity.this,
-                    "Please enter an email",
-                    Toast.LENGTH_SHORT).show();
-            return;
+            showToast("Please enter an email");
+            return true;
         }
         else if (passwordField.getText().toString().equals("")){
-            Toast.makeText(LoginActivity.this,
-                    "Please enter a password",
-                    Toast.LENGTH_SHORT).show();
-            return;
+            showToast("Please enter a password");
+            return true;
         }
-        String userEmail = emailField.getText().toString();
-        String userPassword = passwordField.getText().toString();
-
-        userAuth.signInWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = userAuth.getCurrentUser();
-                            //TODO probably better way, this is just so this can be
-                            // merged in and used
-                            Intent i  = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(i);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
+        return false;
     }
 
     private void navigateToSignUp(View view){
@@ -94,9 +61,36 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    private void navigateToMainPage(){
+        //TODO probably better way, this is just so this can be
+        // merged in and used
+        Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(i);
+    }
+
     private void addListeners(){
-        signInButton.setOnClickListener(this::queryFirebase);
+        signInButton.setOnClickListener(this::attemptLogin);
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
+    }
+
+    public void attemptLogin(View v){
+        if (checkForInvalidInputs()) return;
+
+        String userEmail = emailField.getText().toString();
+        String userPassword = passwordField.getText().toString();
+
+        userAuth.signInWithEmailAndPassword(userEmail, userPassword)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+                        navigateToMainPage();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        showToast(task.getException().getLocalizedMessage());
+                    }
+                });
     }
 
     @Override
