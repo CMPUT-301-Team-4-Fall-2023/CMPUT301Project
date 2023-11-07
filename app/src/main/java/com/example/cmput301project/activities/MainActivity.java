@@ -1,4 +1,4 @@
-package com.example.cmput301project;
+package com.example.cmput301project.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.cmput301project.R;
 import com.example.cmput301project.fragments.AddItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
 import com.example.cmput301project.fragments.ViewItemFragment;
