@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Edit Text on the top row -->
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="348dp"
+        android:layout_height="53dp"
+        android:layout_constraintEnd_toStartOf="@+id/addButton"
+        android:layout_constraintHorizontal_chainStyle="spread_inside"
+        android:layout_constraintStart_toStartOf="parent"
+        android:layout_constraintTop_toTopOf="parent"
+        android:hint="Enter text here" />
+
+    <!-- + Button on the right side of the Edit Text -->
+
+    <!-- Back Button at the bottom left -->
+
+    <!-- Confirm Button at the bottom right -->
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="55dp"
+        android:layout_height="50dp"
+        android:layout_constraintEnd_toEndOf="parent"
+        android:layout_constraintTop_toTopOf="parent"
+        android:text="+"
+        tools:layout_editor_absoluteX="350dp"
+        tools:layout_editor_absoluteY="-1dp" />
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_constraintBottom_toBottomOf="parent"
+        android:layout_constraintStart_toStartOf="parent"
+        android:text="Back"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="667dp" />
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_constraintBottom_toBottomOf="parent"
+        android:layout_constraintEnd_toEndOf="parent"
+        android:text="Confirm"
+        tools:layout_editor_absoluteX="296dp"
+        tools:layout_editor_absoluteY="667dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
