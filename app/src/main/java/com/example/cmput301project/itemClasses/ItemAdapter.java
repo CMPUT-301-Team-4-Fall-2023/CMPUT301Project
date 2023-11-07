@@ -1,4 +1,4 @@
-package com.example.cmput301project.ItemClasses;
+package com.example.cmput301project.itemClasses;
 
 import android.content.Context;
 import android.view.LayoutInflater;

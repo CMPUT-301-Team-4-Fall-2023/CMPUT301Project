@@ -9,12 +9,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.cmput301project.Fragments.AddItemFragment;
-import com.example.cmput301project.Fragments.ItemFiltersFragment;
-import com.example.cmput301project.Fragments.ViewItemFragment;
-import com.example.cmput301project.ItemClasses.Item;
-import com.example.cmput301project.ItemClasses.ItemAdapter;
-import com.example.cmput301project.ItemClasses.ItemFilter;
+import com.example.cmput301project.fragments.AddItemFragment;
+import com.example.cmput301project.fragments.ItemFiltersFragment;
+import com.example.cmput301project.fragments.ViewItemFragment;
+import com.example.cmput301project.itemClasses.Item;
+import com.example.cmput301project.itemClasses.ItemAdapter;
+import com.example.cmput301project.itemClasses.ItemFilter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

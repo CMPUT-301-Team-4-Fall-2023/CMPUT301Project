@@ -1,4 +1,4 @@
-package com.example.cmput301project.Fragments;
+package com.example.cmput301project.fragments;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cmput301project.ItemClasses.Item;
+import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
 
 import java.text.DateFormat;

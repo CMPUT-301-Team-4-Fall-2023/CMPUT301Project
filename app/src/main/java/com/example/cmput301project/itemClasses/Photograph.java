@@ -1,4 +1,4 @@
-package com.example.cmput301project.ItemClasses;
+package com.example.cmput301project.itemClasses;
 
 public class Photograph {
     private String path;
