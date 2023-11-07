@@ -42,6 +42,9 @@ public class EditItemFragment extends DialogFragment {
     private EditText itemMake;
     private Item editItem;
     private Boolean invalidInput;
+
+    private Button addTagsButton;
+    private TextView tagsView;
     private OnFragmentInteractionListener listener;
 
 
@@ -61,8 +64,6 @@ public class EditItemFragment extends DialogFragment {
 
 
     public interface OnFragmentInteractionListener {
-        void onItemEdited(Item item);
-
         void updateTotalCostAfterEdit();
     }
 
@@ -83,6 +84,8 @@ public class EditItemFragment extends DialogFragment {
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
         title = view.findViewById(R.id.add_item_title);
+        tagsView = view.findViewById(R.id.tag_view_text);
+        addTagsButton = view.findViewById(R.id.add_tags_button);
 
         itemName.setText(editItem.getName()); //take data from item if constructed with item passes
         itemDescription.setText(editItem.getDescription());

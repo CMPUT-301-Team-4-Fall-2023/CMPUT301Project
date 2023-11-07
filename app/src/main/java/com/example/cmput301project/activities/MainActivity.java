@@ -109,14 +109,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onItemEdited(Item item) {
-        //interfaces can't have same named methods
-        //TODO: change way of passing state to the main activity
-        items.add(item);
-        itemAdapter.notifyDataSetChanged();
-    }
-
-    @Override
     public void updateTotalCostAfterEdit() {
         //interfaces can't have same named methods
         //TODO: change way of passing state to the main activity

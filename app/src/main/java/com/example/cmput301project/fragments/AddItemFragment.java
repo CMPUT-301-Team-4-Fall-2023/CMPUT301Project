@@ -20,10 +20,12 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Tag;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -40,8 +42,12 @@ public class AddItemFragment extends DialogFragment {
     private EditText itemComments;
     private EditText itemPrice;
     private EditText itemMake;
-    private Item editItem;
     private Boolean invalidInput;
+
+    private Button addTagsButton;
+    private TextView tagsView;
+
+    private ArrayList<Tag> tags = new ArrayList<Tag>();
     private OnFragmentInteractionListener listener;
 
     @Override
@@ -78,6 +84,15 @@ public class AddItemFragment extends DialogFragment {
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
         title = view.findViewById(R.id.add_item_title);
+        tagsView = view.findViewById(R.id.tag_view_text);
+        addTagsButton = view.findViewById(R.id.add_tags_button);
+
+        addTagsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AddTagFragment(tags).show(getSupportFragmentManager(), "ADD_ITEM");
+            }
+        });
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 

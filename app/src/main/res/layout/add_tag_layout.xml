@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Edit Text on the top row -->
+    <EditText
+        android:id="@+id/tag_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter singe tag here"
+        android:textSize="25dp"
+        android:padding="5dp"
+        android:layout_marginRight="10dp"/>
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_constraintEnd_toEndOf="parent"
+        android:layout_constraintTop_toTopOf="parent"
+        android:text="Add Tag"/>
+    <TextView
+        android:id="@+id/tag_view_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="25dp"
+        android:padding="5dp"
+        android:layout_marginRight="10dp">
+    </TextView>
+</LinearLayout>
