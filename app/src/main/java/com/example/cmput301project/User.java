@@ -1,6 +1,6 @@
 package com.example.cmput301project;
 
-import com.example.cmput301project.ItemClasses.ItemList;
+import com.example.cmput301project.itemClasses.ItemList;
 
 public class User {
     private String username;

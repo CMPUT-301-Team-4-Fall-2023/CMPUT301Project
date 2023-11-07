@@ -1,4 +1,4 @@
-package com.example.cmput301project.Fragments;
+package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cmput301project.ItemClasses.ItemFilter;
+import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
 
 import java.text.SimpleDateFormat;

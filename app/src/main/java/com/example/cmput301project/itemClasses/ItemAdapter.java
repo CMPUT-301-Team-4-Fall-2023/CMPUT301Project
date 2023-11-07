@@ -1,4 +1,4 @@
-package com.example.cmput301project.ItemClasses;
+package com.example.cmput301project.itemClasses;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.cmput301project.MainActivity;
+import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
 
 import java.text.DateFormat;
