@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.cmput301project.R;
 import com.example.cmput301project.fragments.AddItemFragment;
+import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
 import com.example.cmput301project.fragments.ViewItemFragment;
 import com.example.cmput301project.itemClasses.Item;
@@ -23,7 +24,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements
+        AddItemFragment.OnFragmentInteractionListener,
+        EditItemFragment.OnFragmentInteractionListener,
+        ViewItemFragment.OnFragmentInteractionListener,
+        ItemFiltersFragment.OnFragmentInteractionListener {
     private ArrayList<Item> items;
     private ListView itemsView;
     private TextView totalCostView;
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
     @Override
     public void editItem(Item item){
-        new AddItemFragment(item).show(getSupportFragmentManager(), "EDIT_ITEM");
+        new EditItemFragment(item).show(getSupportFragmentManager(), "EDIT_ITEM");
     }
     public void viewItem(Item item){
         new ViewItemFragment(item).show(getSupportFragmentManager(), "VIEW_ITEM");
@@ -103,4 +108,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         return items;
     }
 
+    @Override
+    public void onItemEdited(Item item) {
+        //interfaces can't have same named methods
+        //TODO: change way of passing state to the main activity
+        items.add(item);
+        itemAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void updateTotalCostAfterEdit() {
+        //interfaces can't have same named methods
+        //TODO: change way of passing state to the main activity
+        updateTotalCost();
+    }
 }
