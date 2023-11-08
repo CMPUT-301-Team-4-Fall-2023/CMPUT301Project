@@ -29,6 +29,7 @@ public class Item {
         this.photographs = photographs;
         this.selected = false;
     }
+
     public String getName() {
         return name;
     }
@@ -105,9 +106,15 @@ public class Item {
         return photographs;
     }
 
-    public void setPhotographs(ArrayList<Photograph> photographs) {this.photographs = photographs;}
+    public void setPhotographs(ArrayList<Photograph> photographs) {
+        this.photographs = photographs;
+    }
 
-    public boolean isSelected() {return selected;}
+    public boolean isSelected() {
+        return selected;
+    }
 
-    public void setSelected(boolean selected) {this.selected = selected;}
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }

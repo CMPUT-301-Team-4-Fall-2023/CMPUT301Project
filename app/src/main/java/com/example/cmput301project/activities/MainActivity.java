@@ -24,11 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements
-        AddItemFragment.OnFragmentInteractionListener,
-        EditItemFragment.OnFragmentInteractionListener,
-        ViewItemFragment.OnFragmentInteractionListener,
-        ItemFiltersFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
 
     private ArrayList<Item> items;
     private ListView itemsView;
@@ -69,13 +65,15 @@ public class MainActivity extends AppCompatActivity implements
 
         });
     }
+
     @Override
     public void onOKPressed(Item item) {
         items.add(item); //on a new expense addition, add the expense to the datalist and update display
         itemAdapter.notifyDataSetChanged();
     }
+
     @Override
-    public void updateTotalCost(){ //add up all costs of expenses within list, update display
+    public void updateTotalCost() { //add up all costs of expenses within list, update display
         totalCost = 0.00;
         for (int i = 0; i < items.size(); i++) {
             totalCost = totalCost + items.get(i).getValue();
@@ -83,30 +81,34 @@ public class MainActivity extends AppCompatActivity implements
         totalCostView.setText("Total Valuation $" + String.format("%.2f", totalCost));
         itemAdapter.notifyDataSetChanged();
     }
+
     @Override
-    public void editItem(Item item){
+    public void editItem(Item item) {
         new EditItemFragment(item).show(getSupportFragmentManager(), "EDIT_ITEM");
     }
-    public void viewItem(Item item){
+
+    public void viewItem(Item item) {
         new ViewItemFragment(item).show(getSupportFragmentManager(), "VIEW_ITEM");
     }
+
     @Override
     public void onDeletePressed(Item item) { //delete selected expense, update display
         items.remove(item);
         itemAdapter.notifyDataSetChanged();
     }
+
     @Override
     public void onFiltersSaved(ItemFilter itemFilter) {
         ArrayList<Item> filteredItems = new ArrayList<>();
     }
 
     public ArrayList<Item> filterByDate(Date from, Date to) {
-        List<Item> filteredItems = items.stream()
-                .filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
+        List<Item> filteredItems = items.stream().filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
                 .collect(Collectors.toList());
         ArrayList<Item> filteredItemsArrayList = new ArrayList<>(filteredItems);
         return filteredItemsArrayList;
     }
+
     public ArrayList<Item> filterByKeywords() {
         return items;
     }

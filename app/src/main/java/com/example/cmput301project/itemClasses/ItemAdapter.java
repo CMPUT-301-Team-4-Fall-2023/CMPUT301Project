@@ -66,7 +66,6 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         itemComment.setText(item.getComment());
 
 
-
         CheckBox checkBox = view.findViewById(R.id.checkbox); // Assuming checkbox ID is 'checkbox' in your item_content.xml
         checkBox.setChecked(selectedItems.contains(item));
         checkBox.setOnClickListener(v -> {
