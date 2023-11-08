@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,13 +36,13 @@ public class SignUpActivity extends AppCompatActivity {
     private FirebaseAuth userAuth;
     private CollectionReference usersRef;
 
-    private void showToast(String message){
+    private void showToast(String message) {
         Toast.makeText(SignUpActivity.this,
                 message,
                 Toast.LENGTH_SHORT).show();
     }
 
-    private void grabUIElements(){
+    private void grabUIElements() {
         usernameField = findViewById(R.id.usernameEntry);
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
@@ -52,7 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
     }
 
-    public void setDisplayName(FirebaseUser user){
+    public void setDisplayName(FirebaseUser user) {
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setDisplayName(usernameField.getText().toString())
                 .build();
@@ -65,7 +64,7 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private void signUpUser(String userName, String userEmail){
+    private void signUpUser(String userName, String userEmail) {
         FirebaseUser potentialUser = userAuth.getCurrentUser();
         DocumentReference userRef = usersRef.document(userName);
         userRef.get().addOnSuccessListener(doc -> {
@@ -76,15 +75,13 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean checkForInvalidInputs() {
-        if (usernameField.getText().toString().equals("")){
+        if (usernameField.getText().toString().equals("")) {
             showToast("Please enter a username");
             return true;
-        }
-        else if (emailField.getText().toString().equals("")){
+        } else if (emailField.getText().toString().equals("")) {
             showToast("Please enter an email");
             return true;
-        }
-        else if (passwordField.getText().toString().equals("")){
+        } else if (passwordField.getText().toString().equals("")) {
             showToast("Please enter a password");
             return true;
         }
@@ -98,23 +95,23 @@ public class SignUpActivity extends AppCompatActivity {
                 .set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
     }
 
-    private void navigateToLoginActivity(View view){
+    private void navigateToLoginActivity(View view) {
         finish();
     }
 
-    private void navigateToMainActivity(){
+    private void navigateToMainActivity() {
         //TODO probably better way, this is just so this can be
         // merged in and used
-        Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
+        Intent i = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(i);
     }
 
-    private void addListeners(){
+    private void addListeners() {
         signUpButton.setOnClickListener(this::attemptSignUp);
         alreadyHaveAccountTextView.setOnClickListener(this::navigateToLoginActivity);
     }
 
-    public void attemptSignUp(View v){
+    public void attemptSignUp(View v) {
 
         if (checkForInvalidInputs()) return;
 
@@ -125,10 +122,9 @@ public class SignUpActivity extends AppCompatActivity {
         DocumentReference userRef = usersRef.document(userName);
 
         userRef.get().addOnSuccessListener(doc -> {
-            if (doc.exists()){
+            if (doc.exists()) {
                 showToast("An account already exists for this username");
-            }
-            else{
+            } else {
                 userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {

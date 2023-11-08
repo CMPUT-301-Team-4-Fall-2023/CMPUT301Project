@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView createAccountTextView;
     private FirebaseAuth userAuth;
 
-    private void grabUIElements(){
+    private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
@@ -35,45 +35,44 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTextView = findViewById(R.id.accountCreationText);
     }
 
-    private void showToast(String msg){
+    private void showToast(String msg) {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void checkUserLoggedOn(){
+    private void checkUserLoggedOn() {
         FirebaseUser currentUser = userAuth.getCurrentUser();
-        if(currentUser != null) navigateToMainPage();
+        if (currentUser != null) navigateToMainPage();
     }
 
     private boolean checkForInvalidInputs() {
-        if (emailField.getText().toString().equals("")){
+        if (emailField.getText().toString().equals("")) {
             showToast("Please enter an email");
             return true;
-        }
-        else if (passwordField.getText().toString().equals("")){
+        } else if (passwordField.getText().toString().equals("")) {
             showToast("Please enter a password");
             return true;
         }
         return false;
     }
 
-    private void navigateToSignUp(View view){
-        Intent i  = new Intent(LoginActivity.this, SignUpActivity.class);
+    private void navigateToSignUp(View view) {
+        Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
         startActivity(i);
     }
 
-    private void navigateToMainPage(){
+    private void navigateToMainPage() {
         //TODO probably better way, this is just so this can be
         // merged in and used
-        Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
     }
 
-    private void addListeners(){
+    private void addListeners() {
         signInButton.setOnClickListener(this::attemptLogin);
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
-    public void attemptLogin(View v){
+    public void attemptLogin(View v) {
         if (checkForInvalidInputs()) return;
 
         String userEmail = emailField.getText().toString();

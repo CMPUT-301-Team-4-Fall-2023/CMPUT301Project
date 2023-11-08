@@ -12,8 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
+import com.example.cmput301project.activities.MainActivity;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
