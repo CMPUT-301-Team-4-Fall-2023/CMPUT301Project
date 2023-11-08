@@ -14,6 +14,7 @@ public class Item {
     private String comment;
     private ArrayList<Tag> tags;
     private ArrayList<Photograph> photographs;
+    private boolean selected;
 
     public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
         this.name = name;
@@ -26,6 +27,7 @@ public class Item {
         this.comment = comment;
         this.tags = tags;
         this.photographs = photographs;
+        this.selected = false;
     }
     public String getName() {
         return name;
@@ -104,4 +106,8 @@ public class Item {
     }
 
     public void setPhotographs(ArrayList<Photograph> photographs) {this.photographs = photographs;}
+
+    public boolean isSelected() {return selected;}
+
+    public void setSelected(boolean selected) {this.selected = selected;}
 }

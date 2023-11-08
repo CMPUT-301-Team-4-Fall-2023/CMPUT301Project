@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,15 +18,21 @@ import com.example.cmput301project.R;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ItemAdapter extends ArrayAdapter<Item> {
     private ArrayList<Item> items;
     private Context context;
+    private Set<Item> selectedItems;
+
     public ItemAdapter(Context context, ArrayList<Item> items) {
         super(context, 0, items);
         this.items = items;
         this.context = context;
+        this.selectedItems = new HashSet<>();
     }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -36,6 +43,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         }
 
         Item item = items.get(position);
+
         //sets display data of items displayed in the items list (without comment)
         TextView itemName = view.findViewById(R.id.item_name);
         TextView itemMonth = view.findViewById(R.id.item_date);
@@ -57,24 +65,32 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         itemMake.setText(item.getMake());
         itemComment.setText(item.getComment());
 
+
+
+        CheckBox checkBox = view.findViewById(R.id.checkbox); // Assuming checkbox ID is 'checkbox' in your item_content.xml
+        checkBox.setChecked(selectedItems.contains(item));
+        checkBox.setOnClickListener(v -> {
+            if (checkBox.isChecked()) {
+                selectedItems.add(item);
+            } else {
+                selectedItems.remove(item);
+            }
+        });
+
         Button editButton = view.findViewById(R.id.edit_item_button);
         Button viewButton = view.findViewById(R.id.view_item_button);
 
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)context).editItem(item);
-            }
-
-        });
-        viewButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity)context).viewItem(item);
-            }
-
-        });
+        editButton.setOnClickListener(v -> ((MainActivity) context).editItem(item));
+        viewButton.setOnClickListener(v -> ((MainActivity) context).viewItem(item));
 
         return view;
+    }
+
+    public void deleteSelectedItems() {
+        for (Item item : selectedItems) {
+            items.remove(item);
+        }
+        notifyDataSetChanged();
+        selectedItems.clear();
     }
 }

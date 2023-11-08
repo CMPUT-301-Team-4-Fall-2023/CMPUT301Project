@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements
         EditItemFragment.OnFragmentInteractionListener,
         ViewItemFragment.OnFragmentInteractionListener,
         ItemFiltersFragment.OnFragmentInteractionListener {
+
     private ArrayList<Item> items;
     private ListView itemsView;
     private TextView totalCostView;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements
     private Double totalCost;
     private ArrayAdapter<Item> itemAdapter;
     private ArrayAdapter<Item> filteredItemAdapter;
+    private Button deleteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,11 @@ public class MainActivity extends AppCompatActivity implements
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
         filtersButton = findViewById(R.id.filter_items_button);
+
+        deleteButton = findViewById(R.id.delete_items_button);
+        deleteButton.setOnClickListener(v -> {
+            ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
+        });
 
         totalCost = 0.00; //initialize costs to 0 on startup
         itemAdapter = new ItemAdapter(this, items);
@@ -121,5 +128,18 @@ public class MainActivity extends AppCompatActivity implements
         //interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
         updateTotalCost();
+    }
+
+
+    private void deleteSelectedItems() {
+        ArrayList<Item> selected = new ArrayList<>();
+        for (Item item : items) {
+            if (item.isSelected()) {
+                selected.add(item);
+            }
+        }
+
+        items.removeAll(selected);
+        itemAdapter.notifyDataSetChanged();
     }
 }

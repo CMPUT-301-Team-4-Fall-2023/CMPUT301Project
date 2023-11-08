@@ -56,6 +56,16 @@
         android:text="Placeholder - Nav bar here"
         android:textSize="20dp"></TextView>
 </LinearLayout>
+    <Button
+        android:id="@+id/delete_items_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Delete Selected Items"
+        android:background="@color/material_on_background_emphasis_medium"
+        android:textColor="#FFFFFF"
+        android:padding="10dp"
+        android:layout_margin="16dp" />
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_item_button"
         android:layout_width="wrap_content"
@@ -66,4 +76,5 @@
         android:layout_marginRight="25dp"
         android:layout_gravity="bottom|end"
         app:srcCompat="@android:drawable/ic_input_add" />
+
 </FrameLayout>
