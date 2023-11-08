@@ -15,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import com.example.cmput301project.Database;
 import com.example.cmput301project.UserManager;
 import com.example.cmput301project.activities.MainActivity;
@@ -42,11 +43,12 @@ public class SignUpActivity extends AppCompatActivity {
     private UserManager userManager;
     private Database db;
 
+
     private void showToast(String message){
         errorTextView.setText(message);
     }
 
-    private void grabUIElements(){
+    private void grabUIElements() {
         usernameField = findViewById(R.id.usernameEntry);
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
@@ -55,6 +57,7 @@ public class SignUpActivity extends AppCompatActivity {
         errorTextView = findViewById(R.id.errorTextView);
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
     }
+
 
     //TODO: This is backend code, I will move this to the db wrapper class
     private void signUpUser(String userName, String userEmail){
@@ -71,6 +74,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean checkForInvalidInputs() {
+
         if (usernameField.getText().toString().equals("")){
             errorTextView.setText(R.string.userNameFieldError);
             return true;
@@ -86,6 +90,7 @@ public class SignUpActivity extends AppCompatActivity {
         return false;
     }
 
+
     private void navigateToLoginActivity(View view){
         finish();
     }
@@ -95,7 +100,7 @@ public class SignUpActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void addListeners(){
+    private void addListeners() {
         signUpButton.setOnClickListener(this::attemptSignUp);
         alreadyHaveAccountTextView.setOnClickListener(this::navigateToLoginActivity);
     }
@@ -113,10 +118,9 @@ public class SignUpActivity extends AppCompatActivity {
         DocumentReference userRef = usersRef.document(userName);
 
         userRef.get().addOnSuccessListener(doc -> {
-            if (doc.exists()){
+            if (doc.exists()) {
                 showToast("An account already exists for this username");
-            }
-            else{
+            } else {
                 userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {

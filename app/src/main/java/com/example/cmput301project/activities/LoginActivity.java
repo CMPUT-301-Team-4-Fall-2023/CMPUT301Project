@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth userAuth;
     private UserManager userManager;
 
-    private void grabUIElements(){
+    private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
@@ -39,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         errorTextView.setVisibility(View.GONE);
     }
 
-    private void showToast(String msg){
+    private void showToast(String msg) {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -64,8 +64,8 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
-    private void navigateToSignUp(View view){
-        Intent i  = new Intent(LoginActivity.this, SignUpActivity.class);
+    private void navigateToSignUp(View view) {
+        Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
         startActivity(i);
     }
 
@@ -74,12 +74,14 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void addListeners(){
+    private void addListeners() {
         signInButton.setOnClickListener(this::attemptLogin);
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
+
     private void attemptLogin(View v){
+
         if (checkForInvalidInputs()) return;
 
         String userEmail = emailField.getText().toString();

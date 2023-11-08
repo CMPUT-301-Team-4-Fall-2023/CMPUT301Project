@@ -14,6 +14,7 @@ public class Item {
     private String comment;
     private ArrayList<Tag> tags;
     private ArrayList<Photograph> photographs;
+    private boolean selected;
 
     public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
         this.name = name;
@@ -26,7 +27,9 @@ public class Item {
         this.comment = comment;
         this.tags = tags;
         this.photographs = photographs;
+        this.selected = false;
     }
+
     public String getName() {
         return name;
     }
@@ -99,9 +102,32 @@ public class Item {
         this.tags = tags;
     }
 
+    public void addTag(Tag tag) {
+        if (this.tags == null) {
+            this.tags = new ArrayList<>();
+        }
+        this.tags.add(tag);
+    }
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+    }
+    public void clearTags() {
+        // Clear current tags
+        this.tags.clear();
+    }
     public ArrayList<Photograph> getPhotographs() {
         return photographs;
     }
 
-    public void setPhotographs(ArrayList<Photograph> photographs) {this.photographs = photographs;}
+    public void setPhotographs(ArrayList<Photograph> photographs) {
+        this.photographs = photographs;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 }

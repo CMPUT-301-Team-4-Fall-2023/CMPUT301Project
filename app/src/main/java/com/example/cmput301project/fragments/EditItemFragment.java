@@ -20,6 +20,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,6 +46,9 @@ public class EditItemFragment extends DialogFragment {
     private Item editItem;
     private Boolean invalidInput;
     private OnFragmentInteractionListener listener;
+    private EditText inputTagEditText;
+    private ChipGroup chipGroupTags;
+    private Button addTagButton;
 
 
     public EditItemFragment(Item item) { //if called with an item passed in, we assume that we want to edit the item
@@ -83,6 +89,9 @@ public class EditItemFragment extends DialogFragment {
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
         title = view.findViewById(R.id.add_item_title);
+        inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
+        chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
+        addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
 
         itemName.setText(editItem.getName()); //take data from item if constructed with item passes
         itemDescription.setText(editItem.getDescription());
@@ -95,6 +104,15 @@ public class EditItemFragment extends DialogFragment {
         itemPrice.setText(editItem.getValue().toString());
         itemComments.setText(editItem.getComment());
 
+        for (Tag tag : editItem.getTags()) {
+            Chip chip = new Chip(getContext());
+            chip.setText(tag.getName());
+            chip.setCloseIconVisible(true);
+            chip.setOnCloseIconClickListener(v -> chipGroupTags.removeView(chip));
+            chipGroupTags.addView(chip);
+        }
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         Dialog dialog = builder.setView(view)
@@ -105,6 +123,29 @@ public class EditItemFragment extends DialogFragment {
             @Override
             public void onShow(DialogInterface dialogInterface) { //need to overwrite the default behavior of buttons, which is to dismiss the dialog
                 Button okButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+
+                Button addButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE); // This is your existing OK button logic
+
+                // Set the click listener for the add tag button
+                addTagButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String tagText = inputTagEditText.getText().toString().trim();
+                        if (!tagText.isEmpty()) {
+                            Chip chip = new Chip(getContext());
+                            chip.setText(tagText);
+                            chip.setCloseIconVisible(true);
+                            chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    chipGroupTags.removeView(chip);
+                                }
+                            });
+                            chipGroupTags.addView(chip);
+                            inputTagEditText.setText(""); // Clear the EditText after adding the chip
+                        }
+                    }
+                });
 
                 okButton.setOnClickListener(new View.OnClickListener() {
 
@@ -125,6 +166,11 @@ public class EditItemFragment extends DialogFragment {
                         String day = itemDay.getText().toString().trim();
                         String month = itemMonth.getText().toString().trim();
                         String year = itemYear.getText().toString().trim();
+                        editItem.clearTags(); // Clear existing tags
+                        for (int i = 0; i < chipGroupTags.getChildCount(); i++) {
+                            Chip chip = (Chip) chipGroupTags.getChildAt(i);
+                            editItem.addTag(new Tag(chip.getText().toString())); // Add each tag to the item
+                        }
 
                         // Check if any field is empty
                         boolean anyFieldsEmpty = name.isEmpty() || description.isEmpty() ||
