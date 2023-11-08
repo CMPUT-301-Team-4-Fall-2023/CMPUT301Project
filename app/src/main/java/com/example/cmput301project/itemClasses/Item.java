@@ -102,6 +102,19 @@ public class Item {
         this.tags = tags;
     }
 
+    public void addTag(Tag tag) {
+        if (this.tags == null) {
+            this.tags = new ArrayList<>();
+        }
+        this.tags.add(tag);
+    }
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+    }
+    public void clearTags() {
+        // Clear current tags
+        this.tags.clear();
+    }
     public ArrayList<Photograph> getPhotographs() {
         return photographs;
     }
