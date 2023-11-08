@@ -25,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordField;
     private Button signInButton;
     private TextView createAccountTextView;
+    private TextView errorTextView;
     private FirebaseAuth userAuth;
     private UserManager userManager;
 
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
         signInButton = findViewById(R.id.signInButton);
         createAccountTextView = findViewById(R.id.accountCreationText);
+        errorTextView = findViewById(R.id.errorTextView);
+        errorTextView.setVisibility(View.GONE);
     }
 
     private void showToast(String msg){
@@ -49,11 +52,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private boolean checkForInvalidInputs() {
         if (emailField.getText().toString().equals("")){
-            showToast("Please enter an email");
+            errorTextView.setText(R.string.emailFieldError);
+            errorTextView.setVisibility(View.VISIBLE);
             return true;
         }
         else if (passwordField.getText().toString().equals("")){
-            showToast("Please enter a password");
+            errorTextView.setText(R.string.passwordFieldError);
+            errorTextView.setVisibility(View.VISIBLE);
             return true;
         }
         return false;
@@ -95,6 +100,13 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Starts the login activity and prompts the user to log in
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

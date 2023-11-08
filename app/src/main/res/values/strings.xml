@@ -9,4 +9,7 @@
     <string name="password">Password</string>
     <string name="account_creation_textview">Don\'t have an account? Create one now.</string>
     <string name="already_have_account">Already have an account?</string>
+    <string name="emailFieldError">Please enter a valid email</string>
+    <string name="passwordFieldError">"Please enter a valid password"</string>
+    <string name="userNameFieldError">Please enter a valid username</string>
 </resources>

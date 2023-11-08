@@ -36,15 +36,14 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordField;
     private Button signUpButton;
     private TextView alreadyHaveAccountTextView;
+    private TextView errorTextView;
     private FirebaseAuth userAuth;
     private CollectionReference usersRef;
     private UserManager userManager;
     private Database db;
 
     private void showToast(String message){
-        Toast.makeText(SignUpActivity.this,
-                message,
-                Toast.LENGTH_SHORT).show();
+        errorTextView.setText(message);
     }
 
     private void grabUIElements(){
@@ -53,21 +52,8 @@ public class SignUpActivity extends AppCompatActivity {
         passwordField = findViewById(R.id.passwordEntry);
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
         signUpButton = findViewById(R.id.signUpButton);
+        errorTextView = findViewById(R.id.errorTextView);
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
-    }
-
-    // TODO: This is backend code, I will move this to the db wrapper class
-    public void setDisplayName(String userName){
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(userName)
-                .build();
-
-        userManager.getLoggedInUser().updateProfile(profileUpdates)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "User profile updated.");
-                    }
-                });
     }
 
     //TODO: This is backend code, I will move this to the db wrapper class
@@ -77,7 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
         DocumentReference userRef = usersRef.document(userName);
         userRef.get().addOnSuccessListener(doc -> {
             db.registerUser(userManager.getUserID(), userEmail, userName);
-            setDisplayName(userName);
+            userManager.setDisplayName(userName);
             //TODO: Initialize their own database doc that will store all their information
             // probably make the document name their UID so that they can actually write to the db
             navigateToMainActivity();
@@ -86,15 +72,15 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean checkForInvalidInputs() {
         if (usernameField.getText().toString().equals("")){
-            showToast("Please enter a username");
+            errorTextView.setText(R.string.userNameFieldError);
             return true;
         }
         else if (emailField.getText().toString().equals("")){
-            showToast("Please enter an email");
+            errorTextView.setText(R.string.emailFieldError);
             return true;
         }
         else if (passwordField.getText().toString().equals("")){
-            showToast("Please enter a password");
+            errorTextView.setText(R.string.passwordFieldError);
             return true;
         }
         return false;
@@ -114,7 +100,7 @@ public class SignUpActivity extends AppCompatActivity {
         alreadyHaveAccountTextView.setOnClickListener(this::navigateToLoginActivity);
     }
 
-    public void attemptSignUp(View v){
+    private void attemptSignUp(View v){
 
         if (checkForInvalidInputs()) return;
 
@@ -147,6 +133,13 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Starts the sign up activity and prompts the user to sign in
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
