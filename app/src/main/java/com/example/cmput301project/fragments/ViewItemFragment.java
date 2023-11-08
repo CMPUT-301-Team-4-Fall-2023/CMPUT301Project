@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Tag;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,7 @@ public class ViewItemFragment extends DialogFragment {
     private TextView itemTags;
     private TextView itemComment;
     private Item viewedItem;
+
     private OnFragmentInteractionListener listener;
     public ViewItemFragment(Item item){
         this.viewedItem = item;
@@ -64,7 +66,7 @@ public class ViewItemFragment extends DialogFragment {
         itemMake = view.findViewById(R.id.view_item_make);
         itemDate = view.findViewById(R.id.view_item_date);
         itemComment = view.findViewById(R.id.view_item_comment);
-
+        itemTags = view.findViewById(R.id.view_item_tags);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -77,6 +79,18 @@ public class ViewItemFragment extends DialogFragment {
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
         itemDate.setText("Date: "+ df.format(viewedItem.getPurchaseDate()));
         itemComment.setText("Comments: "+ viewedItem.getComment());
+
+        // Assuming the Item class has a method getTags() that returns a List of Tag objects
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (Tag tag : viewedItem.getTags()) {
+            if (tagsBuilder.length() > 0) {
+                tagsBuilder.append(" | "); // Separator for multiple tags
+            }
+            tagsBuilder.append(tag.getName()); // Append the tag name to the builder
+        }
+
+        // Set the tags text from the StringBuilder
+        itemTags.setText("Tags: " + tagsBuilder.toString());
 
         Dialog dialog = builder //set dialog buttons and perform methods defined on MainActivity
                 .setView(view)

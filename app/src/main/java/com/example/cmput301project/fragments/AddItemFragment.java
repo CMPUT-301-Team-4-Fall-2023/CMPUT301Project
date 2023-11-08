@@ -20,6 +20,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -43,6 +46,9 @@ public class AddItemFragment extends DialogFragment {
     private Item editItem;
     private Boolean invalidInput;
     private OnFragmentInteractionListener listener;
+    private EditText inputTagEditText;
+    private ChipGroup chipGroupTags;
+    private Button addTagButton;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -78,6 +84,9 @@ public class AddItemFragment extends DialogFragment {
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
         title = view.findViewById(R.id.add_item_title);
+        inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
+        chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
+        addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -89,6 +98,29 @@ public class AddItemFragment extends DialogFragment {
             @Override
             public void onShow(DialogInterface dialogInterface) { //need to overwrite the default behavior of buttons, which is to dismiss the dialog
                 Button okButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+
+                Button addButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE); // This is your existing OK button logic
+
+                // Set the click listener for the add tag button
+                addTagButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String tagText = inputTagEditText.getText().toString().trim();
+                        if (!tagText.isEmpty()) {
+                            Chip chip = new Chip(getContext());
+                            chip.setText(tagText);
+                            chip.setCloseIconVisible(true);
+                            chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    chipGroupTags.removeView(chip);
+                                }
+                            });
+                            chipGroupTags.addView(chip);
+                            inputTagEditText.setText(""); // Clear the EditText after adding the chip
+                        }
+                    }
+                });
 
                 okButton.setOnClickListener(new View.OnClickListener() {
 
@@ -137,8 +169,18 @@ public class AddItemFragment extends DialogFragment {
                             }
                             Double price = Double.parseDouble(priceText);
 
-                            // Add the item
-                            listener.onOKPressed(new Item(name, parsedDate, description, make, model, serial, price, comments));
+                            // Create a new Item
+                            Item newItem = new Item(name, parsedDate, description, make, model, serial, price, comments);
+
+                            // Add tags from the chipGroupTags to the newItem
+                            for (int i = 0; i < chipGroupTags.getChildCount(); i++) {
+                                Chip chip = (Chip) chipGroupTags.getChildAt(i);
+                                Tag tag = new Tag(chip.getText().toString());
+                                newItem.addTag(tag); // Use the new method in the Item class
+                            }
+
+                            // Call the listener with the new item
+                            listener.onOKPressed(newItem);
                             listener.updateTotalCost();
                             dialog.dismiss();
 
@@ -199,6 +241,8 @@ public class AddItemFragment extends DialogFragment {
                                 itemYear.setError("Year required");
                             }
                         }
+
+
 
                     }
                 });
