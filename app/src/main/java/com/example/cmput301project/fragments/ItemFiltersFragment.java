@@ -17,6 +17,7 @@ import androidx.fragment.app.DialogFragment;
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,26 +45,51 @@ public class ItemFiltersFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener {
         void onFiltersSaved(ItemFilter itemFilter);
+        void onFiltersCleared();
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_filters, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         editFromDate = view.findViewById(R.id.from_date_edit_text);
         editToDate = view.findViewById(R.id.to_date_edit_text);
+        editKeywords = view.findViewById(R.id.keywords_edit_text);
+        editMakes = view.findViewById(R.id.makes_edit_text);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        Bundle args = getArguments();
+        if (args != null) {
+            String fromString = args.getString("from");
+            String toString = args.getString("to");
+            builder.setNeutralButton("Clear", null);
+            editFromDate.setText(fromString);
+            editToDate.setText(toString);
+        }
 
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("OK",null).create(); //create a dialog with buttons and title
+                .setPositiveButton("OK",null)
+                .create(); //create a dialog with buttons and title
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) { //need to overwrite the default behavior of buttons, which is to dismiss the dialog
                 Button okButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                Button clearButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEUTRAL);
+
+                clearButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editFromDate.setText("");
+                        editToDate.setText("");
+                        editKeywords.setText("");
+                        editMakes.setText("");
+                        listener.onFiltersCleared();
+                    }
+                });
+
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -77,14 +103,15 @@ public class ItemFiltersFragment extends DialogFragment {
                             try {
                                 Date fromDate = dateFormat.parse(fromDateString);
                                 Date toDate = dateFormat.parse(toDateString);
+                                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                                 itemFilter.setFrom(fromDate);
                                 itemFilter.setTo(toDate);
-                                itemFilter.setFilterDate(true);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
                         listener.onFiltersSaved(itemFilter);
+                        dialog.dismiss();
                     }
                 });
             }
