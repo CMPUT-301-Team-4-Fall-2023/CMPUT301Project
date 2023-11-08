@@ -131,8 +131,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         //TODO: change way of passing state to the main activity
         updateTotalCost();
     }
-
-
+    
     private void deleteSelectedItems() {
         ArrayList<Item> selected = new ArrayList<>();
         for (Item item : items) {

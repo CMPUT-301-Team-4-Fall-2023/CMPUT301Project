@@ -53,6 +53,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         TextView itemModel = view.findViewById(R.id.item_model);
         TextView itemMake = view.findViewById(R.id.item_make);
         TextView itemComment = view.findViewById(R.id.item_comment);
+        TextView itemTags = view.findViewById(R.id.item_date);
 
         itemName.setText(item.getName());
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
@@ -64,6 +65,18 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         itemModel.setText(item.getModel());
         itemMake.setText(item.getMake());
         itemComment.setText(item.getComment());
+
+        // Assuming the Item class has a method getTags() that returns a List of Tag objects
+        StringBuilder tagsBuilder = new StringBuilder();
+        for (Tag tag : item.getTags()) {
+            if (tagsBuilder.length() > 0) {
+                tagsBuilder.append(" | "); // Separator for multiple tags
+            }
+            tagsBuilder.append(tag.getName()); // Append the tag name to the builder
+        }
+
+        // Set the tags text from the StringBuilder
+        itemTags.setText(tagsBuilder.toString());
 
 
         CheckBox checkBox = view.findViewById(R.id.checkbox); // Assuming checkbox ID is 'checkbox' in your item_content.xml
