@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
+import com.example.cmput301project.UserManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button signInButton;
     private TextView createAccountTextView;
     private FirebaseAuth userAuth;
+    private UserManager userManager;
 
     private void grabUIElements(){
         emailField = findViewById(R.id.emailEntry);
@@ -40,8 +41,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserLoggedOn(){
-        FirebaseUser currentUser = userAuth.getCurrentUser();
-        if(currentUser != null) navigateToMainPage();
+        userManager.setLoggedInUser(userAuth.getCurrentUser());
+        if(userManager.getLoggedInUser() != null){
+            navigateToMainPage();
+        }
     }
 
     private boolean checkForInvalidInputs() {
@@ -62,8 +65,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void navigateToMainPage(){
-        //TODO probably better way, this is just so this can be
-        // merged in and used
         Intent i  = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
     }
@@ -73,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
-    public void attemptLogin(View v){
+    private void attemptLogin(View v){
         if (checkForInvalidInputs()) return;
 
         String userEmail = emailField.getText().toString();
@@ -84,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
+                        userManager.setLoggedInUser(userAuth.getCurrentUser());
                         navigateToMainPage();
                     } else {
                         // If sign in fails, display a message to the user.
@@ -99,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login);
 
         userAuth = FirebaseAuth.getInstance();
+        userManager = UserManager.getInstance();
 
         checkUserLoggedOn();
 

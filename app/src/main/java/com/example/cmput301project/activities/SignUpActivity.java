@@ -15,6 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cmput301project.Database;
+import com.example.cmput301project.UserManager;
 import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +38,8 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView alreadyHaveAccountTextView;
     private FirebaseAuth userAuth;
     private CollectionReference usersRef;
+    private UserManager userManager;
+    private Database db;
 
     private void showToast(String message){
         Toast.makeText(SignUpActivity.this,
@@ -52,12 +56,13 @@ public class SignUpActivity extends AppCompatActivity {
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
     }
 
-    public void setDisplayName(FirebaseUser user){
+    // TODO: This is backend code, I will move this to the db wrapper class
+    public void setDisplayName(String userName){
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setDisplayName(usernameField.getText().toString())
+                .setDisplayName(userName)
                 .build();
 
-        user.updateProfile(profileUpdates)
+        userManager.getLoggedInUser().updateProfile(profileUpdates)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Log.d(TAG, "User profile updated.");
@@ -65,12 +70,16 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
+    //TODO: This is backend code, I will move this to the db wrapper class
     private void signUpUser(String userName, String userEmail){
         FirebaseUser potentialUser = userAuth.getCurrentUser();
+        userManager.setLoggedInUser(potentialUser);
         DocumentReference userRef = usersRef.document(userName);
         userRef.get().addOnSuccessListener(doc -> {
-            addUserToDatabase(userEmail, userName);
-            setDisplayName(Objects.requireNonNull(potentialUser));
+            db.registerUser(userManager.getUserID(), userEmail, userName);
+            setDisplayName(userName);
+            //TODO: Initialize their own database doc that will store all their information
+            // probably make the document name their UID so that they can actually write to the db
             navigateToMainActivity();
         });
     }
@@ -91,20 +100,11 @@ public class SignUpActivity extends AppCompatActivity {
         return false;
     }
 
-    private void addUserToDatabase(String userEmail, String userName) {
-        HashMap<String, String> data = new HashMap<>();
-        data.put("email", userEmail);
-        usersRef.document(userName)
-                .set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
-    }
-
     private void navigateToLoginActivity(View view){
         finish();
     }
 
     private void navigateToMainActivity(){
-        //TODO probably better way, this is just so this can be
-        // merged in and used
         Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
         startActivity(i);
     }
@@ -122,6 +122,8 @@ public class SignUpActivity extends AppCompatActivity {
         String userEmail = emailField.getText().toString();
         String userPassword = passwordField.getText().toString();
 
+        //TODO: Everything from this point on is an amalgamation of front & backend,
+        // will refactor -ALEX
         DocumentReference userRef = usersRef.document(userName);
 
         userRef.get().addOnSuccessListener(doc -> {
@@ -151,8 +153,9 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.sign_up);
 
         userAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        usersRef = db.collection("usernames");
+
+        userManager = UserManager.getInstance();
+        db = Database.getInstance();
 
         grabUIElements();
         addListeners();
