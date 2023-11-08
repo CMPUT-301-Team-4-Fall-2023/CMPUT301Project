@@ -8,11 +8,12 @@ public class ItemFilter {
     private Date to;
     private ArrayList<String> keywords;
     private ArrayList<String> makes;
-    private boolean filterDate = false;
-    private boolean filterKeywords = false;
-    private boolean filterMake = false;
 
     public ItemFilter() {
+        from = null;
+        to = null;
+        keywords = new ArrayList<String>();
+        makes = new ArrayList<String>();
     }
 
     public Date getFrom() {
@@ -48,27 +49,14 @@ public class ItemFilter {
     }
 
     public boolean isFilterDate() {
-        return filterDate;
-    }
-
-    public void setFilterDate(boolean filterDate) {
-        this.filterDate = filterDate;
+        return from != null && to != null;
     }
 
     public boolean isFilterKeywords() {
-        return filterKeywords;
+        return !keywords.isEmpty();
     }
-
-    public void setFilterKeywords(boolean filterKeywords) {
-        this.filterKeywords = filterKeywords;
-    }
-
-    public boolean isFilterMake() {
-        return filterMake;
-    }
-
-    public void setFilterMake(boolean filterMake) {
-        this.filterMake = filterMake;
+    public boolean isFilterMakes() {
+        return !makes.isEmpty();
     }
 }
 

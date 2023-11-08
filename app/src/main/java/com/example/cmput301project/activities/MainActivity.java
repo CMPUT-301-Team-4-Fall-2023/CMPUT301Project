@@ -17,8 +17,11 @@ import com.example.cmput301project.fragments.ViewItemFragment;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.ItemAdapter;
 import com.example.cmput301project.itemClasses.ItemFilter;
+import com.example.cmput301project.itemClasses.ItemList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +30,8 @@ import java.util.stream.Collectors;
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
 
     private ArrayList<Item> items;
+    private ItemList itemList;
+    private ItemFilter itemFilter;
     private ListView itemsView;
     private TextView totalCostView;
     private Button filtersButton;
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         items = new ArrayList<Item>();
+        itemList = new ItemList(items);
+        itemFilter = new ItemFilter();
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
         filtersButton = findViewById(R.id.filter_items_button);
@@ -60,7 +67,21 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         filtersButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ItemFiltersFragment().show(getSupportFragmentManager(), "ITEM_FILTERS");
+                ItemFiltersFragment itemFiltersFragment = new ItemFiltersFragment();
+                Bundle args = new Bundle();
+                if (itemFilter.isFilterDate()) {
+                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                    args.putString("from", df.format(itemFilter.getFrom()));
+                    args.putString("to", df.format(itemFilter.getTo()));
+                }
+                if (itemFilter.isFilterKeywords()) {
+
+                }
+                if (itemFilter.isFilterMakes()) {
+
+                }
+                itemFiltersFragment.setArguments(args);
+                itemFiltersFragment.show(getSupportFragmentManager(), "ITEM_FILTERS");
             }
 
         });
@@ -98,23 +119,27 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     @Override
-    public void onFiltersSaved(ItemFilter itemFilter) {
-        ArrayList<Item> filteredItems = new ArrayList<>();
+    public void onFiltersSaved(ItemFilter i) {
+        this.itemFilter = i;
+        if (itemFilter.isFilterDate()) {
+            itemList.filterByDate(itemFilter.getFrom(), itemFilter.getTo());
+        }
+        if (itemFilter.isFilterKeywords()) {
+            itemList.filterByKeywords();
+        }
+        if (itemFilter.isFilterMakes()) {
+            itemList.filterByMake();
+        }
+        items.clear();
+        items.addAll(itemList.getFilteredItems());
+        itemAdapter.notifyDataSetChanged();
     }
 
-    public ArrayList<Item> filterByDate(Date from, Date to) {
-        List<Item> filteredItems = items.stream().filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
-                .collect(Collectors.toList());
-        ArrayList<Item> filteredItemsArrayList = new ArrayList<>(filteredItems);
-        return filteredItemsArrayList;
-    }
-
-    public ArrayList<Item> filterByKeywords() {
-        return items;
-    }
-
-    public ArrayList<Item> filterByMake() {
-        return items;
+    @Override
+    public void onFiltersCleared() {
+        items.clear();
+        items.addAll(itemList.getItems());
+        itemAdapter.notifyDataSetChanged();
     }
 
     @Override
