@@ -20,14 +20,10 @@ import com.example.cmput301project.itemClasses.ItemAdapter;
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.itemClasses.ItemList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
 
@@ -90,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         });
 
         db = Database.getInstance();
-        db.addUpdaterForArray(items, itemAdapter);
+        db.addArrayAsListener(items, itemAdapter);
     }
 
     @Override
