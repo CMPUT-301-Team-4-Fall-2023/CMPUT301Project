@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="positive_selection">#2ade42</color>
     <color name="main">#2087F2</color>
+    <color name="error">#ff3333</color>
 </resources>

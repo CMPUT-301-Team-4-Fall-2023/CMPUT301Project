@@ -31,6 +31,21 @@
             android:textColor="@color/white"
             android:textSize="50sp" />
 
+        <TextView
+            android:id="@+id/errorTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="60dp"
+            android:fontFamily="@font/roboto_light"
+            android:textColor="@color/error"
+            android:shadowColor="@color/black"
+            android:shadowDx="0.0"
+            android:shadowDy="0.0"
+            android:shadowRadius="0.5"
+            android:textStyle="italic"
+            />
+
         <EditText
             android:id="@+id/emailEntry"
             android:layout_width="300dp"
@@ -40,7 +55,6 @@
             android:ems="10"
             android:fontFamily="@font/roboto_light"
             android:inputType="textEmailAddress"
-            android:layout_marginTop="60dp"
             android:hint="@string/email_prompt"
             android:textColor="@color/white"
             android:textColorHint="@color/white"

@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
+import com.example.cmput301project.UserManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -25,7 +25,9 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordField;
     private Button signInButton;
     private TextView createAccountTextView;
+    private TextView errorTextView;
     private FirebaseAuth userAuth;
+    private UserManager userManager;
 
     private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
@@ -33,23 +35,30 @@ public class LoginActivity extends AppCompatActivity {
         passwordField.setTypeface(Typeface.DEFAULT); // To display the hint
         signInButton = findViewById(R.id.signInButton);
         createAccountTextView = findViewById(R.id.accountCreationText);
+        errorTextView = findViewById(R.id.errorTextView);
+        errorTextView.setVisibility(View.GONE);
     }
 
     private void showToast(String msg) {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void checkUserLoggedOn() {
-        FirebaseUser currentUser = userAuth.getCurrentUser();
-        if (currentUser != null) navigateToMainPage();
+    private void checkUserLoggedOn(){
+        userManager.setLoggedInUser(userAuth.getCurrentUser());
+        if(userManager.getLoggedInUser() != null){
+            navigateToMainPage();
+        }
     }
 
     private boolean checkForInvalidInputs() {
-        if (emailField.getText().toString().equals("")) {
-            showToast("Please enter an email");
+        if (emailField.getText().toString().equals("")){
+            errorTextView.setText(R.string.emailFieldError);
+            errorTextView.setVisibility(View.VISIBLE);
             return true;
-        } else if (passwordField.getText().toString().equals("")) {
-            showToast("Please enter a password");
+        }
+        else if (passwordField.getText().toString().equals("")){
+            errorTextView.setText(R.string.passwordFieldError);
+            errorTextView.setVisibility(View.VISIBLE);
             return true;
         }
         return false;
@@ -60,10 +69,8 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void navigateToMainPage() {
-        //TODO probably better way, this is just so this can be
-        // merged in and used
-        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+    private void navigateToMainPage(){
+        Intent i  = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
     }
 
@@ -72,7 +79,9 @@ public class LoginActivity extends AppCompatActivity {
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
-    public void attemptLogin(View v) {
+
+    private void attemptLogin(View v){
+
         if (checkForInvalidInputs()) return;
 
         String userEmail = emailField.getText().toString();
@@ -83,6 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "createUserWithEmail:success");
+                        userManager.setLoggedInUser(userAuth.getCurrentUser());
                         navigateToMainPage();
                     } else {
                         // If sign in fails, display a message to the user.
@@ -92,12 +102,20 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Starts the login activity and prompts the user to log in
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
         userAuth = FirebaseAuth.getInstance();
+        userManager = UserManager.getInstance();
 
         checkUserLoggedOn();
 
