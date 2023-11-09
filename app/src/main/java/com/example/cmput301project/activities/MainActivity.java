@@ -40,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private ArrayAdapter<Item> filteredItemAdapter;
     private Button deleteButton;
 
+    /**
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,12 +92,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         });
     }
 
+    /**
+     * @param item
+     */
     @Override
     public void onOKPressed(Item item) {
         items.add(item); //on a new expense addition, add the expense to the datalist and update display
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     *
+     */
     @Override
     public void updateTotalCost() { //add up all costs of expenses within list, update display
         totalCost = 0.00;
@@ -103,21 +114,33 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * @param item
+     */
     @Override
     public void editItem(Item item) {
         new EditItemFragment(item).show(getSupportFragmentManager(), "EDIT_ITEM");
     }
 
+    /**
+     * @param item
+     */
     public void viewItem(Item item) {
         new ViewItemFragment(item).show(getSupportFragmentManager(), "VIEW_ITEM");
     }
 
+    /**
+     * @param item
+     */
     @Override
     public void onDeletePressed(Item item) { //delete selected expense, update display
         items.remove(item);
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * @param i
+     */
     @Override
     public void onFiltersSaved(ItemFilter i) {
         this.itemFilter = i;
@@ -135,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     *
+     */
     @Override
     public void onFiltersCleared() {
         items.clear();
@@ -142,6 +168,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * @param item
+     */
     @Override
     public void onItemEdited(Item item) {
         //interfaces can't have same named methods
@@ -150,13 +179,19 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Updates total cost after any changes are made
+     */
     @Override
     public void updateTotalCostAfterEdit() {
         //interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
         updateTotalCost();
     }
-    
+
+    /**
+     * Bulk delete function, deletes all selected items
+     */
     private void deleteSelectedItems() {
         ArrayList<Item> selected = new ArrayList<>();
         for (Item item : items) {
@@ -166,8 +201,5 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         }
         items.removeAll(selected);
         itemAdapter.notifyDataSetChanged();
-    }
-
-    public void setItems(ArrayList<Item> sampleItems) {
     }
 }

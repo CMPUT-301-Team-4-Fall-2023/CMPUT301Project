@@ -50,6 +50,9 @@ public class AddItemFragment extends DialogFragment {
     private ChipGroup chipGroupTags;
     private Button addTagButton;
 
+    /**
+     * @param context
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -61,6 +64,9 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     *
+     */
     public interface OnFragmentInteractionListener {
         void onOKPressed(Item item);
 
@@ -68,6 +74,11 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param savedInstanceState The last saved instance state of the Fragment,
+     *                           or null if this is a freshly created Fragment.
+     * @return
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -252,6 +263,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param name
+     * @return
+     */
     private boolean isValidName(String name) {
         if (name.length() > 15) {
             return false;
@@ -260,6 +275,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param description
+     * @return
+     */
     private boolean isValidDescription(String description) {
         if (description.length() > 50) {
             return false;
@@ -268,6 +287,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param model
+     * @return
+     */
     private boolean isValidModel(String model) {
         if (model.length() > 20) {
             return false;
@@ -276,6 +299,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param make
+     * @return
+     */
     private boolean isValidMake(String make) {
         if (make.length() > 20) {
             return false;
@@ -284,12 +311,20 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param price
+     * @return
+     */
     private boolean isValidPrice(String price) {
         String priceText = String.valueOf(price);
         return priceText.matches("^(0\\.\\d{1,2}|[1-9]\\d*\\.?\\d{0,2})$");
     }
 
 
+    /**
+     * @param comment
+     * @return
+     */
     private boolean isValidComment(String comment) {
         if (comment.length() > 25) {
             return false;
@@ -298,6 +333,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param day
+     * @return
+     */
     private boolean isValidDay(String day) {
         if (!day.isEmpty()) {
             int dayValue = Integer.parseInt(day);
@@ -307,6 +346,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param month
+     * @return
+     */
     private boolean isValidMonth(String month) {
         if (!month.isEmpty()) {
             int monthValue = Integer.parseInt(month);
@@ -316,6 +359,10 @@ public class AddItemFragment extends DialogFragment {
     }
 
 
+    /**
+     * @param year
+     * @return
+     */
     private boolean isValidYear(String year) {
         if (!year.isEmpty() && year.matches("\\d{4}")) {
             return true;
