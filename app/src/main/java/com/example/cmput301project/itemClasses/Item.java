@@ -16,6 +16,8 @@ public class Item {
     private ArrayList<Photograph> photographs;
     private boolean selected;
 
+    public Item() {}
+
     public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
         this.name = name;
         this.purchaseDate = purchaseDate;

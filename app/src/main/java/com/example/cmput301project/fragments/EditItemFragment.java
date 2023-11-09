@@ -210,6 +210,7 @@ public class EditItemFragment extends DialogFragment {
                             editItem.setValue(parseDouble(itemPrice.getText().toString()));
                             editItem.setPurchaseDate(parsedDate);
                             editItem.setComment(itemComments.getText().toString());
+                            listener.onItemEdited(editItem);
                             listener.updateTotalCostAfterEdit(); //recalculate monthly costs
                             dialog.dismiss();
 
@@ -270,8 +271,6 @@ public class EditItemFragment extends DialogFragment {
                                 itemYear.setError("Year required");
                             }
                         }
-
-
                     }
                 });
             }

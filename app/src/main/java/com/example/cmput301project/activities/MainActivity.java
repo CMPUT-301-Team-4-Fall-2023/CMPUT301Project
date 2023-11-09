@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
 import com.example.cmput301project.fragments.AddItemFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
@@ -19,6 +20,7 @@ import com.example.cmput301project.itemClasses.ItemAdapter;
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.itemClasses.ItemList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -29,6 +31,7 @@ import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
 
+    private Database db;
     private ArrayList<Item> items;
     private ItemList itemList;
     private ItemFilter itemFilter;
@@ -85,12 +88,14 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             }
 
         });
+
+        db = Database.getInstance();
+        db.addUpdaterForArray(items, itemAdapter);
     }
 
     @Override
     public void onOKPressed(Item item) {
-        items.add(item); //on a new expense addition, add the expense to the datalist and update display
-        itemAdapter.notifyDataSetChanged();
+        db.addItem(item);
     }
 
     @Override
@@ -114,8 +119,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
     @Override
     public void onDeletePressed(Item item) { //delete selected expense, update display
-        items.remove(item);
-        itemAdapter.notifyDataSetChanged();
+        db.deleteItem(item);
     }
 
     @Override
@@ -146,8 +150,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     public void onItemEdited(Item item) {
         //interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
-        items.add(item);
-        itemAdapter.notifyDataSetChanged();
+        db.editItem(item);
     }
 
     @Override
