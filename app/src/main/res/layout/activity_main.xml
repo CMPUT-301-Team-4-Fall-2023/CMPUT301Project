@@ -20,6 +20,7 @@
             android:text="Total Monthly Expenses: $0.00"
             android:textColor="@color/white"
             android:textSize="20dp"></TextView>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -42,11 +43,22 @@
                 android:drawableRight="@drawable/hamburger_menu"
                 android:gravity="center" />
         </LinearLayout>
+
         <ListView
             android:id="@+id/item_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"></ListView>
+
+        <Button
+            android:id="@+id/delete_items_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="16dp"
+            android:padding="10dp"
+            android:text="Delete Selected Items"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/nav_bar"
@@ -56,19 +68,6 @@
             android:text="Placeholder - Nav bar here"
             android:textSize="20dp"></TextView>
     </LinearLayout>
-
-
-
-    <Button
-        android:id="@+id/delete_items_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="16dp"
-        android:background="@color/material_on_background_emphasis_medium"
-        android:padding="10dp"
-        android:text="Delete Selected Items"
-        android:textColor="#FFFFFF" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_item_button"

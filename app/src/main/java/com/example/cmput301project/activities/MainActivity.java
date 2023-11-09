@@ -164,8 +164,10 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 selected.add(item);
             }
         }
-
         items.removeAll(selected);
         itemAdapter.notifyDataSetChanged();
+    }
+
+    public void setItems(ArrayList<Item> sampleItems) {
     }
 }
