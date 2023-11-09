@@ -98,9 +98,12 @@ public class EditItemFragment extends DialogFragment {
         itemSerial.setText(editItem.getSerialNumber().toString());
         itemModel.setText(editItem.getModel());
         itemMake.setText(editItem.getMake());
-        itemDay.setText(editItem.getPurchaseDate().getDay() + "");
-        itemMonth.setText((editItem.getPurchaseDate().getMonth() + 1) + "");
-        itemYear.setText((editItem.getPurchaseDate().getYear() + 1900) + "");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd");
+        itemDay.setText(sdf.format(editItem.getPurchaseDate()) + "");
+        sdf = new SimpleDateFormat("MM");
+        itemMonth.setText(sdf.format(editItem.getPurchaseDate()) + "");
+        sdf = new SimpleDateFormat("yyyy");
+        itemYear.setText(sdf.format(editItem.getPurchaseDate()) + "");
         itemPrice.setText(editItem.getValue().toString());
         itemComments.setText(editItem.getComment());
 
@@ -210,6 +213,7 @@ public class EditItemFragment extends DialogFragment {
                             editItem.setValue(parseDouble(itemPrice.getText().toString()));
                             editItem.setPurchaseDate(parsedDate);
                             editItem.setComment(itemComments.getText().toString());
+                            listener.onItemEdited(editItem);
                             listener.updateTotalCostAfterEdit(); //recalculate monthly costs
                             dialog.dismiss();
 
@@ -270,8 +274,6 @@ public class EditItemFragment extends DialogFragment {
                                 itemYear.setError("Year required");
                             }
                         }
-
-
                     }
                 });
             }

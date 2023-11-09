@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
 import com.example.cmput301project.activities.MainActivity;
 
@@ -66,6 +67,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         itemMake.setText(item.getMake());
         itemComment.setText(item.getComment());
 
+        if(item.getTags() == null) {item.setTags(new ArrayList<Tag>());}
         // Assuming the Item class has a method getTags() that returns a List of Tag objects
         StringBuilder tagsBuilder = new StringBuilder();
         for (Tag tag : item.getTags()) {
@@ -99,10 +101,10 @@ public class ItemAdapter extends ArrayAdapter<Item> {
     }
 
     public void deleteSelectedItems() {
+        Database db = Database.getInstance(); //hack: remove
         for (Item item : selectedItems) {
-            items.remove(item);
+            db.deleteItem(item);
         }
-        notifyDataSetChanged();
         selectedItems.clear();
     }
 }
