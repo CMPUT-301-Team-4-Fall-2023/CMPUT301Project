@@ -1,3 +1,13 @@
+/**
+ * Sign-up page for the application where users can create a new account by providing a username,
+ * email, and password. This class integrates with Firebase authentication and Firestore for user registration.
+ * Upon successful sign-up, users are directed to the main activity. User input validation is performed,
+ * and the class provides functionality to navigate to the login activity. Existing usernames are checked
+ * to avoid duplicates, and appropriate error messages are displayed to the user. The class also handles
+ * backend code related to user registration and database interaction.
+ */
+
+
 package com.example.cmput301project.activities;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;

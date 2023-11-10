@@ -1,3 +1,13 @@
+/**
+ * Dialog fragment that opens when viewing item details. Displays comprehensive information about
+ * the selected item, including its name, date, price, serial number, model, make, comments, and
+ * associated tags. Utilizes a listener interface to communicate with the hosting activity, allowing
+ * the user to edit or delete the viewed item. Provides a visually appealing layout to present item
+ * details. Implements buttons for user interaction, such as editing, deleting, and dismissing the
+ * details view. The hosting activity is notified of user actions through the listener interface.
+ */
+
+
 package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;

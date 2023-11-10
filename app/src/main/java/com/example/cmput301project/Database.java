@@ -1,3 +1,12 @@
+/**
+ * Manages interactions with the Firestore database,
+ * providing methods to register users, add, edit, and delete items,
+ * and listen for changes in the item collection.
+ * This class follows the Singleton pattern, ensuring a single instance
+ * for database operations throughout the application.
+ */
+
+
 package com.example.cmput301project;
 
 import android.util.Log;

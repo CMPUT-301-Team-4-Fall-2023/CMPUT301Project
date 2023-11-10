@@ -1,3 +1,16 @@
+/**
+ * The main activity of the application responsible for displaying all items, their details, and descriptions.
+ * Users can perform actions such as adding and deleting items directly from this activity.
+ * The UI design is expected to be updated to match the Figma design. The class integrates with the Database
+ * to handle item data and updates dynamically. It includes functionality for adding, editing, viewing, and
+ * deleting items, as well as applying filters to the displayed item list. The total valuation of items is
+ * calculated and displayed. The main UI components include a ListView, buttons for adding, deleting, and
+ * filtering items, and a FloatingActionButton for adding new items. Changes in item data trigger updates
+ * in the displayed list, and the class supports fragment interactions for adding, editing, and viewing items.
+ */
+
+
+
 package com.example.cmput301project.activities;
 
 import android.os.Bundle;
@@ -44,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      *                           previously being shut down then this Bundle contains the data it most
      *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
      *
-     * @TODO update total cost when relaunching app
+     *
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
