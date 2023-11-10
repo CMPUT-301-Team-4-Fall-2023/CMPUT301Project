@@ -79,8 +79,13 @@ public class LoginActivityTest {
                 .perform(ViewActions.typeText("password"));
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.signInButton)).perform(click());
-        //TODO: There is an issue with android-test that stops the main activity from being
-        // launched, so visually this test succeeds but fails this test case
+        try{
+            // Espresso is so bad that without this sleep the test fails, even though visually
+            // it still works
+            Thread.sleep(3000);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
         intended(hasComponent(MainActivity.class.getName()));
         Intents.release();
     }
