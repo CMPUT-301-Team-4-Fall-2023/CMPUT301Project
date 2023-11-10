@@ -54,7 +54,6 @@ public class MainActivityTest {
     // Test for initialization
     @Test
     public void testInitialization() {
-        // Ensure MainActivity is launched and visible
         onView(withId(R.id.item_list)).check(matches(isDisplayed())); // Replace R.id.item_list with your actual ListView ID
         onView(withId(R.id.add_item_button)).check(matches(isDisplayed())); // Replace R.id.add_item_button with your actual Add Item button ID
         // Add more checks for other UI elements as needed
