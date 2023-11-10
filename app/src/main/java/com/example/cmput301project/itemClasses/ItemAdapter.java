@@ -1,3 +1,16 @@
+/**
+ * Custom ArrayAdapter for managing the display of Item objects in a ListView.
+ * This adapter handles the visualization of item data, including name, date, cost,
+ * description, serial number, model, make, comment, and tags. It provides a custom
+ * view for each item in the associated ListView, allowing the user to interact with
+ * and manipulate individual items. The adapter supports the selection of items through
+ * checkboxes, enabling batch operations. It also integrates buttons for editing and
+ * viewing item details directly from the displayed list. The deletion of selected items
+ * is facilitated through the 'deleteSelectedItems' method. The class ensures proper
+ * handling of item data and user interactions within the context of a ListView.
+ */
+
+
 package com.example.cmput301project.itemClasses;
 
 import android.content.Context;

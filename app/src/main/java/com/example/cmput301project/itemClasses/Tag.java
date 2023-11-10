@@ -1,3 +1,11 @@
+/**
+ * Represents a tag applied to an item.
+ * Tags are used to categorize and organize items
+ * based on specific attributes. Each tag has a name,
+ * and instances of this class provide methods to
+ * retrieve and modify the tag name.
+ */
+
 package com.example.cmput301project.itemClasses;
 
 public class Tag {

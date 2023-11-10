@@ -1,3 +1,13 @@
+/**
+ * Container class for managing a list of Item objects and facilitating filtering operations.
+ * The ItemList class holds an ArrayList of items and provides methods for retrieving,
+ * setting, and filtering items based on criteria such as date range, keywords, and make.
+ * Filtering methods modify a separate list of filtered items, allowing for dynamic updates
+ * to the displayed items. This class is intended to be used to organize and manipulate
+ * Item data within the context of the application's functionality.
+ */
+
+
 package com.example.cmput301project.itemClasses;
 
 import java.util.ArrayList;

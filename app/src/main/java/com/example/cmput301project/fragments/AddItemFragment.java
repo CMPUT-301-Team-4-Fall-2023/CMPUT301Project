@@ -1,3 +1,13 @@
+/**
+ * Dialog fragment displayed when adding a new item. Handles user input for item details such as name,
+ * description, serial number, model, make, purchase date, price, and comments. Validates user input
+ * for various fields, including character limits and format requirements. Allows users to add tags to
+ * the item. Utilizes a listener interface to communicate with the hosting activity for item addition.
+ * Ensures proper handling of user interactions, validation errors, and invokes the listener when a new
+ * item is successfully added. Collaborates with the hosting activity to update the total cost of items.
+ */
+
+
 package com.example.cmput301project.fragments;
 
 import static java.lang.Boolean.FALSE;
