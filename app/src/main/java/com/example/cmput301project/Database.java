@@ -113,4 +113,26 @@ public class Database {
         });
     }
 
+    public void addTotalListener(TotalListener totalListener) {
+        itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.e("Firestore", error.toString());
+                    return;
+                }
+                if (querySnapshots != null) {
+                    totalListener.setTotal(0.0);
+                    for (QueryDocumentSnapshot doc: querySnapshots) {
+                        String name = doc.getId();
+                        Item item = doc.toObject(Item.class);
+                        item.setName(name);
+                        totalListener.addTotal(item.getValue());
+                    }
+                    totalListener.update();
+                    Log.d("Firestore", "total updated");
+                }
+            }
+        });
+    }
 }
