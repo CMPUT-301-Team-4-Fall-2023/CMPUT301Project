@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
+import com.example.cmput301project.TotalListener;
 import com.example.cmput301project.fragments.AddItemFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private ListView itemsView;
     private TextView totalCostView;
     private Button filtersButton;
-    private Double totalCost;
+
+    private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private ArrayAdapter<Item> filteredItemAdapter;
     private Button deleteButton;
@@ -62,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
         });
 
-        totalCost = 0.00; //initialize costs to 0 on startup
+        totalListener = new TotalListener(0.0, totalCostView);
         itemAdapter = new ItemAdapter(this, items);
         itemsView.setAdapter(itemAdapter);
         final FloatingActionButton addButton = findViewById(R.id.add_item_button);
@@ -94,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
         db = Database.getInstance();
         db.addArrayAsListener(items, itemAdapter);
+        db.addTotalListener(totalListener);
     }
 
     /**
@@ -109,11 +112,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void updateTotalCost() { //add up all costs of expenses within list, update display
-        totalCost = 0.00;
-        for (int i = 0; i < items.size(); i++) {
-            totalCost = totalCost + items.get(i).getValue();
-        }
-        totalCostView.setText("Total Valuation $" + String.format("%.2f", totalCost));
+        totalCostView.setText("Total Valuation $" + String.format("%.2f", totalListener.getTotal()));
         itemAdapter.notifyDataSetChanged();
     }
 
