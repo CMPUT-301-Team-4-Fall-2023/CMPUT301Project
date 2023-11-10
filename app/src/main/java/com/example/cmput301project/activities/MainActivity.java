@@ -1,13 +1,13 @@
 package com.example.cmput301project.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      * @param savedInstanceState If the activity is being re-initialized after
      *                           previously being shut down then this Bundle contains the data it most
      *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     * @TODO update total cost when relaunching app
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemsView.setAdapter(itemAdapter);
         final FloatingActionButton addButton = findViewById(R.id.add_item_button);
         addButton.setOnClickListener(v -> {
-            new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM"); //add floating + button to add new expense
+            new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
         });
 
         filtersButton.setOnClickListener(new View.OnClickListener() {

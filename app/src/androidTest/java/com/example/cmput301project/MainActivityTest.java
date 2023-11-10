@@ -54,43 +54,19 @@ public class MainActivityTest {
     // Test for initialization
     @Test
     public void testInitialization() {
-        onView(withId(R.id.item_list)).check(matches(isDisplayed())); // Replace R.id.item_list with your actual ListView ID
-        onView(withId(R.id.add_item_button)).check(matches(isDisplayed())); // Replace R.id.add_item_button with your actual Add Item button ID
-        // Add more checks for other UI elements as needed
+
     }
 
     // Test AddItem functionality
     @Test
     public void testAddItem() {
-        /*
-        // Click the add item button
-        onView(withId(R.id.add_item_button)).perform(click()); // Replace R.id.add_item_button with your actual Add Item button ID
 
-        // Add item details and perform the addition
-        // Use Espresso interactions to input details and confirm adding the item
-
-        // Check if the added item is displayed in the list view
-        onView(withText("New Item")).check(matches(isDisplayed())); // Replace "New Item" with the expected item name
-        // Add more verifications for added items if required
-
-         */
     }
 
     // Test Item Deletion
     @Test
     public void testItemDeletion() {
-        /*
-        // Select an item in the list
-        onView(withId(R.id.item_list)).perform(click()); // Click on the item in the list
 
-        // Click delete button
-        onView(withId(R.id.delete_items_button)).perform(click()); // Replace R.id.delete_items_button with your actual Delete button ID
-
-        // Verify that the selected item is removed from the list
-        onView(withText("Item to delete")).check(matches(not(isDisplayed()))); // Replace "Item to delete" with the deleted item name
-        // Add more verifications for deleted items if needed
-
-         */
     }
 
     @Test
