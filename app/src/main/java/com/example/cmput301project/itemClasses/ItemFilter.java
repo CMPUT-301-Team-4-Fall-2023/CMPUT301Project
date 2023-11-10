@@ -1,3 +1,15 @@
+/**
+ * Filter object designed to specify criteria for item filtering.
+ * The filter stores attributes such as date range, keywords, and makes,
+ * allowing users to narrow down the items based on specific conditions.
+ * It includes methods to check the presence of filtering criteria for
+ * dates, keywords, and makes. This class facilitates the customization
+ * of item queries by encapsulating various filter parameters within an
+ * easily manageable structure. Users can employ instances of this class
+ * to define and apply filters when searching for items in the application.
+ */
+
+
 package com.example.cmput301project.itemClasses;
 
 import java.util.ArrayList;

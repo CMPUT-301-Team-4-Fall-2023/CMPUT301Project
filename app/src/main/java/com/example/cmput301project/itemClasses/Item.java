@@ -1,4 +1,17 @@
+/**
+ * Represents an individual item with detailed information such as name, purchase date, description,
+ * make, model, serial number, value, comment, associated tags, photographs, and selection status.
+ * Provides getters and setters for accessing and modifying item attributes. Supports the addition,
+ * removal, and clearing of tags. Implements methods to manage photographs associated with the item.
+ * The selection status is used for tracking the item's state, and a boolean flag indicates whether
+ * the item is currently selected. The class ensures proper encapsulation of item data through its
+ * getter and setter methods.
+ */
+
+
 package com.example.cmput301project.itemClasses;
+
+import com.example.cmput301project.itemClasses.Photograph;
 
 import java.util.ArrayList;
 import java.util.Date;

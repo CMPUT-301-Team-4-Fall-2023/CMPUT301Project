@@ -1,3 +1,14 @@
+/**
+ * Login page for the application where users can enter their email and password to sign in.
+ * New users are redirected to the sign-up page. Upon successful login, users are directed
+ * to the main activity. The class integrates Firebase authentication for user verification.
+ * It provides UI elements for email, password, sign-in button, and navigation to the sign-up page.
+ * User input validation is performed, and login attempts are processed, with success leading
+ * to navigation to the main activity. In case of failures, appropriate error messages are displayed.
+ */
+
+
+
 package com.example.cmput301project.activities;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
@@ -16,6 +27,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.cmput301project.R;
 import com.example.cmput301project.UserManager;
+import com.example.cmput301project.activities.MainActivity;
+import com.example.cmput301project.activities.SignUpActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 

@@ -1,3 +1,12 @@
+/**
+ * Dialog fragment displayed when the filters button is clicked. Allows users to set filters for
+ * items based on criteria such as date range, keywords, and makes. Provides input fields for users
+ * to enter filter values and interactively set date ranges. Utilizes a listener interface to
+ * communicate with the hosting activity, notifying it when filters are saved or cleared. Handles
+ * user interactions, including setting and clearing filters, and invokes the listener accordingly.
+ */
+
+
 package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;

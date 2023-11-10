@@ -1,3 +1,11 @@
+/**
+ * Manages user authentication and provides functionality for handling user-related actions.
+ * This class serves as a singleton for user management, handling authentication, user profile,
+ * and interaction with Firebase. It offers methods to access and modify user information,
+ * including username, user ID, and user profile updates.
+ */
+
+
 package com.example.cmput301project;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
