@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
 import com.example.cmput301project.UserManager;
 import com.example.cmput301project.activities.MainActivity;
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView errorTextView;
     private FirebaseAuth userAuth;
     private UserManager userManager;
+    private Database db;
 
     private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
@@ -84,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void navigateToMainPage(){
         Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+        db.setItemCollection();
         startActivity(i);
     }
 
@@ -129,8 +132,9 @@ public class LoginActivity extends AppCompatActivity {
 
         userAuth = FirebaseAuth.getInstance();
         userManager = UserManager.getInstance();
+        db = Database.getInstance();
 
-        checkUserLoggedOn();
+//        checkUserLoggedOn();
 
         grabUIElements();
         addListeners();

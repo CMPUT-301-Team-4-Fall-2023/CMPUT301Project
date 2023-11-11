@@ -107,6 +107,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void navigateToMainActivity(){
         Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
+        db.setItemCollection();
         startActivity(i);
     }
 
