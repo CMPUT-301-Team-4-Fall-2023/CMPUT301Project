@@ -29,13 +29,12 @@ public class Database {
     private static Database instance = null;
     private final FirebaseFirestore db;
     private final CollectionReference usersRef;
-    private final CollectionReference itemsRef;
+    private CollectionReference itemsRef;
     private final UserManager userManager;
     private Database(){
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("usernames");
         userManager = UserManager.getInstance();
-        itemsRef = db.collection("store").document(userManager.getUserID()).collection("items");
     }
 
     /**
@@ -143,5 +142,11 @@ public class Database {
                 }
             }
         });
+    }
+
+    public void setItemCollection(){
+        itemsRef = db.collection("store")
+                .document(userManager.getUserID())
+                .collection("items");
     }
 }
