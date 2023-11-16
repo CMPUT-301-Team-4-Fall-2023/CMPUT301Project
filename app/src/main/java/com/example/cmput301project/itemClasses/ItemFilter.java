@@ -20,11 +20,13 @@ public class ItemFilter {
     private Date to;
     private ArrayList<String> keywords;
     private String make;
+    private String tag;
     public ItemFilter() {
         from = null;
         to = null;
         keywords = new ArrayList<String>();
         make = null;
+        tag = null;
     }
 
     public Date getFrom() {
@@ -59,6 +61,14 @@ public class ItemFilter {
         this.make = make;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public boolean isFilterDate() {
         return from != null && to != null;
     }
@@ -69,7 +79,10 @@ public class ItemFilter {
     public boolean isFilterMakes() {
         return make != null;
     }
-    public boolean isFilterActive() {return isFilterDate() || isFilterKeywords() || isFilterMakes();}
+    public boolean isFilterTag() {
+        return tag != null;
+    }
+    public boolean isFilterActive() {return isFilterDate() || isFilterKeywords() || isFilterMakes() || isFilterTag();}
 
 
 }

@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                     itemList.setFilteredItems(new ArrayList<Item>(items));
                 }
                 if (itemFilter.isFilterDate()) {
-                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                    DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
                     args.putString("from", df.format(itemFilter.getFrom()));
                     args.putString("to", df.format(itemFilter.getTo()));
                 }
@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 }
                 if (itemFilter.isFilterMakes()) {
                     args.putString("make", itemFilter.getMake());
+                }
+                if (itemFilter.isFilterTag()) {
+                    args.putString("tag", itemFilter.getTag());
                 }
                 itemFiltersFragment.setArguments(args);
                 itemFiltersFragment.show(getSupportFragmentManager(), "ITEM_FILTERS");
@@ -164,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     public void onFiltersSaved(ItemFilter i) {
         if (i.isFilterActive()) {
             itemFilter = i;
+            System.out.println(i.getTag());
             itemList.filterItems(itemFilter);
             items.clear();
             items.addAll(itemList.getFilteredItems());

@@ -67,7 +67,29 @@ public class ItemList {
         filteredItems = new ArrayList<>(f);
     }
 
+    private void filterByTag(String tag) {
+        List<Item> f = filteredItems.stream().filter(item -> {
+                    for (int i = 0; i < item.getTags().size(); i++) {
+                        if (item.getTags().size() == 0) {
+                            return false;
+                        }
+                        if (item.getTags()
+                                .get(i)
+                                .getName()
+                                .toLowerCase().
+                                equals(tag.toLowerCase())
+                        ) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }) // Replace this condition with your filtering criteria
+                .collect(Collectors.toList());
+        filteredItems = new ArrayList<>(f);
+    }
+
     public void filterItems(ItemFilter itemFilter) {
+        filteredItems = new ArrayList<>(unfilteredItems);
         if (itemFilter.isFilterDate()) {
             filterByDate(itemFilter.getFrom(), itemFilter.getTo());
         }
@@ -76,6 +98,9 @@ public class ItemList {
         }
         if (itemFilter.isFilterMakes()) {
             filterByMake(itemFilter.getMake());
+        }
+        if (itemFilter.isFilterTag()) {
+            filterByTag(itemFilter.getTag());
         }
     }
 }

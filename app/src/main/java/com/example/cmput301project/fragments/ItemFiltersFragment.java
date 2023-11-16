@@ -39,9 +39,8 @@ public class ItemFiltersFragment extends DialogFragment {
     private Button addKeywordButton;
     private EditText editKeyword;
     private ChipGroup chipGroupKeywords;
-    private Button addMakeButton;
+    private EditText editTag;
     private EditText editMake;
-//    private ChipGroup chipGroupMakes;
     private OnFragmentInteractionListener listener;
 
     public ItemFiltersFragment(){
@@ -76,22 +75,21 @@ public class ItemFiltersFragment extends DialogFragment {
         addKeywordButton = view.findViewById(R.id.add_keyword_button);
         editKeyword = view.findViewById(R.id.filter_keywords_edit_text);
         chipGroupKeywords = view.findViewById(R.id.chip_group_keywords); // Initialize chipGroupTags
-
-//        addMakeButton = view.findViewById(R.id.add_makes_button);
         editMake = view.findViewById(R.id.filter_make_edit_text);
-//        chipGroupMakes = view.findViewById(R.id.chip_group_makes);
+        editTag = view.findViewById(R.id.filter_tag_edit_text);
 
         Bundle args = getArguments();
         if (args != null) {
-            System.out.println(args);
             String fromString = args.getString("from");
             String toString = args.getString("to");
             String[] keywords = args.getStringArray("keywords");
             String make = args.getString("make");
+            String tag = args.getString("tag");
             builder.setNeutralButton("Clear", null);
             editFromDate.setText(fromString);
             editToDate.setText(toString);
             editMake.setText(make);
+            editTag.setText(tag);
             if (keywords != null) {
                 for (String k : keywords) {
                     Chip chip = new Chip(getContext());
@@ -126,6 +124,7 @@ public class ItemFiltersFragment extends DialogFragment {
                         editToDate.setText("");
                         chipGroupKeywords.removeAllViews();
                         editMake.setText("");
+                        editTag.setText("");
                         listener.onFiltersCleared();
                     }
                 });
@@ -138,6 +137,7 @@ public class ItemFiltersFragment extends DialogFragment {
                         String fromDateString = editFromDate.getText().toString().trim();
                         String toDateString = editToDate.getText().toString().trim();
                         String makeString = editMake.getText().toString().trim();
+                        String tagString = editTag.getText().toString().trim();
 
                         if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -154,17 +154,16 @@ public class ItemFiltersFragment extends DialogFragment {
                         if (!makeString.isEmpty()) {
                             itemFilter.setMake(makeString);
                         }
+                        if (!tagString.isEmpty()) {
+                            itemFilter.setTag(tagString);
+                            System.out.println("set");
+                        }
 
                         for (int i = 0; i < chipGroupKeywords.getChildCount(); i++) {
                             Chip chip = (Chip) chipGroupKeywords.getChildAt(i);
                             String keyword = chip.getText().toString();
                             itemFilter.addKeyword(keyword);
                         }
-//                        for (int i = 0; i < chipGroupMakes.getChildCount(); i++) {
-//                            Chip chip = (Chip) chipGroupMakes.getChildAt(i);
-//                            String make = chip.getText().toString();
-//                            itemFilter.addMake(make);
-//                        }
 
                         listener.onFiltersSaved(itemFilter);
                         dialog.dismiss();
