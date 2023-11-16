@@ -167,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     public void onFiltersSaved(ItemFilter i) {
         if (i.isFilterActive()) {
             itemFilter = i;
-            System.out.println(i.getTag());
             itemList.filterItems(itemFilter);
             items.clear();
             items.addAll(itemList.getFilteredItems());
