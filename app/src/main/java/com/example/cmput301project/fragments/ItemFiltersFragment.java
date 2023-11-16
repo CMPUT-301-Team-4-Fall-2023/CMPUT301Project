@@ -156,7 +156,6 @@ public class ItemFiltersFragment extends DialogFragment {
                         }
                         if (!tagString.isEmpty()) {
                             itemFilter.setTag(tagString);
-                            System.out.println("set");
                         }
 
                         for (int i = 0; i < chipGroupKeywords.getChildCount(); i++) {
