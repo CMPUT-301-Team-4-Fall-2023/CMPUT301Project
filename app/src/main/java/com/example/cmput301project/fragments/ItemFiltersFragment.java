@@ -25,6 +25,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,8 +36,12 @@ import java.util.Date;
 public class ItemFiltersFragment extends DialogFragment {
     private EditText editFromDate;
     private EditText editToDate;
-    private EditText editKeywords;
-    private EditText editMakes;
+    private Button addKeywordButton;
+    private EditText editKeyword;
+    private ChipGroup chipGroupKeywords;
+    private Button addMakeButton;
+    private EditText editMake;
+//    private ChipGroup chipGroupMakes;
     private OnFragmentInteractionListener listener;
 
     public ItemFiltersFragment(){
@@ -65,16 +72,40 @@ public class ItemFiltersFragment extends DialogFragment {
 
         editFromDate = view.findViewById(R.id.from_date_edit_text);
         editToDate = view.findViewById(R.id.to_date_edit_text);
-        editKeywords = view.findViewById(R.id.keywords_edit_text);
-        editMakes = view.findViewById(R.id.makes_edit_text);
+
+        addKeywordButton = view.findViewById(R.id.add_keyword_button);
+        editKeyword = view.findViewById(R.id.filter_keywords_edit_text);
+        chipGroupKeywords = view.findViewById(R.id.chip_group_keywords); // Initialize chipGroupTags
+
+//        addMakeButton = view.findViewById(R.id.add_makes_button);
+        editMake = view.findViewById(R.id.filter_make_edit_text);
+//        chipGroupMakes = view.findViewById(R.id.chip_group_makes);
 
         Bundle args = getArguments();
         if (args != null) {
+            System.out.println(args);
             String fromString = args.getString("from");
             String toString = args.getString("to");
+            String[] keywords = args.getStringArray("keywords");
+            String make = args.getString("make");
             builder.setNeutralButton("Clear", null);
             editFromDate.setText(fromString);
             editToDate.setText(toString);
+            editMake.setText(make);
+            if (keywords != null) {
+                for (String k : keywords) {
+                    Chip chip = new Chip(getContext());
+                    chip.setText(k);
+                    chip.setCloseIconVisible(true);
+                    chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            chipGroupKeywords.removeView(chip);
+                        }
+                    });
+                    chipGroupKeywords.addView(chip);
+                }
+            }
         }
 
         Dialog dialog = builder.setView(view)
@@ -93,8 +124,8 @@ public class ItemFiltersFragment extends DialogFragment {
                     public void onClick(View view) {
                         editFromDate.setText("");
                         editToDate.setText("");
-                        editKeywords.setText("");
-                        editMakes.setText("");
+                        chipGroupKeywords.removeAllViews();
+                        editMake.setText("");
                         listener.onFiltersCleared();
                     }
                 });
@@ -106,6 +137,7 @@ public class ItemFiltersFragment extends DialogFragment {
 
                         String fromDateString = editFromDate.getText().toString().trim();
                         String toDateString = editToDate.getText().toString().trim();
+                        String makeString = editMake.getText().toString().trim();
 
                         if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -119,8 +151,43 @@ public class ItemFiltersFragment extends DialogFragment {
                                 e.printStackTrace();
                             }
                         }
+                        if (!makeString.isEmpty()) {
+                            itemFilter.setMake(makeString);
+                        }
+
+                        for (int i = 0; i < chipGroupKeywords.getChildCount(); i++) {
+                            Chip chip = (Chip) chipGroupKeywords.getChildAt(i);
+                            String keyword = chip.getText().toString();
+                            itemFilter.addKeyword(keyword);
+                        }
+//                        for (int i = 0; i < chipGroupMakes.getChildCount(); i++) {
+//                            Chip chip = (Chip) chipGroupMakes.getChildAt(i);
+//                            String make = chip.getText().toString();
+//                            itemFilter.addMake(make);
+//                        }
+
                         listener.onFiltersSaved(itemFilter);
                         dialog.dismiss();
+                    }
+                });
+
+                addKeywordButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String keywordText = editKeyword.getText().toString().trim();
+                        if (!keywordText.isEmpty()) {
+                            Chip chip = new Chip(getContext());
+                            chip.setText(keywordText);
+                            chip.setCloseIconVisible(true);
+                            chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    chipGroupKeywords.removeView(chip);
+                                }
+                            });
+                            chipGroupKeywords.addView(chip);
+                            editKeyword.setText(""); // Clear the EditText after adding the chip
+                        }
                     }
                 });
             }

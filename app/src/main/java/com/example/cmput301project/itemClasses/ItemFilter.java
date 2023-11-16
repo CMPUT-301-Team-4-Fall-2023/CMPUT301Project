@@ -19,13 +19,12 @@ public class ItemFilter {
     private Date from;
     private Date to;
     private ArrayList<String> keywords;
-    private ArrayList<String> makes;
-
+    private String make;
     public ItemFilter() {
         from = null;
         to = null;
         keywords = new ArrayList<String>();
-        makes = new ArrayList<String>();
+        make = null;
     }
 
     public Date getFrom() {
@@ -48,16 +47,16 @@ public class ItemFilter {
         return keywords;
     }
 
-    public void setKeywords(ArrayList<String> keywords) {
-        this.keywords = keywords;
+    public void addKeyword(String keyword) {
+        keywords.add(keyword);
     }
 
-    public ArrayList<String> getMakes() {
-        return makes;
+    public String getMake() {
+        return make;
     }
 
-    public void setMakes(ArrayList<String> makes) {
-        this.makes = makes;
+    public void setMake(String make) {
+        this.make = make;
     }
 
     public boolean isFilterDate() {
@@ -68,8 +67,11 @@ public class ItemFilter {
         return !keywords.isEmpty();
     }
     public boolean isFilterMakes() {
-        return !makes.isEmpty();
+        return make != null;
     }
+    public boolean isFilterActive() {return isFilterDate() || isFilterKeywords() || isFilterMakes();}
+
+
 }
 
 
