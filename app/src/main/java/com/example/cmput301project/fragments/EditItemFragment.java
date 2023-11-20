@@ -43,7 +43,6 @@ import java.util.Date;
 
 
 public class EditItemFragment extends DialogFragment {
-
     private TextView title;
     private EditText itemName;
     private EditText itemDescription;

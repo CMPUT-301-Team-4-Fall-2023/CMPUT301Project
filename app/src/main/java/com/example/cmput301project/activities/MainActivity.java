@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
 
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
-    private ArrayAdapter<Item> filteredItemAdapter;
     private Button deleteButton;
 
     /**
@@ -68,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         items = new ArrayList<Item>();
         itemList = new ItemList(items);
         itemFilter = new ItemFilter();
+
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
         filtersButton = findViewById(R.id.filter_items_button);
@@ -90,16 +90,24 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             public void onClick(View v) {
                 ItemFiltersFragment itemFiltersFragment = new ItemFiltersFragment();
                 Bundle args = new Bundle();
+                if (!itemFilter.isFilterActive()) {
+                    itemList.setUnfilteredItems(new ArrayList<Item>(items));
+                    itemList.setFilteredItems(new ArrayList<Item>(items));
+                }
                 if (itemFilter.isFilterDate()) {
-                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                    DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
                     args.putString("from", df.format(itemFilter.getFrom()));
                     args.putString("to", df.format(itemFilter.getTo()));
                 }
                 if (itemFilter.isFilterKeywords()) {
-
+                    String[] keywords = itemFilter.getKeywords().toArray(new String[0]);
+                    args.putStringArray("keywords", keywords);
                 }
                 if (itemFilter.isFilterMakes()) {
-
+                    args.putString("make", itemFilter.getMake());
+                }
+                if (itemFilter.isFilterTag()) {
+                    args.putString("tag", itemFilter.getTag());
                 }
                 itemFiltersFragment.setArguments(args);
                 itemFiltersFragment.show(getSupportFragmentManager(), "ITEM_FILTERS");
@@ -157,19 +165,15 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void onFiltersSaved(ItemFilter i) {
-        this.itemFilter = i;
-        if (itemFilter.isFilterDate()) {
-            itemList.filterByDate(itemFilter.getFrom(), itemFilter.getTo());
+        if (i.isFilterActive()) {
+            itemFilter = i;
+            itemList.filterItems(itemFilter);
+            items.clear();
+            items.addAll(itemList.getFilteredItems());
+            itemAdapter.notifyDataSetChanged();
+            updateTotalCost();
         }
-        if (itemFilter.isFilterKeywords()) {
-            itemList.filterByKeywords();
-        }
-        if (itemFilter.isFilterMakes()) {
-            itemList.filterByMake();
-        }
-        items.clear();
-        items.addAll(itemList.getFilteredItems());
-        itemAdapter.notifyDataSetChanged();
+
     }
 
     /**
@@ -177,9 +181,11 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void onFiltersCleared() {
+        itemFilter = new ItemFilter();
         items.clear();
-        items.addAll(itemList.getItems());
+        items.addAll(itemList.getUnfilteredItems());
         itemAdapter.notifyDataSetChanged();
+        updateTotalCost();
     }
 
     /**

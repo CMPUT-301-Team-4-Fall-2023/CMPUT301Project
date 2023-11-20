@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="5dp"
     android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
@@ -13,8 +14,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textSize="25dp"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"/>
         <EditText
             android:id="@+id/from_date_edit_text"
             android:inputType="date"
@@ -41,39 +48,74 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Keywords:"
-            android:textSize="25sp"/>
-        <EditText
-            android:inputType="text"
-            android:id="@+id/keywords_edit_text"
-            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="todo">
-        </EditText>
+            android:text="Keywords"
+            android:textSize="25dp"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"/>
+        <EditText
+            android:id="@+id/filter_keywords_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter keyword"
+            android:textSize="20sp"/>
+        <Button
+            android:id="@+id/add_keyword_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:orientation="horizontal">
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_keywords"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <!-- Chips can be added here -->
+        </com.google.android.material.chip.ChipGroup>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Makes:"
-            android:textSize="25sp"/>
-        <EditText
-            android:inputType="text"
-            android:id="@+id/makes_edit_text"
-            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="todo">
-        </EditText>
+            android:text="Make"
+            android:textSize="25dp"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"/>
+        <EditText
+            android:id="@+id/filter_make_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter Make"
+            android:textSize="20sp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tag"
+            android:textSize="25dp"
+            android:padding="5dp"
+            android:layout_marginRight="10dp"/>
+        <EditText
+            android:id="@+id/filter_tag_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Enter Tag"
+            android:textSize="20sp"/>
     </LinearLayout>
 </LinearLayout>
