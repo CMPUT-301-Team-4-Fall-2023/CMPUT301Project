@@ -59,8 +59,8 @@ public class Database {
      */
     public void registerUser(String userId, String userEmail, String userName){
         HashMap<String, String> data = new HashMap<>();
-        data.put("email", userEmail);
         data.put("username", userName);
+        data.put("email", userEmail);
         usersRef.document(userId)
                 .set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
     }
@@ -148,5 +148,9 @@ public class Database {
         itemsRef = db.collection("store")
                 .document(userManager.getUserID())
                 .collection("items");
+    }
+
+    public CollectionReference getUsersRef(){
+        return usersRef;
     }
 }
