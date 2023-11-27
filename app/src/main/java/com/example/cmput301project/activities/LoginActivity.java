@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
@@ -88,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent i  = new Intent(LoginActivity.this, MainActivity.class);
         db.setItemCollection();
         startActivity(i);
+        finish();
     }
 
     private void addListeners() {
@@ -128,13 +130,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Turns off dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.login);
 
         userAuth = FirebaseAuth.getInstance();
         userManager = UserManager.getInstance();
         db = Database.getInstance();
 
-//        checkUserLoggedOn();
+        checkUserLoggedOn();
 
         grabUIElements();
         addListeners();

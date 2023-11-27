@@ -13,6 +13,7 @@
 
 package com.example.cmput301project.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
 import com.example.cmput301project.TotalListener;
+import com.example.cmput301project.UserManager;
 import com.example.cmput301project.fragments.AddItemFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
@@ -39,6 +43,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
 
     private Database db;
@@ -48,10 +54,22 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private ListView itemsView;
     private TextView totalCostView;
     private Button filtersButton;
-
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private Button deleteButton;
+    private CircleImageView profilePicture;
+    private UserManager userManager;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Glide.with(getApplicationContext())
+                .load(userManager.getUserProfilePicture())
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.defaultuser)
+                        .error(R.drawable.defaultuser))
+                .into(profilePicture);
+    }
 
     /**
      * @param savedInstanceState If the activity is being re-initialized after
@@ -60,10 +78,15 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      *
      *
      */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userManager = UserManager.getInstance();
+
         items = new ArrayList<Item>();
         itemList = new ItemList(items);
         itemFilter = new ItemFilter();
@@ -71,6 +94,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
         filtersButton = findViewById(R.id.filter_items_button);
+
+        profilePicture = findViewById(R.id.profile_image);
+        profilePicture.setOnClickListener(v -> {
+            navigateToUserProfile();
+        });
+
+        Glide.with(getApplicationContext())
+                .load(userManager.getUserProfilePicture())
+                .apply(new RequestOptions()
+                        .placeholder(R.drawable.defaultuser)
+                        .error(R.drawable.defaultuser))
+                .into(profilePicture);
 
         deleteButton = findViewById(R.id.delete_items_button);
         deleteButton.setOnClickListener(v -> {
@@ -118,6 +153,11 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         db = Database.getInstance();
         db.addArrayAsListener(items, itemAdapter);
         db.addTotalListener(totalListener);
+    }
+
+    private void navigateToUserProfile() {
+        Intent i = new Intent(MainActivity.this, UserProfileActivity.class);
+        startActivity(i);
     }
 
     /**
