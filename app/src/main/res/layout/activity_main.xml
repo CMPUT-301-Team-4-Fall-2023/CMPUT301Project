@@ -10,16 +10,39 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
-
-        <TextView
-            android:id="@+id/total_cost"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:background="@color/main"
-            android:gravity="center"
-            android:text="LOADING"
-            android:textColor="@color/white"
-            android:textSize="20sp"/>
+            tools:context=".MainActivity">
+
+            <TextView
+                android:id="@+id/total_cost"
+                android:layout_width="310dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="LOADING..."
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <!--HACK: This view aligns the next two elements to the right-->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/placeholder"
+                app:civ_border_width="2dp"
+                app:civ_border_color="#FF000000"/>
+        </LinearLayout>
+
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

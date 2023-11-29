@@ -10,14 +10,19 @@ package com.example.cmput301project;
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.net.Uri;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Objects;
 
 final public class UserManager {
     private static UserManager instance = null;
@@ -71,12 +76,28 @@ final public class UserManager {
         return loggedInUser.getUid();
     }
 
+    public String getUserEmail(){return loggedInUser.getEmail();}
+
+    public Uri getUserProfilePicture(){return loggedInUser.getPhotoUrl();}
     public FirebaseUser getCurrentUser(){
         return userAuth.getCurrentUser();
     }
 
     public FirebaseAuth getUserAuth(){ //TODO: Probably unsafe, maybe fix later?
         return userAuth;
+    }
+
+    public void setProfilePicture(Uri picture){
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(picture)
+                .build();
+
+        loggedInUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "User profile updated.");
+                    }
+                });
     }
 
     /**
@@ -97,7 +118,7 @@ final public class UserManager {
                 });
     }
 
-    public void signUpUser(String userName, String userEmail) { //TODO: Finish refactoring
+    public void signUpUser(String userName, String userEmail) {
         FirebaseUser potentialUser = userAuth.getCurrentUser();
         setLoggedInUser(potentialUser);
         DocumentReference userRef = db.getUsersRef().document(userName);
@@ -107,4 +128,16 @@ final public class UserManager {
         });
     }
 
+    public void signOutUser(){
+        userAuth.signOut();
+    }
+
+    public void sendPasswordReset(){
+        userAuth.sendPasswordResetEmail(Objects.requireNonNull(loggedInUser.getEmail()))
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "Email sent.");
+                    }
+                });
+    }
 }
