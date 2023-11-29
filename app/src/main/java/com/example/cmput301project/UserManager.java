@@ -15,11 +15,15 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.DocumentReference;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 final public class UserManager {
     private static UserManager instance = null;
     private final FirebaseAuth userAuth;
     private FirebaseUser loggedInUser;
+    private Database db;
     private UserManager(){
         userAuth = FirebaseAuth.getInstance();
     }
@@ -35,6 +39,10 @@ final public class UserManager {
             instance = new UserManager();
         }
         return instance;
+    }
+
+    public void setDatabase(Database db){
+        this.db = db;
     }
 
     /**
@@ -63,6 +71,14 @@ final public class UserManager {
         return loggedInUser.getUid();
     }
 
+    public FirebaseUser getCurrentUser(){
+        return userAuth.getCurrentUser();
+    }
+
+    public FirebaseAuth getUserAuth(){ //TODO: Probably unsafe, maybe fix later?
+        return userAuth;
+    }
+
     /**
      * Sets the current user's username
      *
@@ -81,9 +97,14 @@ final public class UserManager {
                 });
     }
 
-    public void signUpUser(String userName, String userEmail){ //TODO: Finish refactoring
+    public void signUpUser(String userName, String userEmail) { //TODO: Finish refactoring
         FirebaseUser potentialUser = userAuth.getCurrentUser();
         setLoggedInUser(potentialUser);
+        DocumentReference userRef = db.getUsersRef().document(userName);
+        userRef.get().addOnSuccessListener(doc -> {
+            db.registerUser(getUserID(), userEmail, userName);
+            setDisplayName(userName);
+        });
     }
 
 }

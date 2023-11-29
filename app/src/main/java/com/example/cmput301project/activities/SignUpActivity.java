@@ -48,8 +48,6 @@ public class SignUpActivity extends AppCompatActivity {
     private Button signUpButton;
     private TextView alreadyHaveAccountTextView;
     private TextView errorTextView;
-    private FirebaseAuth userAuth;
-    private CollectionReference usersRef;
     private UserManager userManager;
     private Database db;
 
@@ -66,21 +64,6 @@ public class SignUpActivity extends AppCompatActivity {
         signUpButton = findViewById(R.id.signUpButton);
         errorTextView = findViewById(R.id.errorTextView);
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
-    }
-
-
-    //TODO: This is backend code, I will move this to the db wrapper class
-    private void signUpUser(String userName, String userEmail){
-        FirebaseUser potentialUser = userAuth.getCurrentUser();
-        userManager.setLoggedInUser(potentialUser);
-        DocumentReference userRef = usersRef.document(userName);
-        userRef.get().addOnSuccessListener(doc -> {
-            db.registerUser(userManager.getUserID(), userEmail, userName);
-            userManager.setDisplayName(userName);
-            //TODO: Initialize their own database doc that will store all their information
-            // probably make the document name their UID so that they can actually write to the db
-            navigateToMainActivity();
-        });
     }
 
     private boolean checkForInvalidInputs() {
@@ -109,6 +92,7 @@ public class SignUpActivity extends AppCompatActivity {
         Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
         db.setItemCollection();
         startActivity(i);
+        finish();
     }
 
     private void addListeners() {
@@ -124,20 +108,17 @@ public class SignUpActivity extends AppCompatActivity {
         String userEmail = emailField.getText().toString();
         String userPassword = passwordField.getText().toString();
 
-        //TODO: Everything from this point on is an amalgamation of front & backend,
-        // will refactor -ALEX
-        DocumentReference userRef = usersRef.document(userName);
-
-        userRef.get().addOnSuccessListener(doc -> {
+        db.getUsersRef().document(userName).get().addOnSuccessListener(doc -> {
             if (doc.exists()) {
                 showToast("An account already exists for this username");
             } else {
-                userAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+                userManager.getUserAuth().createUserWithEmailAndPassword(userEmail, userPassword)
                         .addOnCompleteListener(this, task -> {
                             if (task.isSuccessful()) {
                                 // Sign up success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success");
-                                signUpUser(userName, userEmail);
+                                userManager.signUpUser(userName, userEmail);
+                                navigateToMainActivity();
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
@@ -160,10 +141,9 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_up);
 
-        userAuth = FirebaseAuth.getInstance();
-
         userManager = UserManager.getInstance();
         db = Database.getInstance();
+        userManager.setDatabase(db);
 
         grabUIElements();
         addListeners();
