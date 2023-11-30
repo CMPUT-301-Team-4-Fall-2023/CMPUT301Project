@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,6 +31,7 @@ import com.example.cmput301project.R;
 import com.example.cmput301project.TotalListener;
 import com.example.cmput301project.UserManager;
 import com.example.cmput301project.fragments.AddItemFragment;
+import com.example.cmput301project.fragments.AddTagsSelectedItemsFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
 import com.example.cmput301project.fragments.ViewItemFragment;
@@ -45,8 +47,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
-
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener, AddTagsSelectedItemsFragment.OnFragmentInteractionListener {
     private Database db;
     private ArrayList<Item> items;
     private ItemList itemList;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private Button deleteButton;
+    private Button addTagsSelectedButton;
     private CircleImageView profilePicture;
     private UserManager userManager;
 
@@ -110,6 +112,19 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         deleteButton = findViewById(R.id.delete_items_button);
         deleteButton.setOnClickListener(v -> {
             ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
+        });
+
+        addTagsSelectedButton = findViewById(R.id.add_tags_selected_button);
+        addTagsSelectedButton.setOnClickListener(v -> {
+            if (!((ItemAdapter) itemsView.getAdapter()).getSelectedItems().isEmpty()) {
+                Toast.makeText(this, "YAY", Toast.LENGTH_SHORT).show();
+                AddTagsSelectedItemsFragment tagsSelectedFragment = new AddTagsSelectedItemsFragment((ItemAdapter) itemAdapter);
+                Bundle args = new Bundle();
+                tagsSelectedFragment.setArguments(args);
+                tagsSelectedFragment.show(getSupportFragmentManager(), "ADD_TAGS_SELECTED");
+            } else {
+                Toast.makeText(this, "You must select at least one item", Toast.LENGTH_SHORT).show();
+            }
         });
 
         totalListener = new TotalListener(0.0, totalCostView);
@@ -246,19 +261,5 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         //interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
         updateTotalCost();
-    }
-
-    /**
-     * Bulk delete function, deletes all selected items
-     */
-    private void deleteSelectedItems() {
-        ArrayList<Item> selected = new ArrayList<>();
-        for (Item item : items) {
-            if (item.isSelected()) {
-                selected.add(item);
-            }
-        }
-        items.removeAll(selected);
-        itemAdapter.notifyDataSetChanged();
     }
 }

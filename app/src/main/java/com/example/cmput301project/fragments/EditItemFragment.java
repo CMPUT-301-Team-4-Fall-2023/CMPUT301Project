@@ -126,7 +126,6 @@ public class EditItemFragment extends DialogFragment {
             chipGroupTags.addView(chip);
         }
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         Dialog dialog = builder.setView(view)
