@@ -71,7 +71,7 @@
                 android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:drawableEnd="@drawable/hamburger_menu" />
+                android:drawableEnd="@drawable/down_arrow" />
             <Button
                 android:id="@+id/filter_items_button"
                 android:layout_width="60dp"
