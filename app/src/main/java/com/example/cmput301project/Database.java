@@ -9,11 +9,13 @@
 
 package com.example.cmput301project;
 
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.Nullable;
 import com.example.cmput301project.itemClasses.Item;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -22,6 +24,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -124,6 +127,18 @@ public class Database {
                 arrayAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    public UploadTask addImage(String name, Uri uri){
+        return itemImageRef.child("/"+name).putFile(uri);
+    }
+
+    public Task<Uri> getImage(String name){
+        return itemImageRef.child("/"+name).getDownloadUrl();
+    }
+
+    public StorageReference getImageForGlide(String name){
+        return itemImageRef.child("/"+name);
     }
 
     public void addTotalListener(TotalListener totalListener) {
