@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class ItemAdapter extends ArrayAdapter<Item> {
@@ -113,6 +115,9 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         return view;
     }
 
+    /**
+     * Bulk delete function, deletes all selected items
+     */
     public void deleteSelectedItems() {
         Database db = Database.getInstance(); //hack: remove
         for (Item item : selectedItems) {
@@ -120,4 +125,19 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         }
         selectedItems.clear();
     }
+
+    public Set<Item> getSelectedItems() {
+        return selectedItems;
+    }
+
+
+    /**
+     * Clears the selection of items.
+     * This method empties the set of selected items, ensuring no items are marked as selected.
+     */
+    public void clearSelectedItems() {
+        selectedItems.clear();
+        notifyDataSetChanged();  // Notifying the adapter to refresh the list view
+    }
+
 }

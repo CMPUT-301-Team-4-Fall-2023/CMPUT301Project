@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,6 +33,7 @@ import com.example.cmput301project.R;
 import com.example.cmput301project.TotalListener;
 import com.example.cmput301project.UserManager;
 import com.example.cmput301project.fragments.AddItemFragment;
+import com.example.cmput301project.fragments.AddTagsSelectedItemsFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
 import com.example.cmput301project.fragments.SortItemsFragment;
@@ -51,8 +53,7 @@ import java.util.Comparator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener, SortItemsFragment.OnFragmentInteractionListener {
-
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener, AddTagsSelectedItemsFragment.OnFragmentInteractionListener, SortItemsFragment.OnFragmentInteractionListener {
     private Database db;
     private ArrayList<Item> items;
     private ItemList itemList;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private Button deleteButton;
+    private Button addTagsSelectedButton;
     private CircleImageView profilePicture;
     private UserManager userManager;
 
@@ -119,6 +121,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         deleteButton = findViewById(R.id.delete_items_button);
         deleteButton.setOnClickListener(v -> {
             ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
+        });
+
+        addTagsSelectedButton = findViewById(R.id.add_tags_selected_button);
+        addTagsSelectedButton.setOnClickListener(v -> {
+            if (!((ItemAdapter) itemsView.getAdapter()).getSelectedItems().isEmpty()) {
+                AddTagsSelectedItemsFragment tagsSelectedFragment = new AddTagsSelectedItemsFragment((ItemAdapter) itemAdapter);
+                Bundle args = new Bundle();
+                tagsSelectedFragment.setArguments(args);
+                tagsSelectedFragment.show(getSupportFragmentManager(), "ADD_TAGS_SELECTED");
+            } else {
+                Toast.makeText(this, "You must select at least one item", Toast.LENGTH_SHORT).show();
+            }
         });
 
         totalListener = new TotalListener(0.0, totalCostView);
