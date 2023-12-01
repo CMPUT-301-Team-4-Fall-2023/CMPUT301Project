@@ -126,21 +126,18 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         selectedItems.clear();
     }
 
-//    /**
-//     * Opens a fragment that allows users to add tags to all of the selected items.
-//     */
-//    public void addTagsSelected(List tagsList) {
-//        Database db = Database.getInstance(); // hack: remove
-//        if (selectedItems.isEmpty()) {
-//            // Display a Toast message with the provided context
-//            Toast.makeText(context, "You must select at least one item", Toast.LENGTH_SHORT).show();
-//
-//            selectedItems.clear();
-//        }
-//    }
-
     public Set<Item> getSelectedItems() {
         return selectedItems;
+    }
+
+
+    /**
+     * Clears the selection of items.
+     * This method empties the set of selected items, ensuring no items are marked as selected.
+     */
+    public void clearSelectedItems() {
+        selectedItems.clear();
+        notifyDataSetChanged();  // Notifying the adapter to refresh the list view
     }
 
 }

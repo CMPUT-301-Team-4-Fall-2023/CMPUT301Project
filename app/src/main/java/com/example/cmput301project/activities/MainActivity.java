@@ -117,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         addTagsSelectedButton = findViewById(R.id.add_tags_selected_button);
         addTagsSelectedButton.setOnClickListener(v -> {
             if (!((ItemAdapter) itemsView.getAdapter()).getSelectedItems().isEmpty()) {
-                Toast.makeText(this, "YAY", Toast.LENGTH_SHORT).show();
                 AddTagsSelectedItemsFragment tagsSelectedFragment = new AddTagsSelectedItemsFragment((ItemAdapter) itemAdapter);
                 Bundle args = new Bundle();
                 tagsSelectedFragment.setArguments(args);
