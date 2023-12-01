@@ -14,13 +14,14 @@ import android.widget.ArrayAdapter;
 
 import androidx.annotation.Nullable;
 import com.example.cmput301project.itemClasses.Item;
-import com.example.cmput301project.itemClasses.ItemAdapter;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +29,16 @@ import java.util.HashMap;
 public class Database {
     private static Database instance = null;
     private final FirebaseFirestore db;
+
+    private final FirebaseStorage storage;
     private final CollectionReference usersRef;
+
+    private StorageReference itemImageRef;
     private CollectionReference itemsRef;
     private final UserManager userManager;
     private Database(){
         db = FirebaseFirestore.getInstance();
+        storage = FirebaseStorage.getInstance();
         usersRef = db.collection("usernames");
         userManager = UserManager.getInstance();
     }
@@ -71,7 +77,7 @@ public class Database {
      * @param item item to add
      */
     public void addItem(Item item){
-        itemsRef.document(item.getName()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Added!", item.getName())));
+        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Added!", item.getName())));
     }
 
     /**
@@ -80,7 +86,7 @@ public class Database {
      * @param item item to edit
      */
     public void editItem(Item item){
-        itemsRef.document(item.getName()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
+        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
     }
 
     /**
@@ -89,7 +95,7 @@ public class Database {
      * @param item item to delete
      */
     public void deleteItem(Item item){
-        itemsRef.document(item.getName()).delete().addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
+        itemsRef.document(item.getUniqueId().toString()).delete().addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
     }
 
     /**
@@ -111,7 +117,6 @@ public class Database {
                     for (QueryDocumentSnapshot doc: querySnapshots) {
                         String name = doc.getId();
                         Item item = doc.toObject(Item.class);
-                        item.setName(name);
                         Log.d("Firestore", String.format("Item(%s) fetched", name));
                         array.add(item);
                     }
@@ -132,9 +137,7 @@ public class Database {
                 if (querySnapshots != null) {
                     totalListener.setTotal(0.0);
                     for (QueryDocumentSnapshot doc: querySnapshots) {
-                        String name = doc.getId();
                         Item item = doc.toObject(Item.class);
-                        item.setName(name);
                         totalListener.addTotal(item.getValue());
                     }
                     totalListener.update();
@@ -148,6 +151,7 @@ public class Database {
         itemsRef = db.collection("store")
                 .document(userManager.getUserID())
                 .collection("items");
+        itemImageRef = storage.getReference().child("images");
     }
 
     public CollectionReference getUsersRef(){

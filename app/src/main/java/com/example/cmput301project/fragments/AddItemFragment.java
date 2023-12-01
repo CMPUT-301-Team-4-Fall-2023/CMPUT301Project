@@ -59,6 +59,8 @@ public class AddItemFragment extends DialogFragment {
     private EditText inputTagEditText;
     private ChipGroup chipGroupTags;
     private Button addTagButton;
+    private Button cameraButton;
+    private Button galleryButton;
 
     /**
      * @param context
@@ -108,6 +110,8 @@ public class AddItemFragment extends DialogFragment {
         inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
         chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
         addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
+        galleryButton = view.findViewById(R.id.gallery_button);
+        cameraButton = view.findViewById(R.id.camera_button);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -262,9 +266,6 @@ public class AddItemFragment extends DialogFragment {
                                 itemYear.setError("Year required");
                             }
                         }
-
-
-
                     }
                 });
             }

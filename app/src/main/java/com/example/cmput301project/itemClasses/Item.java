@@ -15,6 +15,7 @@ import com.example.cmput301project.itemClasses.Photograph;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 public class Item {
     private String name;
@@ -28,6 +29,7 @@ public class Item {
     private ArrayList<Tag> tags;
     private ArrayList<Photograph> photographs;
     private boolean selected;
+    private UniqueId uniqueId;
 
     public Item() {}
 
@@ -43,6 +45,7 @@ public class Item {
         this.tags = tags;
         this.photographs = photographs;
         this.selected = false;
+        this.uniqueId = new UniqueId();
     }
 
     public String getName() {
@@ -144,5 +147,13 @@ public class Item {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public UniqueId getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(UniqueId uniqueId) {
+        this.uniqueId = uniqueId;
     }
 }

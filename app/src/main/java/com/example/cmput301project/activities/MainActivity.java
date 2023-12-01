@@ -106,18 +106,16 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                         .placeholder(R.drawable.defaultuser)
                         .error(R.drawable.defaultuser))
                 .into(profilePicture);
-
-        deleteButton = findViewById(R.id.delete_items_button);
-        deleteButton.setOnClickListener(v -> {
-            ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
-        });
-
         totalListener = new TotalListener(0.0, totalCostView);
         itemAdapter = new ItemAdapter(this, items);
         itemsView.setAdapter(itemAdapter);
         final FloatingActionButton addButton = findViewById(R.id.add_item_button);
         addButton.setOnClickListener(v -> {
             new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
+        });
+        deleteButton = findViewById(R.id.delete_items_button);
+        deleteButton.setOnClickListener(v -> {
+            ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
         });
 
         filtersButton.setOnClickListener(new View.OnClickListener() {
