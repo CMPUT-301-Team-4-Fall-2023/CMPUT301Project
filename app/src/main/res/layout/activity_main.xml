@@ -56,9 +56,19 @@
                 android:layout_marginStart="10dp"
                 android:backgroundTint="#E83F94"
                 android:padding="10dp"
-                android:text="Delete Selected Items"
+                android:text="Delete Items"
                 android:textColor="#FFFFFF"
                 android:drawableLeft="@mipmap/trash_can" />
+
+            <Button
+                android:id="@+id/add_tags_selected_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:backgroundTint="#1E92FF"
+                android:padding="10dp"
+                android:text="Add Tags"
+                android:textColor="#FFFFFF" />
 
             <!--HACK: This view aligns the next two elements to the right-->
             <View
