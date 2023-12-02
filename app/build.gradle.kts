@@ -43,6 +43,7 @@ dependencies {
     implementation("com.firebaseui:firebase-ui-storage:7.2.0")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
 
 
     testImplementation("junit:junit:4.13.2")

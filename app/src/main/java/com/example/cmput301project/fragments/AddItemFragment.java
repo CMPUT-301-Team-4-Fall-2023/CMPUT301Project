@@ -14,11 +14,21 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Double.parseDouble;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,21 +36,36 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
 import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.List;
 
 
 public class AddItemFragment extends DialogFragment {
@@ -62,6 +87,19 @@ public class AddItemFragment extends DialogFragment {
     private EditText inputTagEditText;
     private ChipGroup chipGroupTags;
     private Button addTagButton;
+    private Button scannerButton;
+    private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int STORAGE_REQUEST_CODE = 101;
+    private String[] cameraPermissions;
+    private String[] storagePermissions;
+    private Uri imageURI = null;
+    public static final String TAG = "MAIN_TAG";
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
+
+    private BarcodeScannerOptions barcodeScannerOptions;
+    private BarcodeScanner barcodeScanner;
+
 
     /**
      * @param context
@@ -121,7 +159,11 @@ public class AddItemFragment extends DialogFragment {
         inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
         chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
         addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
-
+        scannerButton = view.findViewById(R.id.scan_barcode_button);
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
+        barcodeScanner = BarcodeScanning.getClient(barcodeScannerOptions);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         Dialog dialog = builder.setView(view)
@@ -134,6 +176,20 @@ public class AddItemFragment extends DialogFragment {
                 Button okButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
                 Button addButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE); // This is your existing OK button logic
+
+                scannerButton.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                            pickImageCamera();
+                            detectResultFromImage();
+
+                        }
+                        else{
+                            requestCameraPermission();
+                        }
+                    }
+                });
 
                 // Set the click listener for the add tag button
                 addTagButton.setOnClickListener(new View.OnClickListener() {
@@ -396,4 +452,91 @@ public class AddItemFragment extends DialogFragment {
         }
         return false;
     }
+
+    private void pickImageCamera(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.TITLE, "Sample Title");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Sample Description");
+
+        imageURI = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageURI);
+        cameraActivityResultLauncher.launch(intent);
+
+    }
+
+    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK){
+                        Intent data = result.getData();
+                        Log.d(TAG,"onActivityResult: imageURI: "+ imageURI);
+
+                    }
+                    else{
+                        //Error
+                    }
+                }
+            }
+    );
+    private void requestCameraPermission(){
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+    }
+    private void detectResultFromImage(){
+        try{
+            InputImage inputImage = InputImage.fromFilePath(getActivity(),imageURI);
+            Task<List<Barcode>> barcodeResult = barcodeScanner.process(inputImage).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                @Override
+                public void onSuccess(List<Barcode> barcodes) {
+                    extractBarCodeQRCodeInfo(barcodes);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //error
+                }
+            });
+        }
+        catch (Exception e){
+            Toast.makeText(getActivity(),"Failed due to "+e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void extractBarCodeQRCodeInfo(List<Barcode> barcodes){
+        for(Barcode barcode : barcodes){
+            Rect bounds = barcode.getBoundingBox();
+            Point[] corners = barcode.getCornerPoints();
+
+            String rawValue = barcode.getRawValue();
+            Log.d(TAG,"extractBarCodeQRCodeInfo: rawValue: "+ rawValue);
+            itemName.setError(rawValue);
+        }
+    }
+//    private boolean checkStoragePermission(){
+//        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+//        return result;
+//    }
+//    private void requestStoragePermission(){
+//        ActivityCompat.requestPermissions(getActivity(), storagePermissions,STORAGE_REQUEST_CODE);
+//    }
+//
+//    private boolean checkCameraPermission(){
+//        boolean resultCamera = ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+//        boolean resultStorage = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+//
+//        return resultCamera && resultStorage;
+//
+//    }
+//
+//    private void requestCameraPermission(){
+//        ActivityCompat.requestPermissions(getActivity(),cameraPermissions,CAMERA_REQUEST_CODE);
+//    }
+//
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+//
+//    }
 }
