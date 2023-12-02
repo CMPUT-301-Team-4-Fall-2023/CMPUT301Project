@@ -33,6 +33,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +95,9 @@ public class AddItemFragment extends DialogFragment {
     private String[] storagePermissions;
     private Uri imageURI = null;
     public static final String TAG = "MAIN_TAG";
+    private ImageView scannedImage;
+
+    private Button parseButton;
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
 
@@ -160,6 +164,8 @@ public class AddItemFragment extends DialogFragment {
         chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
         addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
         scannerButton = view.findViewById(R.id.scan_barcode_button);
+        parseButton = view.findViewById(R.id.parse_barcode_button);
+        scannedImage = view.findViewById(R.id.scannedImage);
         cameraPermissions = new String[]{Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
         barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
@@ -182,11 +188,19 @@ public class AddItemFragment extends DialogFragment {
                     public void onClick(View v){
                         if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
                             pickImageCamera();
-                            detectResultFromImage();
-
                         }
                         else{
                             requestCameraPermission();
+                        }
+                    }
+                });
+                parseButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (imageURI == null){
+                            //error
+                        }else{
+                            detectResultFromImage();
                         }
                     }
                 });
@@ -474,7 +488,7 @@ public class AddItemFragment extends DialogFragment {
                     if (result.getResultCode() == Activity.RESULT_OK){
                         Intent data = result.getData();
                         Log.d(TAG,"onActivityResult: imageURI: "+ imageURI);
-
+                        scannedImage.setImageURI(imageURI);
                     }
                     else{
                         //Error
