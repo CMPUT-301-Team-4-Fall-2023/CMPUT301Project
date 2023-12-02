@@ -12,4 +12,8 @@
     <string name="emailFieldError">Please enter a valid email</string>
     <string name="passwordFieldError">"Please enter a valid password"</string>
     <string name="userNameFieldError">Please enter a valid username</string>
+    <string name="change_password">Change password</string>
+    <string name="loading_text">LOADING...</string>
+    <string name="user_profile">User Profile</string>
+    <string name="log_out">Log out</string>
 </resources>

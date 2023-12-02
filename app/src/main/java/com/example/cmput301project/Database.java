@@ -29,13 +29,12 @@ public class Database {
     private static Database instance = null;
     private final FirebaseFirestore db;
     private final CollectionReference usersRef;
-    private final CollectionReference itemsRef;
+    private CollectionReference itemsRef;
     private final UserManager userManager;
     private Database(){
         db = FirebaseFirestore.getInstance();
         usersRef = db.collection("usernames");
         userManager = UserManager.getInstance();
-        itemsRef = db.collection("store").document(userManager.getUserID()).collection("items");
     }
 
     /**
@@ -60,8 +59,8 @@ public class Database {
      */
     public void registerUser(String userId, String userEmail, String userName){
         HashMap<String, String> data = new HashMap<>();
-        data.put("email", userEmail);
         data.put("username", userName);
+        data.put("email", userEmail);
         usersRef.document(userId)
                 .set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
     }
@@ -143,5 +142,15 @@ public class Database {
                 }
             }
         });
+    }
+
+    public void setItemCollection(){
+        itemsRef = db.collection("store")
+                .document(userManager.getUserID())
+                .collection("items");
+    }
+
+    public CollectionReference getUsersRef(){
+        return usersRef;
     }
 }

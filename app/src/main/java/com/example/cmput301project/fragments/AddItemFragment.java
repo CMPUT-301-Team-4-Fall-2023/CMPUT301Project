@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -83,6 +85,16 @@ public class AddItemFragment extends DialogFragment {
         void updateTotalCost();
     }
 
+    // Method to check if the tag is already added
+    private boolean isTagAlreadyAdded(String tagText) {
+        for (int i = 0; i < chipGroupTags.getChildCount(); i++) {
+            Chip chip = (Chip) chipGroupTags.getChildAt(i);
+            if (chip.getText().toString().equalsIgnoreCase(tagText)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * @param savedInstanceState The last saved instance state of the Fragment,
@@ -128,17 +140,21 @@ public class AddItemFragment extends DialogFragment {
                     public void onClick(View v) {
                         String tagText = inputTagEditText.getText().toString().trim();
                         if (!tagText.isEmpty()) {
-                            Chip chip = new Chip(getContext());
-                            chip.setText(tagText);
-                            chip.setCloseIconVisible(true);
-                            chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    chipGroupTags.removeView(chip);
-                                }
-                            });
-                            chipGroupTags.addView(chip);
-                            inputTagEditText.setText(""); // Clear the EditText after adding the chip
+                            if(isTagAlreadyAdded(tagText)) {
+                                Toast.makeText(getContext(), "This tag has already been added", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Chip chip = new Chip(getContext());
+                                chip.setText(tagText);
+                                chip.setCloseIconVisible(true);
+                                chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        chipGroupTags.removeView(chip);
+                                    }
+                                });
+                                chipGroupTags.addView(chip);
+                                inputTagEditText.setText(""); // Clear the EditText after adding the chip
+                            }
                         }
                     }
                 });

@@ -10,26 +10,27 @@
 
 package com.example.cmput301project.itemClasses;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemList {
-    private ArrayList<Item> items;
+    private ArrayList<Item> unfilteredItems;
     private ArrayList<Item> filteredItems;
 
     public ItemList(ArrayList<Item> items) {
-        this.items = items;
-        this.filteredItems = items;
+        this.unfilteredItems = new ArrayList<>(items);
+        this.filteredItems = new ArrayList<>(items);
     }
 
-    public ArrayList<Item> getItems() {
-        return items;
+    public ArrayList<Item> getUnfilteredItems() {
+        return unfilteredItems;
     }
 
-    public void setItems(ArrayList<Item> items) {
-        this.items = items;
+    public void setUnfilteredItems(ArrayList<Item> items) {
+        unfilteredItems = items;
     }
 
     public ArrayList<Item> getFilteredItems() {
@@ -40,15 +41,66 @@ public class ItemList {
         this.filteredItems = filteredItems;
     }
 
-    public void filterByDate(Date from, Date to) {
-        List<Item> f = items.stream().filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
+    private void filterByDate(Date from, Date to) {
+        List<Item> f = filteredItems.stream().filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
                 .collect(Collectors.toList());
         filteredItems = new ArrayList<>(f);
     }
 
-    public void filterByKeywords() {
+    private void filterByKeywords(ArrayList<String> keywords) {
+        List<Item> f = filteredItems.stream().filter(item -> {
+                    for (int i = 0; i < keywords.size(); i++) {
+                        if (!item.getDescription().toLowerCase().contains(keywords.get(i).toLowerCase())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }) // Replace this condition with your filtering criteria
+                .collect(Collectors.toList());
+        filteredItems = new ArrayList<>(f);
+
     }
 
-    public void filterByMake() {
+    private void filterByMake(String make) {
+        List<Item> f = filteredItems.stream().filter(item -> item.getMake().toLowerCase().equals(make.toLowerCase())) // Replace this condition with your filtering criteria
+                .collect(Collectors.toList());
+        filteredItems = new ArrayList<>(f);
+    }
+
+    private void filterByTag(String tag) {
+        List<Item> f = filteredItems.stream().filter(item -> {
+                    for (int i = 0; i < item.getTags().size(); i++) {
+                        if (item.getTags().size() == 0) {
+                            return false;
+                        }
+                        if (item.getTags()
+                                .get(i)
+                                .getName()
+                                .toLowerCase().
+                                equals(tag.toLowerCase())
+                        ) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }) // Replace this condition with your filtering criteria
+                .collect(Collectors.toList());
+        filteredItems = new ArrayList<>(f);
+    }
+
+    public void filterItems(ItemFilter itemFilter) {
+        filteredItems = new ArrayList<>(unfilteredItems);
+        if (itemFilter.isFilterDate()) {
+            filterByDate(itemFilter.getFrom(), itemFilter.getTo());
+        }
+        if (itemFilter.isFilterKeywords()) {
+            filterByKeywords(itemFilter.getKeywords());
+        }
+        if (itemFilter.isFilterMakes()) {
+            filterByMake(itemFilter.getMake());
+        }
+        if (itemFilter.isFilterTag()) {
+            filterByTag(itemFilter.getTag());
+        }
     }
 }
