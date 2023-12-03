@@ -89,13 +89,8 @@ public class AddItemFragment extends DialogFragment {
     private ChipGroup chipGroupTags;
     private Button addTagButton;
     private Button scannerButton;
-    private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 101;
-    private String[] cameraPermissions;
-    private String[] storagePermissions;
     private Uri imageURI = null;
     public static final String TAG = "MAIN_TAG";
-    private ImageView scannedImage;
 
     private Button parseButton;
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -165,9 +160,6 @@ public class AddItemFragment extends DialogFragment {
         addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
         scannerButton = view.findViewById(R.id.scan_barcode_button);
         parseButton = view.findViewById(R.id.parse_barcode_button);
-        scannedImage = view.findViewById(R.id.scannedImage);
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
         barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
         barcodeScanner = BarcodeScanning.getClient(barcodeScannerOptions);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -488,7 +480,6 @@ public class AddItemFragment extends DialogFragment {
                     if (result.getResultCode() == Activity.RESULT_OK){
                         Intent data = result.getData();
                         Log.d(TAG,"onActivityResult: imageURI: "+ imageURI);
-                        scannedImage.setImageURI(imageURI);
                     }
                     else{
                         //Error
@@ -510,7 +501,7 @@ public class AddItemFragment extends DialogFragment {
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    //error
+                    itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
                 }
             });
         }
@@ -520,37 +511,17 @@ public class AddItemFragment extends DialogFragment {
     }
 
     private void extractBarCodeQRCodeInfo(List<Barcode> barcodes){
+        if (barcodes.isEmpty()) {
+            itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
+        }
         for(Barcode barcode : barcodes){
             Rect bounds = barcode.getBoundingBox();
             Point[] corners = barcode.getCornerPoints();
 
             String rawValue = barcode.getRawValue();
             Log.d(TAG,"extractBarCodeQRCodeInfo: rawValue: "+ rawValue);
-            itemName.setError(rawValue);
+            itemSerial.setText(barcode.getDisplayValue());
         }
     }
-//    private boolean checkStoragePermission(){
-//        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-//        return result;
-//    }
-//    private void requestStoragePermission(){
-//        ActivityCompat.requestPermissions(getActivity(), storagePermissions,STORAGE_REQUEST_CODE);
-//    }
-//
-//    private boolean checkCameraPermission(){
-//        boolean resultCamera = ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-//        boolean resultStorage = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-//
-//        return resultCamera && resultStorage;
-//
-//    }
-//
-//    private void requestCameraPermission(){
-//        ActivityCompat.requestPermissions(getActivity(),cameraPermissions,CAMERA_REQUEST_CODE);
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
-//
-//    }
+
 }
