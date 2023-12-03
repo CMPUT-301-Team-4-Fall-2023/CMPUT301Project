@@ -91,4 +91,8 @@
         android:gravity="center"
         android:textSize="20sp"
         android:text="Picture:"/>
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 </LinearLayout>

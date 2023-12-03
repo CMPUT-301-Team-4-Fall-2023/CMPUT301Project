@@ -25,6 +25,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +38,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -48,8 +54,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.activities.MainActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.cmput301project.Database;
+import com.example.cmput301project.UserManager;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Photograph;
 import com.example.cmput301project.itemClasses.Tag;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -61,12 +72,22 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
 import com.google.mlkit.vision.barcode.common.Barcode;
 import com.google.mlkit.vision.common.InputImage;
+import com.example.cmput301project.itemClasses.UniqueId;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 public class AddItemFragment extends DialogFragment {
@@ -82,11 +103,16 @@ public class AddItemFragment extends DialogFragment {
     private EditText itemComments;
     private EditText itemPrice;
     private EditText itemMake;
-    private Item editItem;
+    private Item newItem;
     private Boolean invalidInput;
     private OnFragmentInteractionListener listener;
     private EditText inputTagEditText;
     private ChipGroup chipGroupTags;
+
+    private ImageView itemPicture;
+
+    private Database db = Database.getInstance();
+    private UserManager userManager;
     private Button addTagButton;
     private Button scannerButton;
     private Uri imageURI = null;
@@ -99,6 +125,46 @@ public class AddItemFragment extends DialogFragment {
     private BarcodeScannerOptions barcodeScannerOptions;
     private BarcodeScanner barcodeScanner;
 
+    private Button cameraButton;
+    private Button galleryButton;
+
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
+                if (imageUri != null) {
+                    Photograph photo = new Photograph(imageUri.toString());
+                    photo.setName(UUID.randomUUID().toString());
+                    UploadTask uploadTask = db.addImage(photo.getName(), imageUri);
+
+                    uploadTask.continueWithTask(task -> {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        // Continue with the task to get the download URL
+                        return db.getImage(photo.getName());
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+                                Glide.with(getActivity())
+                                        .load(downloadUri)
+                                        .apply(new RequestOptions()
+                                                .placeholder(R.drawable.defaultuser)
+                                                .error(R.drawable.defaultuser))
+                                        .into(itemPicture);
+                                itemPicture.invalidate();
+                                ArrayList pictures = new ArrayList<Photograph>();
+                                pictures.add(photo);
+                                if (newItem == null){
+                                    newItem = new Item();
+                                }
+                                newItem.setPhotographs(pictures);
+                            }
+                        }
+                    });
+                }
+            });
 
     /**
      * @param context
@@ -162,6 +228,18 @@ public class AddItemFragment extends DialogFragment {
         parseButton = view.findViewById(R.id.parse_barcode_button);
         barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
         barcodeScanner = BarcodeScanning.getClient(barcodeScannerOptions);
+        galleryButton = view.findViewById(R.id.gallery_button);
+        cameraButton = view.findViewById(R.id.camera_button);
+        itemPicture = view.findViewById(R.id.image_view);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
+        });
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         Dialog dialog = builder.setView(view)
@@ -270,7 +348,20 @@ public class AddItemFragment extends DialogFragment {
                             Double price = Double.parseDouble(priceText);
 
                             // Create a new Item
-                            Item newItem = new Item(name, parsedDate, description, make, model, serial, price, comments);
+                            if(newItem == null){
+                                newItem = new Item(name, parsedDate, description, make, model, serial, price, comments);
+                            }
+                            else{
+                                newItem.setUniqueId(new UniqueId());
+                                newItem.setName(name);
+                                newItem.setPurchaseDate(parsedDate);
+                                newItem.setDescription(description);
+                                newItem.setMake(make);
+                                newItem.setModel(model);
+                                newItem.setSerialNumber(serial);
+                                newItem.setValue(price);
+                                newItem.setComment(comments);
+                            }
 
                             // Add tags from the chipGroupTags to the newItem
                             for (int i = 0; i < chipGroupTags.getChildCount(); i++) {
@@ -341,9 +432,6 @@ public class AddItemFragment extends DialogFragment {
                                 itemYear.setError("Year required");
                             }
                         }
-
-
-
                     }
                 });
             }
