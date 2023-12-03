@@ -23,7 +23,7 @@ public class Item {
     private String description;
     private String make;
     private String model;
-    private Integer serialNumber;
+    private String serialNumber;
     private Double value;
     private String comment;
     private ArrayList<Tag> tags;
@@ -33,7 +33,7 @@ public class Item {
 
     public Item() {}
 
-    public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
+    public Item(String name, Date purchaseDate, String description, String make, String model, String serialNumber, Double value, String comment) {
         this.name = name;
         this.purchaseDate = purchaseDate;
         this.description = description;
@@ -59,7 +59,6 @@ public class Item {
     public Date getPurchaseDate() {
         return purchaseDate;
     }
-
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
@@ -88,11 +87,11 @@ public class Item {
         this.model = model;
     }
 
-    public Integer getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(Integer serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 

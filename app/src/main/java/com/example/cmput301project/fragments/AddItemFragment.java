@@ -14,13 +14,24 @@ import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.lang.Double.parseDouble;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Point;
+import android.graphics.Rect;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -32,10 +43,17 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.cmput301project.activities.MainActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.cmput301project.Database;
@@ -44,6 +62,16 @@ import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
 import com.example.cmput301project.itemClasses.Photograph;
 import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.mlkit.vision.barcode.BarcodeScanner;
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
+import com.google.mlkit.vision.barcode.BarcodeScanning;
+import com.google.mlkit.vision.barcode.common.Barcode;
+import com.google.mlkit.vision.common.InputImage;
 import com.example.cmput301project.itemClasses.UniqueId;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -58,6 +86,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -85,6 +114,17 @@ public class AddItemFragment extends DialogFragment {
     private Database db = Database.getInstance();
     private UserManager userManager;
     private Button addTagButton;
+    private Button scannerButton;
+    private Uri imageURI = null;
+    public static final String TAG = "MAIN_TAG";
+
+    private Button parseButton;
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
+
+    private BarcodeScannerOptions barcodeScannerOptions;
+    private BarcodeScanner barcodeScanner;
+
     private Button cameraButton;
     private Button galleryButton;
 
@@ -184,6 +224,10 @@ public class AddItemFragment extends DialogFragment {
         inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
         chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
         addTagButton = view.findViewById(R.id.add_tags_button); // Initialize the addTagButton
+        scannerButton = view.findViewById(R.id.scan_barcode_button);
+        parseButton = view.findViewById(R.id.parse_barcode_button);
+        barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
+        barcodeScanner = BarcodeScanning.getClient(barcodeScannerOptions);
         galleryButton = view.findViewById(R.id.gallery_button);
         cameraButton = view.findViewById(R.id.camera_button);
         itemPicture = view.findViewById(R.id.image_view);
@@ -208,6 +252,28 @@ public class AddItemFragment extends DialogFragment {
                 Button okButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
 
                 Button addButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE); // This is your existing OK button logic
+
+                scannerButton.setOnClickListener(new View.OnClickListener(){
+                    @Override
+                    public void onClick(View v){
+                        if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                            pickImageCamera();
+                        }
+                        else{
+                            requestCameraPermission();
+                        }
+                    }
+                });
+                parseButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (imageURI == null){
+                            //error
+                        }else{
+                            detectResultFromImage();
+                        }
+                    }
+                });
 
                 // Set the click listener for the add tag button
                 addTagButton.setOnClickListener(new View.OnClickListener() {
@@ -258,11 +324,11 @@ public class AddItemFragment extends DialogFragment {
                                 year.isEmpty() || priceText.isEmpty() || comments.isEmpty();
 
                         // Set serial number to 0 if non provided
-                        Integer serial;
+                        String serial;
                         if (!serialText.isEmpty()) {
-                            serial = Integer.parseInt(serialText);
+                            serial = serialText;
                         } else {
-                            serial = 0;
+                            serial = "";
                         }
 
                         // Validate all fields
@@ -480,4 +546,70 @@ public class AddItemFragment extends DialogFragment {
         }
         return false;
     }
+
+    private void pickImageCamera(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.TITLE, "Sample Title");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Sample Description");
+
+        imageURI = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageURI);
+        cameraActivityResultLauncher.launch(intent);
+
+    }
+
+    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK){
+                        Intent data = result.getData();
+                        Log.d(TAG,"onActivityResult: imageURI: "+ imageURI);
+                    }
+                    else{
+                        //Error
+                    }
+                }
+            }
+    );
+    private void requestCameraPermission(){
+        requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+    }
+    private void detectResultFromImage(){
+        try{
+            InputImage inputImage = InputImage.fromFilePath(getActivity(),imageURI);
+            Task<List<Barcode>> barcodeResult = barcodeScanner.process(inputImage).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
+                @Override
+                public void onSuccess(List<Barcode> barcodes) {
+                    extractBarCodeQRCodeInfo(barcodes);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
+                }
+            });
+        }
+        catch (Exception e){
+            Toast.makeText(getActivity(),"Failed due to "+e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void extractBarCodeQRCodeInfo(List<Barcode> barcodes){
+        if (barcodes.isEmpty()) {
+            itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
+        }
+        for(Barcode barcode : barcodes){
+            Rect bounds = barcode.getBoundingBox();
+            Point[] corners = barcode.getCornerPoints();
+
+            String rawValue = barcode.getRawValue();
+            Log.d(TAG,"extractBarCodeQRCodeInfo: rawValue: "+ rawValue);
+            itemSerial.setText(barcode.getDisplayValue());
+        }
+    }
+
 }

@@ -64,10 +64,25 @@
             android:id="@+id/serial_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:textSize="20sp"
             android:hint="Serial">
         </EditText>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:id="@+id/scan_barcode_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Capture Barcode"/>
+        <Button
+            android:id="@+id/parse_barcode_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scan Barcode"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
