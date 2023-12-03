@@ -30,6 +30,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -139,6 +140,27 @@ public class ItemFiltersFragment extends DialogFragment {
                         String makeString = editMake.getText().toString().trim();
                         String tagString = editTag.getText().toString().trim();
 
+
+                        // Check if both date fields are empty
+                        if (fromDateString.isEmpty() && toDateString.isEmpty()) {
+                            // Both date fields are empty, close the fragment without showing errors
+                            dialog.dismiss();
+                            return;
+                        }
+
+                        // Validate date format
+                        if (!isValidDateFormat(fromDateString) || !isValidDateFormat(toDateString)) {
+
+                            if (!isValidDateFormat(fromDateString)) {
+                                editFromDate.setError("Invalid date format");
+                            }
+                            if (!isValidDateFormat(toDateString)) {
+                                editToDate.setError("Invalid date format");
+                            }
+                            return;
+                        }
+
+
                         if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
                             try {
@@ -192,6 +214,18 @@ public class ItemFiltersFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    // Add a helper method to validate the date format
+    private boolean isValidDateFormat(String date) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+            dateFormat.setLenient(false);
+            dateFormat.parse(date);
+            return true;
+        } catch (ParseException e) {
+            return false;
+        }
     }
 
 }

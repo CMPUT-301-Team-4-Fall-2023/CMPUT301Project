@@ -18,8 +18,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,8 +33,10 @@ import com.example.cmput301project.R;
 import com.example.cmput301project.TotalListener;
 import com.example.cmput301project.UserManager;
 import com.example.cmput301project.fragments.AddItemFragment;
+import com.example.cmput301project.fragments.AddTagsSelectedItemsFragment;
 import com.example.cmput301project.fragments.EditItemFragment;
 import com.example.cmput301project.fragments.ItemFiltersFragment;
+import com.example.cmput301project.fragments.SortItemsFragment;
 import com.example.cmput301project.fragments.ViewItemFragment;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.ItemAdapter;
@@ -39,14 +44,16 @@ import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.itemClasses.ItemList;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener {
-
+public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener, AddTagsSelectedItemsFragment.OnFragmentInteractionListener, SortItemsFragment.OnFragmentInteractionListener {
     private Database db;
     private ArrayList<Item> items;
     private ItemList itemList;
@@ -54,9 +61,12 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private ListView itemsView;
     private TextView totalCostView;
     private Button filtersButton;
+    private Button sortButton;
+    private Object sortRadioTag;
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private Button deleteButton;
+    private Button addTagsSelectedButton;
     private CircleImageView profilePicture;
     private UserManager userManager;
 
@@ -94,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemsView = findViewById(R.id.item_list);
         totalCostView = findViewById(R.id.total_cost);
         filtersButton = findViewById(R.id.filter_items_button);
+        sortButton = findViewById(R.id.sort_items_button);
 
         profilePicture = findViewById(R.id.profile_image);
         profilePicture.setOnClickListener(v -> {
@@ -106,6 +117,24 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                         .placeholder(R.drawable.defaultuser)
                         .error(R.drawable.defaultuser))
                 .into(profilePicture);
+
+        deleteButton = findViewById(R.id.delete_items_button);
+        deleteButton.setOnClickListener(v -> {
+            ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
+        });
+
+        addTagsSelectedButton = findViewById(R.id.add_tags_selected_button);
+        addTagsSelectedButton.setOnClickListener(v -> {
+            if (!((ItemAdapter) itemsView.getAdapter()).getSelectedItems().isEmpty()) {
+                AddTagsSelectedItemsFragment tagsSelectedFragment = new AddTagsSelectedItemsFragment((ItemAdapter) itemAdapter);
+                Bundle args = new Bundle();
+                tagsSelectedFragment.setArguments(args);
+                tagsSelectedFragment.show(getSupportFragmentManager(), "ADD_TAGS_SELECTED");
+            } else {
+                Toast.makeText(this, "You must select at least one item", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         totalListener = new TotalListener(0.0, totalCostView);
         itemAdapter = new ItemAdapter(this, items);
         itemsView.setAdapter(itemAdapter);
@@ -146,6 +175,21 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 itemFiltersFragment.show(getSupportFragmentManager(), "ITEM_FILTERS");
             }
 
+        });
+
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SortItemsFragment sortItemsFragment = new SortItemsFragment();
+
+                if (sortRadioTag != null) {
+                    Bundle args = new Bundle();
+                    args.putSerializable("tagObject", (Serializable) sortRadioTag);
+                    sortItemsFragment.setArguments(args);
+                }
+
+                sortItemsFragment.show(getSupportFragmentManager(), "SORT_ITEMS");
+            }
         });
 
         db = Database.getInstance();
@@ -211,7 +255,39 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             itemAdapter.notifyDataSetChanged();
             updateTotalCost();
         }
+    }
 
+    @Override
+    public void onRadioButtonSaved(Object tag) {
+        sortRadioTag = tag;
+        switch(tag.toString()) {
+            case "DATE_OLDEST":
+                sortByDate(true);
+                break;
+            case "DATE_NEWEST":
+                sortByDate(false);
+                break;
+            case "PRICE_LOWEST":
+                sortByPrice(true);
+                break;
+            case "PRICE_HIGHEST":
+                sortByPrice(false);
+                break;
+            case "MAKE_AtoZ":
+                sortByMake(true);
+                break;
+            case "MAKE_ZtoA":
+                sortByMake(false);
+                break;
+            case "DESCRIPTION_AtoZ":
+                sortByDescription(true);
+                break;
+            case "DESCRIPTION_ZtoA":
+                sortByDescription(false);
+                break;
+            default:
+                break;
+        }
     }
 
     /**
@@ -257,6 +333,51 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             }
         }
         items.removeAll(selected);
+        itemAdapter.notifyDataSetChanged();
+    }
+
+    public void sortByDate(boolean ascending) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return ascending
+                    ? item1.getPurchaseDate().compareTo(item2.getPurchaseDate())
+                    : item2.getPurchaseDate().compareTo(item1.getPurchaseDate());
+            }
+        });
+        itemAdapter.notifyDataSetChanged();
+    }
+    public void sortByPrice(boolean ascending) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return ascending
+                    ? item1.getValue().compareTo(item2.getValue())
+                    : item2.getValue().compareTo(item1.getValue());
+            }
+        });
+        itemAdapter.notifyDataSetChanged();
+    }
+    public void sortByMake(boolean ascending) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return ascending
+                    ? item1.getMake().compareTo(item2.getMake())
+                    : item2.getMake().compareTo(item1.getMake());
+            }
+        });
+        itemAdapter.notifyDataSetChanged();
+    }
+    public void sortByDescription(boolean ascending) {
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                return ascending
+                    ? item1.getDescription().compareTo(item2.getDescription())
+                    : item2.getDescription().compareTo(item1.getDescription());
+            }
+        });
         itemAdapter.notifyDataSetChanged();
     }
 }
