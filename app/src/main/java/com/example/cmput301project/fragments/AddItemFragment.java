@@ -246,11 +246,11 @@ public class AddItemFragment extends DialogFragment {
                                 year.isEmpty() || priceText.isEmpty() || comments.isEmpty();
 
                         // Set serial number to 0 if non provided
-                        Integer serial;
+                        String serial;
                         if (!serialText.isEmpty()) {
-                            serial = Integer.parseInt(serialText);
+                            serial = serialText;
                         } else {
-                            serial = 0;
+                            serial = "";
                         }
 
                         // Validate all fields

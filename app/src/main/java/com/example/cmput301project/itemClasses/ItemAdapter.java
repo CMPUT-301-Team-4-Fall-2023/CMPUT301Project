@@ -77,7 +77,7 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         itemMonth.setText(newDateString);
         itemCharge.setText("$" + String.format("%.2f", item.getValue()));
         itemDescription.setText(item.getDescription());
-        itemSerial.setText(item.getSerialNumber().toString());
+        itemSerial.setText(item.getSerialNumber());
         itemModel.setText(item.getModel());
         itemMake.setText(item.getMake());
         itemComment.setText(item.getComment());

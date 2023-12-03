@@ -268,11 +268,11 @@ public class EditItemFragment extends DialogFragment {
                                 year.isEmpty() || priceText.isEmpty() || comments.isEmpty();
 
                         // Set serial number to 0 if non provided
-                        Integer serial;
+                        String serial;
                         if (!serialText.isEmpty()) {
-                            serial = Integer.parseInt(serialText);
+                            serial = serialText;
                         } else {
-                            serial = 0;
+                            serial = "";
                         }
 
                         // Validate all fields
@@ -294,7 +294,7 @@ public class EditItemFragment extends DialogFragment {
                             // Edit the item
                             editItem.setName(itemName.getText().toString());
                             editItem.setDescription(itemDescription.getText().toString());
-                            editItem.setSerialNumber(Integer.parseInt(itemSerial.getText().toString()));
+                            editItem.setSerialNumber(itemSerial.getText().toString());
                             editItem.setModel(itemModel.getText().toString());
                             editItem.setMake(itemMake.getText().toString());
                             editItem.setValue(parseDouble(itemPrice.getText().toString()));
