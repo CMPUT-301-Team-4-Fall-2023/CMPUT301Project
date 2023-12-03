@@ -32,19 +32,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.mockito.Mock;
 
-import java.lang.reflect.Method;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTest {
     @Rule
     public ActivityScenarioRule<LoginActivity> activityRule = new ActivityScenarioRule<>(LoginActivity.class);
-    @Mock
-    public FirebaseUser user;
 
     @Test
     public void testNavigateToSignIn(){
@@ -87,6 +86,7 @@ public class LoginActivityTest {
             e.printStackTrace();
         }
         intended(hasComponent(MainActivity.class.getName()));
+        FirebaseAuth.getInstance().signOut();
         Intents.release();
     }
 

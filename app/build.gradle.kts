@@ -46,6 +46,10 @@ dependencies {
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.mockito:mockito-core:5.7.0")
+    testImplementation("org.powermock:powermock-api-mockito:1.6.2")
+    testImplementation("org.powermock:powermock-module-junit4-rule-agent:1.6.2")
+    testImplementation("org.powermock:powermock-module-junit4-rule:1.6.2")
+    testImplementation("org.powermock:powermock-module-junit4:1.6.2")
     androidTestImplementation("androidx.test:runner:1.5.2")
     androidTestImplementation("androidx.test.uiautomator:uiautomator:2.3.0-alpha05")
     androidTestImplementation("androidx.test:rules:1.5.0")

@@ -29,6 +29,9 @@ final public class UserManager {
     private final FirebaseAuth userAuth;
     private FirebaseUser loggedInUser;
     private Database db;
+    private String userName;
+    private String email;
+    private Uri profilePhoto;
     private UserManager(){
         userAuth = FirebaseAuth.getInstance();
     }
@@ -55,6 +58,9 @@ final public class UserManager {
      */
     public void setLoggedInUser(FirebaseUser user){
         this.loggedInUser = user;
+        this.userName = user.getDisplayName();
+        this.email = user.getEmail();
+        this.profilePhoto = user.getPhotoUrl();
     }
 
     /**
@@ -66,7 +72,7 @@ final public class UserManager {
      * @return the username of the current user
      */
     public String getUserName(){
-        return loggedInUser.getDisplayName();
+        return userName;
     }
 
     /**
@@ -76,9 +82,9 @@ final public class UserManager {
         return loggedInUser.getUid();
     }
 
-    public String getUserEmail(){return loggedInUser.getEmail();}
+    public String getUserEmail(){return email;}
 
-    public Uri getUserProfilePicture(){return loggedInUser.getPhotoUrl();}
+    public Uri getUserProfilePicture(){return profilePhoto;}
     public FirebaseUser getCurrentUser(){
         return userAuth.getCurrentUser();
     }
@@ -139,5 +145,19 @@ final public class UserManager {
                         Log.d(TAG, "Email sent.");
                     }
                 });
+    }
+
+    // THESE NEXT FUNCTIONS ARE FOR TESTING. I SWEAR TO GOD IF YOU CALL THEM IN THE STANDARD
+    // CODE I WILL CHECK THE GIT BLAME AND FIND YOU
+    public void setUserNameTest(String userName){
+        this.userName = userName;
+    }
+
+    public void setUserEmailTest(String email){
+        this.email = email;
+    }
+
+    public void setUserProfilePictureTest(Uri uri){
+        this.profilePhoto = uri;
     }
 }
