@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                     itemList.setFilteredItems(new ArrayList<Item>(items));
                 }
                 if (itemFilter.isFilterDate()) {
-                    DateFormat df = new SimpleDateFormat("mm/dd/yyyy");
+                    DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                     args.putString("from", df.format(itemFilter.getFrom()));
                     args.putString("to", df.format(itemFilter.getTo()));
                 }

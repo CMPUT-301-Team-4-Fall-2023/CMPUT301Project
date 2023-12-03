@@ -208,8 +208,8 @@ public class AddItemFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.add_item_layout, null);
+
         itemName = view.findViewById(R.id.name_edit_text); //find views on fragment to set text later
         itemDescription = view.findViewById(R.id.description_edit_text);
         itemSerial = view.findViewById(R.id.serial_edit_text);

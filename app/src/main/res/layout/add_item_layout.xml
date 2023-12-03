@@ -1,268 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/add_item_title"
-        android:layout_width="match_parent"
-        android:layout_height="75dp"
-        android:text="Add Item"
-        android:gravity="center"
-        android:textSize="25dp"/>
+    android:layout_height="match_parent">
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Item Name:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/name_edit_text"
+            android:id="@+id/add_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:text="Add Item"
+            android:gravity="center"
+            android:textSize="25dp"/>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Name">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Description:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/description_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Item Name:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Name">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Description">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Serial: (Optional)"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/serial_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Description:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/description_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Description">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Serial">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
-        <Button
-            android:id="@+id/scan_barcode_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Capture Barcode"/>
-        <Button
-            android:id="@+id/parse_barcode_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Scan Barcode"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Model:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/model_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Serial: (Optional)"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/serial_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Serial">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Model">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Make:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/make_edit_text"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/scan_barcode_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Capture Barcode"/>
+            <Button
+                android:id="@+id/parse_barcode_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan Barcode"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Make">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Date:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/item_month_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Model:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/model_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Model">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:textSize="20sp"
-            android:maxLength="2"
-            android:hint="mm"
-            android:layout_weight="1"/>
-        <EditText
-            android:id="@+id/item_day_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Make:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/make_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Make">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:textSize="20sp"
-            android:maxLength="2"
-            android:hint="dd"
-            android:layout_weight="1"/>
-        <EditText
-            android:id="@+id/item_year_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Date:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/item_month_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:textSize="20sp"
+                android:maxLength="2"
+                android:hint="mm"
+                android:layout_weight="1"/>
+            <EditText
+                android:id="@+id/item_day_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:textSize="20sp"
+                android:maxLength="2"
+                android:hint="dd"
+                android:layout_weight="1"/>
+            <EditText
+                android:id="@+id/item_year_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:textSize="20sp"
+                android:maxLength="4"
+                android:hint="yyyy"
+                android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="date"
-            android:textSize="20sp"
-            android:maxLength="4"
-            android:hint="yyyy"
-            android:layout_weight="1"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tags:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/input_tag_edit_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Enter tag"
-            android:textSize="20sp"/>
-        <Button
-            android:id="@+id/add_tags_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Tag"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
-        android:orientation="horizontal">
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group_tags"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <!-- Chips can be added here -->
-        </com.google.android.material.chip.ChipGroup>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Price: $"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/price_edit_text"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tags:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/input_tag_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Enter tag"
+                android:textSize="20sp"/>
+            <Button
+                android:id="@+id/add_tags_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Tag"/>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:textSize="20sp"
-            android:hint="$$$$.$$">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Comments:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <EditText
-            android:id="@+id/comments_edit_text"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
+            android:orientation="horizontal">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_tags"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <!-- Chips can be added here -->
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:hint="Comments">
-        </EditText>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
->
-        <TextView
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Price: $"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/price_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:textSize="20sp"
+                android:hint="$$$$.$$">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Comments:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <EditText
+                android:id="@+id/comments_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="Comments">
+            </EditText>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+    >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Photos:"
+                android:textSize="25dp"
+                android:padding="5dp"
+                android:layout_marginRight="10dp"/>
+            <Button
+                android:id="@+id/gallery_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Gallery"/>
+            <Button
+                android:id="@+id/camera_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Camera"/>
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/image_view"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Photos:"
-            android:textSize="25dp"
-            android:padding="5dp"
-            android:layout_marginRight="10dp"/>
-        <Button
-            android:id="@+id/gallery_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Gallery"/>
-        <Button
-            android:id="@+id/camera_button"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="Camera"/>
-    </LinearLayout>
-    <ImageView
-        android:id="@+id/image_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
