@@ -142,6 +142,10 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         addButton.setOnClickListener(v -> {
             new AddItemFragment().show(getSupportFragmentManager(), "ADD_ITEM");
         });
+        deleteButton = findViewById(R.id.delete_items_button);
+        deleteButton.setOnClickListener(v -> {
+            ((ItemAdapter) itemsView.getAdapter()).deleteSelectedItems();
+        });
 
         filtersButton.setOnClickListener(new View.OnClickListener() {
             @Override
