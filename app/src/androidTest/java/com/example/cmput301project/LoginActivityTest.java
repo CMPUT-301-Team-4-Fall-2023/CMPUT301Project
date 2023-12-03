@@ -72,10 +72,10 @@ public class LoginActivityTest {
     public void testSuccessfulSignIn(){
         Intents.init();
         onView(withId(R.id.emailEntry))
-                .perform(ViewActions.typeText("admin@admin.com"));
+                .perform(ViewActions.typeText("Arnold@email.com"));
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.passwordEntry))
-                .perform(ViewActions.typeText("password"));
+                .perform(ViewActions.typeText("12345678"));
         Espresso.closeSoftKeyboard();
         onView(withId(R.id.signInButton)).perform(click());
         try{
