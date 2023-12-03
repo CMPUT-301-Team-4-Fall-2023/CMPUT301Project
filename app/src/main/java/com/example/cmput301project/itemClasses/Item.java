@@ -15,6 +15,7 @@ import com.example.cmput301project.itemClasses.Photograph;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 public class Item {
     private String name;
@@ -22,16 +23,17 @@ public class Item {
     private String description;
     private String make;
     private String model;
-    private Integer serialNumber;
+    private String serialNumber;
     private Double value;
     private String comment;
     private ArrayList<Tag> tags;
     private ArrayList<Photograph> photographs;
     private boolean selected;
+    private UniqueId uniqueId;
 
     public Item() {}
 
-    public Item(String name, Date purchaseDate, String description, String make, String model, Integer serialNumber, Double value, String comment) {
+    public Item(String name, Date purchaseDate, String description, String make, String model, String serialNumber, Double value, String comment) {
         this.name = name;
         this.purchaseDate = purchaseDate;
         this.description = description;
@@ -43,6 +45,7 @@ public class Item {
         this.tags = tags;
         this.photographs = photographs;
         this.selected = false;
+        this.uniqueId = new UniqueId();
     }
 
     public String getName() {
@@ -56,7 +59,6 @@ public class Item {
     public Date getPurchaseDate() {
         return purchaseDate;
     }
-
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
     }
@@ -85,11 +87,11 @@ public class Item {
         this.model = model;
     }
 
-    public Integer getSerialNumber() {
+    public String getSerialNumber() {
         return serialNumber;
     }
 
-    public void setSerialNumber(Integer serialNumber) {
+    public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
 
@@ -144,5 +146,13 @@ public class Item {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public UniqueId getUniqueId() {
+        return uniqueId;
+    }
+
+    public void setUniqueId(UniqueId uniqueId) {
+        this.uniqueId = uniqueId;
     }
 }

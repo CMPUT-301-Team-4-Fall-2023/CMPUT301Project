@@ -10,17 +10,18 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MainActivity">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@color/main"
+            android:orientation="horizontal"
             tools:context=".MainActivity">
 
             <TextView
                 android:id="@+id/total_cost"
-                android:layout_width="310dp"
-                android:layout_height="match_parent"
+                android:layout_width="300dp"
+                android:layout_height="57dp"
                 android:gravity="center"
                 android:text="LOADING..."
                 android:textColor="@color/white"
@@ -37,15 +38,16 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/placeholder"
-                app:civ_border_width="2dp"
-                app:civ_border_color="#FF000000"/>
+                android:translationX="-5dp"
+                android:translationY="3dp"
+                app:civ_border_color="#276683"
+                app:civ_border_width="3dp" />
         </LinearLayout>
-
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:orientation="horizontal"
             tools:context=".MainActivity">
 
@@ -55,10 +57,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:backgroundTint="#E83F94"
-                android:padding="10dp"
+                android:drawableLeft="@mipmap/trash_can"
+                android:padding="8dp"
                 android:text="Delete Items"
-                android:textColor="#FFFFFF"
-                android:drawableLeft="@mipmap/trash_can" />
+                android:textColor="#FFFFFF" />
 
             <Button
                 android:id="@+id/add_tags_selected_button"
@@ -76,12 +78,12 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/sort_items_button"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="Filters"
-                android:textSize="20sp"/>
+                android:background="@android:color/transparent"
+                android:drawableEnd="@drawable/down_arrow" />
 
             <Button
                 android:id="@+id/filter_items_button"
@@ -95,15 +97,9 @@
             android:id="@+id/item_list"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:translationY="3dp" />
 
-        <TextView
-            android:id="@+id/nav_bar"
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            android:gravity="center"
-            android:text="Placeholder - Nav bar here"
-            android:textSize="20sp"/>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -112,7 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="25dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="25dp"
         android:clickable="true"
         android:focusable="true"
         app:srcCompat="@android:drawable/ic_input_add" />

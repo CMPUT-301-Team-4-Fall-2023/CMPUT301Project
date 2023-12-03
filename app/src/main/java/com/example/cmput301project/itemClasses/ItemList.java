@@ -42,7 +42,10 @@ public class ItemList {
     }
 
     private void filterByDate(Date from, Date to) {
-        List<Item> f = filteredItems.stream().filter(item -> item.getPurchaseDate().after(from) && item.getPurchaseDate().before(to)) // Replace this condition with your filtering criteria
+
+        List<Item> f = filteredItems.stream().filter(item ->
+                (item.getPurchaseDate().equals(from) || item.getPurchaseDate().after(from))
+                        && (item.getPurchaseDate().equals(to) || item.getPurchaseDate().before(to))) // Replace this condition with your filtering criteria
                 .collect(Collectors.toList());
         filteredItems = new ArrayList<>(f);
     }

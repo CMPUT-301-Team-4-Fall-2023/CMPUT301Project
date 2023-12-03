@@ -14,21 +14,30 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.cmput301project.Database;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Photograph;
 import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class ViewItemFragment extends DialogFragment {
     private TextView itemName;
@@ -41,6 +50,10 @@ public class ViewItemFragment extends DialogFragment {
     private TextView itemTags;
     private TextView itemComment;
     private Item viewedItem;
+
+    private ImageView itemPicture;
+
+    private Database db = Database.getInstance();
 
     private OnFragmentInteractionListener listener;
     public ViewItemFragment(Item item){
@@ -77,6 +90,24 @@ public class ViewItemFragment extends DialogFragment {
         itemDate = view.findViewById(R.id.view_item_date);
         itemComment = view.findViewById(R.id.view_item_comment);
         itemTags = view.findViewById(R.id.view_item_tags);
+        itemPicture = view.findViewById(R.id.image_view);
+
+        if(!viewedItem.getPhotographs().isEmpty()){
+            db.getImage(viewedItem.getPhotographs().get(0).getName()).addOnSuccessListener(
+                    new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide.with(getActivity())
+                                    .load(uri)
+                                    .apply(new RequestOptions()
+                                            .placeholder(R.drawable.defaultuser)
+                                            .error(R.drawable.defaultuser))
+                                    .into(itemPicture);
+                            itemPicture.invalidate();
+                        }
+                    }
+            );
+        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 

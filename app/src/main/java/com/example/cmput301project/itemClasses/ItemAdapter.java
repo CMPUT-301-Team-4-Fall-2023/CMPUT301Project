@@ -64,37 +64,12 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         TextView itemName = view.findViewById(R.id.item_name);
         TextView itemMonth = view.findViewById(R.id.item_date);
         TextView itemCharge = view.findViewById(R.id.item_cost);
-        TextView itemDescription = view.findViewById(R.id.item_description);
-        TextView itemSerial = view.findViewById(R.id.item_serial);
-        TextView itemModel = view.findViewById(R.id.item_model);
-        TextView itemMake = view.findViewById(R.id.item_make);
-        TextView itemComment = view.findViewById(R.id.item_comment);
-        TextView itemTags = view.findViewById(R.id.item_date);
 
         itemName.setText(item.getName());
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
         String newDateString = df.format(item.getPurchaseDate());
         itemMonth.setText(newDateString);
         itemCharge.setText("$" + String.format("%.2f", item.getValue()));
-        itemDescription.setText(item.getDescription());
-        itemSerial.setText(item.getSerialNumber().toString());
-        itemModel.setText(item.getModel());
-        itemMake.setText(item.getMake());
-        itemComment.setText(item.getComment());
-
-        if(item.getTags() == null) {item.setTags(new ArrayList<Tag>());}
-        // Assuming the Item class has a method getTags() that returns a List of Tag objects
-        StringBuilder tagsBuilder = new StringBuilder();
-        for (Tag tag : item.getTags()) {
-            if (tagsBuilder.length() > 0) {
-                tagsBuilder.append(" | "); // Separator for multiple tags
-            }
-            tagsBuilder.append(tag.getName()); // Append the tag name to the builder
-        }
-
-        // Set the tags text from the StringBuilder
-        itemTags.setText(tagsBuilder.toString());
-
 
         CheckBox checkBox = view.findViewById(R.id.checkbox); // Assuming checkbox ID is 'checkbox' in your item_content.xml
         checkBox.setChecked(selectedItems.contains(item));
@@ -126,21 +101,18 @@ public class ItemAdapter extends ArrayAdapter<Item> {
         selectedItems.clear();
     }
 
-//    /**
-//     * Opens a fragment that allows users to add tags to all of the selected items.
-//     */
-//    public void addTagsSelected(List tagsList) {
-//        Database db = Database.getInstance(); // hack: remove
-//        if (selectedItems.isEmpty()) {
-//            // Display a Toast message with the provided context
-//            Toast.makeText(context, "You must select at least one item", Toast.LENGTH_SHORT).show();
-//
-//            selectedItems.clear();
-//        }
-//    }
-
     public Set<Item> getSelectedItems() {
         return selectedItems;
+    }
+
+
+    /**
+     * Clears the selection of items.
+     * This method empties the set of selected items, ensuring no items are marked as selected.
+     */
+    public void clearSelectedItems() {
+        selectedItems.clear();
+        notifyDataSetChanged();  // Notifying the adapter to refresh the list view
     }
 
 }

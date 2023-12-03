@@ -13,6 +13,11 @@ package com.example.cmput301project.itemClasses;
 public class Photograph {
     private String path;
 
+    private String name;
+
+    public Photograph(){
+    }
+
     public Photograph(String path) {
         this.path = path;
     }
@@ -23,5 +28,13 @@ public class Photograph {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
