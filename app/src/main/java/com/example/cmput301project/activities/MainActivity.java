@@ -247,14 +247,11 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void onFiltersSaved(ItemFilter i) {
-        if (i.isFilterActive()) {
-            itemFilter = i;
-            itemList.filterItems(itemFilter);
-            items.clear();
-            items.addAll(itemList.getFilteredItems());
-            itemAdapter.notifyDataSetChanged();
-            updateTotalCost();
-        }
+        itemFilter = i;
+        itemList.filterItems(itemFilter);
+        items.clear();
+        items.addAll(itemList.getFilteredItems());
+        itemAdapter.notifyDataSetChanged();
     }
 
     @Override
