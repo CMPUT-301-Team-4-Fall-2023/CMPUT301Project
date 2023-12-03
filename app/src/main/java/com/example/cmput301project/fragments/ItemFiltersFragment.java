@@ -142,23 +142,23 @@ public class ItemFiltersFragment extends DialogFragment {
 
 
                         // Check if both date fields are empty
-                        if (fromDateString.isEmpty() && toDateString.isEmpty()) {
-                            // Both date fields are empty, close the fragment without showing errors
-                            dialog.dismiss();
-                            return;
+                        if (!fromDateString.isEmpty() || !toDateString.isEmpty()) {
+
+                            // Validate date format
+                            if (!isValidDateFormat(fromDateString) || !isValidDateFormat(toDateString)) {
+
+                                if (!isValidDateFormat(fromDateString)) {
+                                    editFromDate.setError("Invalid date format");
+                                }
+                                if (!isValidDateFormat(toDateString)) {
+                                    editToDate.setError("Invalid date format");
+                                }
+                                return;
+                            }
+
                         }
 
-                        // Validate date format
-                        if (!isValidDateFormat(fromDateString) || !isValidDateFormat(toDateString)) {
 
-                            if (!isValidDateFormat(fromDateString)) {
-                                editFromDate.setError("Invalid date format");
-                            }
-                            if (!isValidDateFormat(toDateString)) {
-                                editToDate.setError("Invalid date format");
-                            }
-                            return;
-                        }
 
 
                         if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
