@@ -92,7 +92,7 @@ public class ViewItemFragment extends DialogFragment {
         itemTags = view.findViewById(R.id.view_item_tags);
         itemPicture = view.findViewById(R.id.image_view);
 
-        if(!viewedItem.getPhotographs().isEmpty()){
+        if(viewedItem.getPhotographs() != null && !viewedItem.getPhotographs().isEmpty()){
             db.getImage(viewedItem.getPhotographs().get(0).getName()).addOnSuccessListener(
                     new OnSuccessListener<Uri>() {
                         @Override

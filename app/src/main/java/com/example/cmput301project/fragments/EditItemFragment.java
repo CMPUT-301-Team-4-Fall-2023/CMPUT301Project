@@ -169,12 +169,14 @@ public class EditItemFragment extends DialogFragment {
         itemPrice.setText(editItem.getValue().toString());
         itemComments.setText(editItem.getComment());
 
-        for (Tag tag : editItem.getTags()) {
-            Chip chip = new Chip(getContext());
-            chip.setText(tag.getName());
-            chip.setCloseIconVisible(true);
-            chip.setOnCloseIconClickListener(v -> chipGroupTags.removeView(chip));
-            chipGroupTags.addView(chip);
+        if (editItem.getTags() != null) {
+            for (Tag tag : editItem.getTags()) {
+                Chip chip = new Chip(getContext());
+                chip.setText(tag.getName());
+                chip.setCloseIconVisible(true);
+                chip.setOnCloseIconClickListener(v -> chipGroupTags.removeView(chip));
+                chipGroupTags.addView(chip);
+            }
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

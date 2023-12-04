@@ -130,8 +130,9 @@ public class Item {
         this.tags.remove(tag);
     }
     public void clearTags() {
-        // Clear current tags
-        this.tags.clear();
+        if (tags != null) {
+            tags.clear();
+        }
     }
     public ArrayList<Photograph> getPhotographs() {
         return photographs;
