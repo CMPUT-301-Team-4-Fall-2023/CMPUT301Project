@@ -700,6 +700,11 @@ public class AddItemFragment extends DialogFragment {
         }
     }
 
+    /**
+     * This will display the calendar widget set to the correct date if the user has chosen one
+     * previously
+     * @param v the textview that the user clicked on
+     */
     private void displayCalendar(View v) {
         Calendar cal = Calendar.getInstance();
         DatePickerDialog.OnDateSetListener date = (fromView, year, month, day) -> {
@@ -715,6 +720,13 @@ public class AddItemFragment extends DialogFragment {
         dialog.show();
     }
 
+    /**
+     * This will update the textview v with the new date (formatted properly)
+     * @param v The textview that the new date will be put into
+     * @param year The new year
+     * @param month The new month
+     * @param day The new day
+     */
     private void updateLabel(View v, int year, int month, int day) {
         if (v instanceof TextView){
             TextView textView = (TextView) v;
