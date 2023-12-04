@@ -211,12 +211,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void onOKPressed(Item item) {
-        db.addItem(item, () -> {
-            // This code will run after the item is successfully edited
-            if (itemFilter.isFilterActive()) {
-                onFiltersSaved(itemFilter);
-            }
-        });
+        db.addItem(item);
     }
 
     /**

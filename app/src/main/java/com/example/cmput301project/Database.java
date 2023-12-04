@@ -54,10 +54,6 @@ public class Database {
         void onEditComplete();
     }
 
-    public interface OnAddCompleteListener {
-        void onAddComplete();
-    }
-
     /**
      * Singleton for the firestore database. Holds the database instance and provides all methods
      * for interacting with the database
@@ -90,12 +86,11 @@ public class Database {
      *
      * @param item item to add
      */
-    public void addItem(Item item, OnAddCompleteListener listener) {
+    public void addItem(Item item) {
         itemsRef.document(item.getUniqueId().toString())
                 .set(item)
                 .addOnSuccessListener(unused -> {
                     Log.d("Firestore", String.format("Item %s Added!", item.getName()));
-                    listener.onAddComplete(); // Assuming you have a corresponding method in your listener
                 })
                 .addOnFailureListener(e -> {
                     // Handle failure if necessary
