@@ -1,4 +1,20 @@
+/**
+ * UserProfileActivity.java
+ * <p>
+ * This activity is responsible for displaying and managing user profile information,
+ * including the user's username, email, and profile picture. It provides options for the
+ * user to update their profile picture, log out, and reset their password.
+ * <p>
+ * The activity utilizes Firebase storage for handling profile picture uploads and
+ * downloads. It also interacts with the UserManager and Database singletons to manage
+ * user authentication and retrieve user details.
+ * <p>
+ * The activity layout is defined in the 'user_profile.xml' resource file.
+ */
+
 package com.example.cmput301project.activities;
+
+// Import statements
 
 import android.content.Intent;
 import android.net.Uri;
@@ -26,6 +42,9 @@ import com.google.firebase.storage.UploadTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+/**
+ * The main activity responsible for displaying and managing user profile information.
+ */
 public class UserProfileActivity extends AppCompatActivity {
     private TextView username;
     private TextView email;
@@ -38,80 +57,86 @@ public class UserProfileActivity extends AppCompatActivity {
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             // Good lord above forgive me for what I am about to do
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
-        if (imageUri != null) {
-            StorageReference iconRef = FirebaseStorage.getInstance().getReference("profilePictures/" + userManager.getUserID());
-            UploadTask uploadTask = iconRef.putFile(imageUri);
+                if (imageUri != null) {
+                    StorageReference iconRef = FirebaseStorage.getInstance().getReference("profilePictures/" + userManager.getUserID());
+                    UploadTask uploadTask = iconRef.putFile(imageUri);
 
-            uploadTask.continueWithTask(task -> {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
+                    uploadTask.continueWithTask(task -> {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
 
-                // Continue with the task to get the download URL
-                return iconRef.getDownloadUrl();
-            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-                        Uri downloadUri = task.getResult();
-                        userManager.setProfilePicture(downloadUri);
-                        Glide.with(getApplicationContext())
-                                .load(downloadUri)
-                                .apply(new RequestOptions()
-                                        .placeholder(R.drawable.defaultuser)
-                                        .error(R.drawable.defaultuser))
-                                .into(profilePicture);
-                        profilePicture.invalidate();
-                    }
+                        // Continue with the task to get the download URL
+                        return iconRef.getDownloadUrl();
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+                                userManager.setProfilePicture(downloadUri);
+                                Glide.with(getApplicationContext()).load(downloadUri).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(profilePicture);
+                                profilePicture.invalidate();
+                            }
+                        }
+                    });
                 }
             });
-        }
-    });
 
-
+    /**
+     * Initializes the activity and sets the content view.
+     *
+     * @param savedInstanceState Bundle containing the activity's previously saved state.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_profile);
-
         getSingletons();
         grabUIElements();
         injectUserDetails();
         addListeners();
     }
 
+    /**
+     * Adds listeners to UI elements, such as buttons and profile picture, for user interactions.
+     */
     private void addListeners() {
         backButton.setOnClickListener(v -> finish());
-        profilePicture.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
+        profilePicture.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build()));
         logOut.setOnClickListener(v -> logUserOut());
         resetPassword.setOnClickListener(v -> userManager.sendPasswordReset());
     }
 
+    /**
+     * Logs the user out of the application and navigates to the login screen.
+     */
     private void logUserOut() {
         userManager.signOutUser();
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
+    /**
+     * Retrieves singleton instances for UserManager and Database.
+     */
     private void getSingletons() {
         userManager = UserManager.getInstance();
         db = Database.getInstance();
     }
 
+    /**
+     * Displays the user's details in the corresponding UI elements.
+     */
     private void injectUserDetails() {
         username.setText(userManager.getUserName());
         email.setText(userManager.getUserEmail());
-        Glide.with(getApplicationContext())
-                .load(userManager.getUserProfilePicture())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.defaultuser)
-                        .error(R.drawable.defaultuser))
-                .into(profilePicture);
+        Glide.with(getApplicationContext()).load(userManager.getUserProfilePicture()).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(profilePicture);
     }
 
+    /**
+     * Initializes UI elements by finding and assigning them from the layout.
+     */
     private void grabUIElements() {
         username = findViewById(R.id.username);
         email = findViewById(R.id.email);

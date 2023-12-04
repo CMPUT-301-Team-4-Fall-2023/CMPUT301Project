@@ -7,8 +7,9 @@
  * backend code related to user registration and database interaction.
  */
 
-
 package com.example.cmput301project.activities;
+
+// Import statements
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
@@ -20,29 +21,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.cmput301project.Database;
-import com.example.cmput301project.UserManager;
-import com.example.cmput301project.activities.MainActivity;
 import com.example.cmput301project.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.example.cmput301project.UserManager;
 
-import java.util.HashMap;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    // Membership variable declaration
     private EditText usernameField;
     private EditText emailField;
     private EditText passwordField;
@@ -53,12 +44,18 @@ public class SignUpActivity extends AppCompatActivity {
     private Database db;
     private final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
 
-
-
-    private void showToast(String message){
+    /**
+     * Displays a toast message with the provided error message.
+     *
+     * @param message The error message to be displayed.
+     */
+    private void showToast(String message) {
         errorTextView.setText(message);
     }
 
+    /**
+     * Retrieves UI elements from the layout file.
+     */
     private void grabUIElements() {
         usernameField = findViewById(R.id.usernameEntry);
         emailField = findViewById(R.id.emailEntry);
@@ -69,41 +66,60 @@ public class SignUpActivity extends AppCompatActivity {
         alreadyHaveAccountTextView = findViewById(R.id.accountLoginTextView);
     }
 
+    /**
+     * Checks for invalid user inputs, such as empty fields.
+     *
+     * @return True if invalid inputs are found, false otherwise.
+     */
     private boolean checkForInvalidInputs() {
 
-        if (usernameField.getText().toString().equals("")){
+        if (usernameField.getText().toString().equals("")) {
             errorTextView.setText(R.string.userNameFieldError);
             return true;
-        }
-        else if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()){
+        } else if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()) {
             errorTextView.setText(R.string.emailFieldError);
             return true;
-        }
-        else if (passwordField.getText().toString().equals("")){
+        } else if (passwordField.getText().toString().equals("")) {
             errorTextView.setText(R.string.passwordFieldError);
             return true;
         }
         return false;
     }
 
-
-    private void navigateToLoginActivity(View view){
+    /**
+     * Navigates to the login activity.
+     *
+     * @param view The View that triggered this method.
+     */
+    private void navigateToLoginActivity(View view) {
         finish();
     }
 
-    private void navigateToMainActivity(){
-        Intent i  = new Intent(SignUpActivity.this, MainActivity.class);
+    /**
+     * Navigates to the main activity upon successful sign-up.
+     */
+    private void navigateToMainActivity() {
+        Intent i = new Intent(SignUpActivity.this, MainActivity.class);
         db.setItemCollection();
         startActivity(i);
         finish();
     }
 
+    /**
+     * Adds listeners to UI elements, such as buttons and text views.
+     */
     private void addListeners() {
         signUpButton.setOnClickListener(this::attemptSignUp);
         alreadyHaveAccountTextView.setOnClickListener(this::navigateToLoginActivity);
     }
 
-    private void attemptSignUp(View v){
+    /**
+     * Attempts user sign-up with provided credentials. Checks for existing usernames
+     * to avoid duplicates and displays appropriate error messages.
+     *
+     * @param v The View that triggered this method.
+     */
+    private void attemptSignUp(View v) {
 
         if (checkForInvalidInputs()) return;
 
@@ -115,19 +131,18 @@ public class SignUpActivity extends AppCompatActivity {
             if (doc.exists()) {
                 showToast("An account already exists for this username");
             } else {
-                userManager.getUserAuth().createUserWithEmailAndPassword(userEmail, userPassword)
-                        .addOnCompleteListener(this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign up success, update UI with the signed-in user's information
-                                Log.d(TAG, "createUserWithEmail:success");
-                                userManager.signUpUser(userName, userEmail);
-                                navigateToMainActivity();
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                showToast(task.getException().getLocalizedMessage());
-                            }
-                        });
+                userManager.getUserAuth().createUserWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign up success, update UI with the signed-in user's information
+                        Log.d(TAG, "createUserWithEmail:success");
+                        userManager.signUpUser(userName, userEmail);
+                        navigateToMainActivity();
+                    } else {
+                        // If sign in fails, display a message to the user.
+                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                        showToast(task.getException().getLocalizedMessage());
+                    }
+                });
             }
         });
     }
