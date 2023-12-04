@@ -10,8 +10,16 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.InputStream;
 
+/**
+ * Simple class for making loading images easier
+ */
 @com.bumptech.glide.annotation.GlideModule
 public class GlideModule extends AppGlideModule {
+    /**
+     * @param context  An Application {@link android.content.Context}.
+     * @param glide    The Glide singleton that is in the process of being initialized.
+     * @param registry An {@link com.bumptech.glide.Registry} to use to register components.
+     */
     @Override
     public void registerComponents(Context context, Glide glide, Registry registry) {
         // Register FirebaseImageLoader to handle StorageReference

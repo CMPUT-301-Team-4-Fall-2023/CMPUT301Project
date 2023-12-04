@@ -134,10 +134,16 @@ final public class UserManager {
         });
     }
 
+    /**
+     * Signs out the current user
+     */
     public void signOutUser(){
         userAuth.signOut();
     }
 
+    /**
+     * Sends a password reset to the current user's email
+     */
     public void sendPasswordReset(){
         userAuth.sendPasswordResetEmail(Objects.requireNonNull(loggedInUser.getEmail()))
                 .addOnCompleteListener(task -> {
@@ -147,16 +153,23 @@ final public class UserManager {
                 });
     }
 
-    // THESE NEXT FUNCTIONS ARE FOR TESTING. I SWEAR TO GOD IF YOU CALL THEM IN THE STANDARD
-    // CODE I WILL CHECK THE GIT BLAME AND FIND YOU
+    /**
+     * @param userName The username to be set as the user's username
+     */
     public void setUserNameTest(String userName){
         this.userName = userName;
     }
 
+    /**
+     * @param email The email to set as the user's email
+     */
     public void setUserEmailTest(String email){
         this.email = email;
     }
 
+    /**
+     * @param uri A uri that will be set as the user's profile picture
+     */
     public void setUserProfilePictureTest(Uri uri){
         this.profilePhoto = uri;
     }

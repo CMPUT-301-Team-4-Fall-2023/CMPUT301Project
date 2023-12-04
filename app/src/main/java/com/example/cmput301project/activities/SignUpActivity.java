@@ -39,6 +39,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -50,6 +51,8 @@ public class SignUpActivity extends AppCompatActivity {
     private TextView errorTextView;
     private UserManager userManager;
     private Database db;
+    private final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
+
 
 
     private void showToast(String message){
@@ -72,7 +75,7 @@ public class SignUpActivity extends AppCompatActivity {
             errorTextView.setText(R.string.userNameFieldError);
             return true;
         }
-        else if (emailField.getText().toString().equals("")){
+        else if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()){
             errorTextView.setText(R.string.emailFieldError);
             return true;
         }
