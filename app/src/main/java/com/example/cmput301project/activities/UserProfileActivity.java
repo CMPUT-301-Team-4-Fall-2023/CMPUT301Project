@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -104,7 +105,9 @@ public class UserProfileActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> finish());
         profilePicture.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build()));
         logOut.setOnClickListener(v -> logUserOut());
-        resetPassword.setOnClickListener(v -> userManager.sendPasswordReset());
+        resetPassword.setOnClickListener(v -> {
+            Toast.makeText(UserProfileActivity.this, "email sent!", Toast.LENGTH_SHORT).show();
+            userManager.sendPasswordReset();});
     }
 
     /**
