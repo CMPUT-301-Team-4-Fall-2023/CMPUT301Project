@@ -74,7 +74,6 @@ public class MainActivityTest {
     @Test
     public void testAddItem() {
         onView(withId(R.id.add_item_button)).perform(click());
-        onView(withText("OK")).perform(click());
         onView(withId(R.id.name_edit_text)).perform(ViewActions.typeText("House"));
         onView(withId(R.id.description_edit_text)).perform(ViewActions.typeText("My House"));
         onView(withId(R.id.serial_edit_text)).perform(ViewActions.typeText("12345"));
