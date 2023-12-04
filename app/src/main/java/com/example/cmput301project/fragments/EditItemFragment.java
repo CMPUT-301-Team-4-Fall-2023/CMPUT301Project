@@ -9,11 +9,10 @@
  * to update the total cost of items after the edit.
  */
 
-
 package com.example.cmput301project.fragments;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
+// Import statements
+
 import static java.lang.Double.parseDouble;
 
 import android.Manifest;
@@ -53,8 +52,8 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.cmput301project.Database;
-import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.Photograph;
 import com.example.cmput301project.itemClasses.Tag;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -79,8 +78,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-
 public class EditItemFragment extends DialogFragment {
+
+    // Membership variable declaration
     private TextView title;
     private EditText itemName;
     private EditText itemDescription;
@@ -100,17 +100,19 @@ public class EditItemFragment extends DialogFragment {
     private Uri imageURI = null;
     private Database db = Database.getInstance();
     public static final String TAG = "MAIN_TAG";
-
     private Button parseButton;
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
-
+    private final ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+    });
     private BarcodeScannerOptions barcodeScannerOptions;
     private BarcodeScanner barcodeScanner;
-
     private ImageView itemPicture;
     private Button deletePicture;
 
+    /**
+     * Constructor for the EditItemFragment class.
+     *
+     * @param item The item to be edited.
+     */
     public EditItemFragment(Item item) { //if called with an item passed in, we assume that we want to edit the item
         this.editItem = item;
     }
@@ -125,98 +127,104 @@ public class EditItemFragment extends DialogFragment {
         }
         return false;
     }
+
     private Button cameraButton;
     private Button galleryButton;
-
     private Uri cameraUri;
 
-    private void takePhotoCamera(){
+    /**
+     * Takes a photo using the device's camera, stores it in the external media store,
+     * and handles the result using the provided ActivityResultLauncher.
+     */
+    private void takePhotoCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "New Photo");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Item Photo");
 
-        cameraUri = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+        cameraUri = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,cameraUri);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
         capturingImageResultLauncher.launch(intent);
     }
 
-    private final ActivityResultLauncher<Intent> capturingImageResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    Log.d(TAG, "onActivityResult: cameraUri: " + cameraUri);
-                    if (cameraUri != null) {
-                        Photograph photo = new Photograph(cameraUri.toString());
-                        photo.setName(UUID.randomUUID().toString());
-                        UploadTask uploadTask = db.addImage(photo.getName(), cameraUri);
+    /**
+     * Handles the result of capturing an image using the camera.
+     * If successful, uploads the image to the database, retrieves its download URL,
+     * and displays the image using Glide library.
+     */
+    private final ActivityResultLauncher<Intent> capturingImageResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == Activity.RESULT_OK) {
+            Intent data = result.getData();
+            Log.d(TAG, "onActivityResult: cameraUri: " + cameraUri);
+            if (cameraUri != null) {
+                Photograph photo = new Photograph(cameraUri.toString());
+                photo.setName(UUID.randomUUID().toString());
+                UploadTask uploadTask = db.addImage(photo.getName(), cameraUri);
 
-                        uploadTask.continueWithTask(task -> {
-                            if (!task.isSuccessful()) {
-                                throw task.getException();
-                            }
+                uploadTask.continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
 
-                            // Continue with the task to get the download URL
-                            return db.getImage(photo.getName());
-                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Uri> task) {
-                                if (task.isSuccessful()) {
-                                    Uri downloadUri = task.getResult();
-                                    Glide.with(getActivity())
-                                            .load(downloadUri)
-                                            .apply(new RequestOptions()
-                                                    .placeholder(R.drawable.defaultuser)
-                                                    .error(R.drawable.defaultuser))
-                                            .into(itemPicture);
-                                    itemPicture.invalidate();
-                                    editItem.addPhotograph(photo);
-                                    deletePicture.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-                    } else {
-                        Log.d(TAG, "error taking picture with Camera");
+                    // Continue with the task to get the download URL
+                    return db.getImage(photo.getName());
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            Glide.with(getActivity()).load(downloadUri).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(itemPicture);
+                            itemPicture.invalidate();
+                            editItem.addPhotograph(photo);
+                            deletePicture.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+            } else {
+                Log.d(TAG, "error taking picture with Camera");
+            }
+        }
+    });
+
+    /**
+     * Handles the result of picking visual media (e.g., gallery images).
+     * If successful, uploads the image to the database, retrieves its download URL,
+     * and displays the image using Glide library.
+     */
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia = registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
+        if (imageUri != null) {
+            Photograph photo = new Photograph(imageUri.toString());
+            photo.setName(UUID.randomUUID().toString());
+            UploadTask uploadTask = db.addImage(photo.getName(), imageUri);
+
+            uploadTask.continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return db.getImage(photo.getName());
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        Glide.with(getActivity()).load(downloadUri).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(itemPicture);
+                        itemPicture.invalidate();
+                        editItem.addPhotograph(photo);
+                        deletePicture.setVisibility(View.VISIBLE);
                     }
                 }
-            }
-    );
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
-            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
-                if (imageUri != null) {
-                    Photograph photo = new Photograph(imageUri.toString());
-                    photo.setName(UUID.randomUUID().toString());
-                    UploadTask uploadTask = db.addImage(photo.getName(), imageUri);
-
-                    uploadTask.continueWithTask(task -> {
-                        if (!task.isSuccessful()) {
-                            throw task.getException();
-                        }
-
-                        // Continue with the task to get the download URL
-                        return db.getImage(photo.getName());
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
-                                Glide.with(getActivity())
-                                        .load(downloadUri)
-                                        .apply(new RequestOptions()
-                                                .placeholder(R.drawable.defaultuser)
-                                                .error(R.drawable.defaultuser))
-                                        .into(itemPicture);
-                                itemPicture.invalidate();
-                                editItem.addPhotograph(photo);
-                                deletePicture.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    });
-                }
             });
+        }
+    });
 
+    /**
+     * Called when the fragment is attached to an activity.
+     *
+     * @param context The context to which the fragment is attached.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -227,14 +235,21 @@ public class EditItemFragment extends DialogFragment {
         }
     }
 
-
+    /**
+     * Interface for communication with the hosting activity.
+     */
     public interface OnFragmentInteractionListener {
         void onItemEdited(Item item);
 
         void updateTotalCostAfterEdit();
     }
 
-
+    /**
+     * Creates and returns an AlertDialog for the fragment.
+     *
+     * @param savedInstanceState The saved instance state, if any.
+     * @return The created dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -251,6 +266,7 @@ public class EditItemFragment extends DialogFragment {
         itemPicture = view.findViewById(R.id.image_view);
         deletePicture = view.findViewById(R.id.delete_photo_button);
         deletePicture.setVisibility(View.GONE);
+
 
         dateAdded.setOnClickListener(this::displayCalendar);
 
@@ -286,19 +302,16 @@ public class EditItemFragment extends DialogFragment {
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pickMedia.launch(new PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                        .build());
+                pickMedia.launch(new PickVisualMediaRequest.Builder().setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE).build());
             }
         });
 
         cameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
-                if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+            public void onClick(View v) {
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     takePhotoCamera();
-                }
-                else{
+                } else {
                     requestCameraPermission();
                 }
             }
@@ -309,9 +322,6 @@ public class EditItemFragment extends DialogFragment {
         itemSerial.setText(editItem.getSerialNumber().toString());
         itemModel.setText(editItem.getModel());
         itemMake.setText(editItem.getMake());
-//        String t = editItem.getPurchaseDate().toString();
-//        SimpleDateFormat sdf = new SimpleDateFormat("MM/DD/YYYY");
-//        sdf.format(editItem.getPurchaseDate());
         dateAdded.setText(new SimpleDateFormat("MM/dd/YYYY").format(editItem.getPurchaseDate()));
         itemPrice.setText(editItem.getValue().toString());
         itemComments.setText(editItem.getComment());
@@ -328,9 +338,7 @@ public class EditItemFragment extends DialogFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        Dialog dialog = builder.setView(view)
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("OK", null).create(); //create a dialog with buttons and title
+        Dialog dialog = builder.setView(view).setNegativeButton("Cancel", null).setPositiveButton("OK", null).create(); //create a dialog with buttons and title
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -347,13 +355,12 @@ public class EditItemFragment extends DialogFragment {
                         Glide.with(getActivity()).load("").into(itemPicture);
                     }
                 });
-                scannerButton.setOnClickListener(new View.OnClickListener(){
+                scannerButton.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v){
-                        if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    public void onClick(View v) {
+                        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                             pickImageCamera();
-                        }
-                        else{
+                        } else {
                             requestCameraPermission();
                         }
                     }
@@ -361,9 +368,9 @@ public class EditItemFragment extends DialogFragment {
                 parseButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (imageURI == null){
+                        if (imageURI == null) {
                             //error
-                        }else{
+                        } else {
                             detectResultFromImage();
                         }
                     }
@@ -375,7 +382,7 @@ public class EditItemFragment extends DialogFragment {
                     public void onClick(View v) {
                         String tagText = inputTagEditText.getText().toString().trim();
                         if (!tagText.isEmpty()) {
-                            if(isTagAlreadyAdded(tagText)) {
+                            if (isTagAlreadyAdded(tagText)) {
                                 Toast.makeText(getContext(), "This tag has already been added", Toast.LENGTH_SHORT).show();
                             } else {
                                 Chip chip = new Chip(getContext());
@@ -503,7 +510,12 @@ public class EditItemFragment extends DialogFragment {
         return dialog;
     }
 
-
+    /**
+     * Validates if the name input is valid.
+     *
+     * @param name The name input to be validated.
+     * @return True if the name is valid, false otherwise.
+     */
     private boolean isValidName(String name) {
         if (name.length() > 15) {
             return false;
@@ -511,7 +523,12 @@ public class EditItemFragment extends DialogFragment {
         return true;
     }
 
-
+    /**
+     * Validates if the description input is valid.
+     *
+     * @param description The description input to be validated.
+     * @return True if the description is valid, false otherwise.
+     */
     private boolean isValidDescription(String description) {
         if (description.length() > 50) {
             return false;
@@ -519,7 +536,12 @@ public class EditItemFragment extends DialogFragment {
         return true;
     }
 
-
+    /**
+     * Checks if the given model string is valid.
+     *
+     * @param model The model string to be validated.
+     * @return true if the model is valid (length is 20 characters or less), false otherwise.
+     */
     private boolean isValidModel(String model) {
         if (model.length() > 20) {
             return false;
@@ -527,7 +549,12 @@ public class EditItemFragment extends DialogFragment {
         return true;
     }
 
-
+    /**
+     * Checks if the given make string is valid.
+     *
+     * @param make The make string to be validated.
+     * @return true if the make is valid (length is 20 characters or less), false otherwise.
+     */
     private boolean isValidMake(String make) {
         if (make.length() > 20) {
             return false;
@@ -535,13 +562,23 @@ public class EditItemFragment extends DialogFragment {
         return true;
     }
 
-
+    /**
+     * Checks if the given price string is a valid numeric format with up to two decimal places.
+     *
+     * @param price The price string to be validated.
+     * @return true if the price is valid, false otherwise.
+     */
     private boolean isValidPrice(String price) {
         String priceText = String.valueOf(price);
         return priceText.matches("^(0\\.\\d{1,2}|[1-9]\\d*\\.?\\d{0,2})$");
     }
 
-
+    /**
+     * Checks if the given comment string is valid.
+     *
+     * @param comment The comment string to be validated.
+     * @return true if the comment is valid (length is 25 characters or less), false otherwise.
+     */
     private boolean isValidComment(String comment) {
         if (comment.length() > 25) {
             return false;
@@ -549,7 +586,12 @@ public class EditItemFragment extends DialogFragment {
         return true;
     }
 
-
+    /**
+     * Checks if the given day string represents a valid day of the month.
+     *
+     * @param day The day string to be validated.
+     * @return true if the day is valid (within the range 1 to 31), false otherwise.
+     */
     private boolean isValidDay(String day) {
         if (!day.isEmpty()) {
             int dayValue = Integer.parseInt(day);
@@ -558,7 +600,12 @@ public class EditItemFragment extends DialogFragment {
         return false;
     }
 
-
+    /**
+     * Checks if the given month string represents a valid month of the year.
+     *
+     * @param month The month string to be validated.
+     * @return true if the month is valid (within the range 1 to 12), false otherwise.
+     */
     private boolean isValidMonth(String month) {
         if (!month.isEmpty()) {
             int monthValue = Integer.parseInt(month);
@@ -567,47 +614,63 @@ public class EditItemFragment extends DialogFragment {
         return false;
     }
 
-
+    /**
+     * Checks if the given year string is a valid four-digit year.
+     *
+     * @param year The year string to be validated.
+     * @return true if the year is valid (four digits), false otherwise.
+     */
     private boolean isValidYear(String year) {
         if (!year.isEmpty() && year.matches("\\d{4}")) {
             return true;
         }
         return false;
     }
-    private void pickImageCamera(){
+
+    /**
+     * Picks an image from the camera.
+     */
+    private void pickImageCamera() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Sample Title");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Sample Description");
 
-        imageURI = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+        imageURI = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,imageURI);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, imageURI);
         cameraActivityResultLauncher.launch(intent);
 
     }
 
-    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK){
-                        Intent data = result.getData();
-                        Log.d(TAG,"onActivityResult: imageURI: "+ imageURI);
-                    }
-                    else{
-                        //Error
-                    }
-                }
+    /**
+     * Requests camera permission.
+     */
+    private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if (result.getResultCode() == Activity.RESULT_OK) {
+                Intent data = result.getData();
+                Log.d(TAG, "onActivityResult: imageURI: " + imageURI);
+            } else {
+                //Error
             }
-    );
-    private void requestCameraPermission(){
+        }
+    });
+
+    /**
+     * Requests camera permission.
+     */
+    private void requestCameraPermission() {
         requestPermissionLauncher.launch(Manifest.permission.CAMERA);
     }
-    private void detectResultFromImage(){
-        try{
-            InputImage inputImage = InputImage.fromFilePath(getActivity(),imageURI);
+
+    /**
+     * Detects barcode or QR code information from the image.
+     */
+    private void detectResultFromImage() {
+        try {
+            InputImage inputImage = InputImage.fromFilePath(getActivity(), imageURI);
             Task<List<Barcode>> barcodeResult = barcodeScanner.process(inputImage).addOnSuccessListener(new OnSuccessListener<List<Barcode>>() {
                 @Override
                 public void onSuccess(List<Barcode> barcodes) {
@@ -619,22 +682,26 @@ public class EditItemFragment extends DialogFragment {
                     itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
                 }
             });
-        }
-        catch (Exception e){
-            Toast.makeText(getActivity(),"Failed due to "+e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(getActivity(), "Failed due to " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void extractBarCodeQRCodeInfo(List<Barcode> barcodes){
+    /**
+     * Extracts barcode or QR code information from the detected barcodes.
+     *
+     * @param barcodes The list of detected barcodes.
+     */
+    private void extractBarCodeQRCodeInfo(List<Barcode> barcodes) {
         if (barcodes.isEmpty()) {
             itemSerial.setError("Unable to parse that barcode. The image may be blurry, or the barcode is not supported.");
         }
-        for(Barcode barcode : barcodes){
+        for (Barcode barcode : barcodes) {
             Rect bounds = barcode.getBoundingBox();
             Point[] corners = barcode.getCornerPoints();
 
             String rawValue = barcode.getRawValue();
-            Log.d(TAG,"extractBarCodeQRCodeInfo: rawValue: "+ rawValue);
+            Log.d(TAG, "extractBarCodeQRCodeInfo: rawValue: " + rawValue);
             itemSerial.setText(barcode.getDisplayValue());
         }
     }

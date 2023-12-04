@@ -6,18 +6,18 @@
  * for database operations throughout the application.
  */
 
-
 package com.example.cmput301project;
+
+// Import statements
 
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.Photograph;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -33,16 +33,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Database {
+
+    // Membership variable declaration
     private static Database instance = null;
     private final FirebaseFirestore db;
-
     private final FirebaseStorage storage;
     private final CollectionReference usersRef;
-
     private StorageReference itemImageRef;
     private CollectionReference itemsRef;
     private final UserManager userManager;
-    private Database(){
+
+    private Database() {
         db = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
         usersRef = db.collection("usernames");
@@ -55,8 +56,8 @@ public class Database {
      *
      * @return the instance of the user manager class
      */
-    public static Database getInstance(){
-        if (instance == null){
+    public static Database getInstance() {
+        if (instance == null) {
             instance = new Database();
         }
         return instance;
@@ -65,16 +66,15 @@ public class Database {
     /**
      * Registers the user in the database, with the doc name being the user's Id
      *
-     * @param userId string that is the user's id
+     * @param userId    string that is the user's id
      * @param userEmail string that is the user's email
-     * @param userName string that is the user's username
+     * @param userName  string that is the user's username
      */
-    public void registerUser(String userId, String userEmail, String userName){
+    public void registerUser(String userId, String userEmail, String userName) {
         HashMap<String, String> data = new HashMap<>();
         data.put("username", userName);
         data.put("email", userEmail);
-        usersRef.document(userId)
-                .set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
+        usersRef.document(userId).set(data).addOnSuccessListener(unused -> Log.d("Firestore", "New User Created!"));
     }
 
     /**
@@ -82,7 +82,7 @@ public class Database {
      *
      * @param item item to add
      */
-    public void addItem(Item item){
+    public void addItem(Item item) {
         itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Added!", item.getName())));
     }
 
@@ -91,7 +91,7 @@ public class Database {
      *
      * @param item item to edit
      */
-    public void editItem(Item item){
+    public void editItem(Item item) {
         itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
     }
 
@@ -100,12 +100,10 @@ public class Database {
      *
      * @param item item to delete
      */
-    public void deleteItem(Item item){
-        if(item.getPhotographs() != null){
-            for(Photograph ph : item.getPhotographs()){
-                itemImageRef.child("/"+ph.getName()).delete().addOnFailureListener(
-                        e -> Log.d("Firestore-Images", String.format("Failure when deleting photo: %s", ph.getName()))
-                );
+    public void deleteItem(Item item) {
+        if (item.getPhotographs() != null) {
+            for (Photograph ph : item.getPhotographs()) {
+                itemImageRef.child("/" + ph.getName()).delete().addOnFailureListener(e -> Log.d("Firestore-Images", String.format("Failure when deleting photo: %s", ph.getName())));
             }
         }
         itemsRef.document(item.getUniqueId().toString()).delete().addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
@@ -114,10 +112,10 @@ public class Database {
     /**
      * Adds array and corresponding arrayAdapter as listeners to the changes in a firebase collection
      *
-     * @param array array to update as listener
+     * @param array        array to update as listener
      * @param arrayAdapter arrayAdapter to change when change to data occurs
      */
-    public void addArrayAsListener(ArrayList<Item> array, ArrayAdapter<Item> arrayAdapter){
+    public void addArrayAsListener(ArrayList<Item> array, ArrayAdapter<Item> arrayAdapter) {
         itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot querySnapshots, @Nullable FirebaseFirestoreException error) {
@@ -127,7 +125,7 @@ public class Database {
                 }
                 if (querySnapshots != null) {
                     array.clear();
-                    for (QueryDocumentSnapshot doc: querySnapshots) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
                         String name = doc.getId();
                         Item item = doc.toObject(Item.class);
                         Log.d("Firestore", String.format("Item(%s) fetched", name));
@@ -139,18 +137,43 @@ public class Database {
         });
     }
 
-    public UploadTask addImage(String name, Uri uri){
-        return itemImageRef.child("/"+name).putFile(uri);
+    /**
+     * Adds an image to the storage with the specified name and URI.
+     *
+     * @param name The name of the image.
+     * @param uri  The URI of the image to be uploaded.
+     * @return An UploadTask representing the asynchronous operation of uploading the image.
+     */
+    public UploadTask addImage(String name, Uri uri) {
+        return itemImageRef.child("/" + name).putFile(uri);
     }
 
-    public Task<Uri> getImage(String name){
-        return itemImageRef.child("/"+name).getDownloadUrl();
+    /**
+     * Retrieves the download URL for an image with the specified name.
+     *
+     * @param name The name of the image.
+     * @return A Task containing the Uri of the image's download URL.
+     */
+    public Task<Uri> getImage(String name) {
+        return itemImageRef.child("/" + name).getDownloadUrl();
     }
 
-    public StorageReference getImageForGlide(String name){
-        return itemImageRef.child("/"+name);
+    /**
+     * Retrieves the StorageReference for an image with the specified name, suitable for Glide.
+     *
+     * @param name The name of the image.
+     * @return The StorageReference for the specified image.
+     */
+    public StorageReference getImageForGlide(String name) {
+        return itemImageRef.child("/" + name);
     }
 
+
+    /**
+     * Adds a listener to monitor changes in the total value of items in the Firestore database.
+     *
+     * @param totalListener The TotalListener to be notified of total value changes.
+     */
     public void addTotalListener(TotalListener totalListener) {
         itemsRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -161,7 +184,7 @@ public class Database {
                 }
                 if (querySnapshots != null) {
                     totalListener.setTotal(0.0);
-                    for (QueryDocumentSnapshot doc: querySnapshots) {
+                    for (QueryDocumentSnapshot doc : querySnapshots) {
                         Item item = doc.toObject(Item.class);
                         totalListener.addTotal(item.getValue());
                     }
@@ -172,14 +195,20 @@ public class Database {
         });
     }
 
-    public void setItemCollection(){
-        itemsRef = db.collection("store")
-                .document(userManager.getUserID())
-                .collection("items");
+    /**
+     * Sets the Firestore collection references for items and user data.
+     */
+    public void setItemCollection() {
+        itemsRef = db.collection("store").document(userManager.getUserID()).collection("items");
         itemImageRef = storage.getReference().child("images");
     }
 
-    public CollectionReference getUsersRef(){
+    /**
+     * Retrieves the Firestore collection reference for users.
+     *
+     * @return The CollectionReference for the users in Firestore.
+     */
+    public CollectionReference getUsersRef() {
         return usersRef;
     }
 }

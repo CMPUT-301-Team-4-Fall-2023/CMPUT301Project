@@ -10,17 +10,16 @@
  */
 
 
-
 package com.example.cmput301project.activities;
+
+// Import statements
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +54,8 @@ import java.util.Comparator;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements AddItemFragment.OnFragmentInteractionListener, EditItemFragment.OnFragmentInteractionListener, ViewItemFragment.OnFragmentInteractionListener, ItemFiltersFragment.OnFragmentInteractionListener, AddTagsSelectedItemsFragment.OnFragmentInteractionListener, SortItemsFragment.OnFragmentInteractionListener {
+
+    // Member variable declaration
     private Database db;
     private ArrayList<Item> items;
     private ItemList itemList;
@@ -72,26 +73,25 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private CircleImageView profilePicture;
     private UserManager userManager;
 
+    /**
+     * onResume method is overridden to refresh the user profile picture
+     * when the MainActivity is resumed.
+     */
     @Override
     protected void onResume() {
         super.onResume();
-        Glide.with(getApplicationContext())
-                .load(userManager.getUserProfilePicture())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.defaultuser)
-                        .error(R.drawable.defaultuser))
-                .into(profilePicture);
+        Glide.with(getApplicationContext()).load(userManager.getUserProfilePicture()).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(profilePicture);
     }
 
     /**
+     * Overrides the onCreate method to set up the main activity.
+     * Initializes UI elements, listeners, Database, and item adapters.
+     *
      * @param savedInstanceState If the activity is being re-initialized after
-     *                           previously being shut down then this Bundle contains the data it most
-     *                           recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
-     *
-     *
+     *                           previously being shut down, contains the data it
+     *                           most recently supplied in onSaveInstanceState.
+     *                           Otherwise, it is null.
      */
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,12 +113,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
             navigateToUserProfile();
         });
 
-        Glide.with(getApplicationContext())
-                .load(userManager.getUserProfilePicture())
-                .apply(new RequestOptions()
-                        .placeholder(R.drawable.defaultuser)
-                        .error(R.drawable.defaultuser))
-                .into(profilePicture);
+        Glide.with(getApplicationContext()).load(userManager.getUserProfilePicture()).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(profilePicture);
 
         deleteButton = findViewById(R.id.delete_items_button);
         deleteButton.setOnClickListener(v -> {
@@ -190,11 +185,8 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                     if (sortRadioTag.toString().equals("TAG")) {
                         args.putString("tagString", sortTagString);
                     }
-
                     sortItemsFragment.setArguments(args);
-
                 }
-
                 sortItemsFragment.show(getSupportFragmentManager(), "SORT_ITEMS");
             }
         });
@@ -204,13 +196,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         db.addTotalListener(totalListener);
     }
 
+    /**
+     * Navigates to the user profile activity when the profile picture is clicked.
+     */
     private void navigateToUserProfile() {
         Intent i = new Intent(MainActivity.this, UserProfileActivity.class);
         startActivity(i);
     }
 
     /**
-     * @param item
+     * Handles the user's response to adding a new item.
+     *
+     * @param item The item to be added.
      */
     @Override
     public void onOKPressed(Item item) {
@@ -218,7 +215,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     *
+     * Updates the total cost display after any changes are made.
      */
     @Override
     public void updateTotalCost() { //add up all costs of expenses within list, update display
@@ -227,7 +224,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     * @param item
+     * Initiates the editing of a specific item.
+     *
+     * @param item The item to be edited.
      */
     @Override
     public void editItem(Item item) {
@@ -235,14 +234,18 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     * @param item
+     * Initiates the viewing of a specific item.
+     *
+     * @param item The item to be viewed.
      */
     public void viewItem(Item item) {
         new ViewItemFragment(item).show(getSupportFragmentManager(), "VIEW_ITEM");
     }
 
     /**
-     * @param item
+     * Handles the user's request to delete a specific item.
+     *
+     * @param item The item to be deleted.
      */
     @Override
     public void onDeletePressed(Item item) { //delete selected expense, update display
@@ -250,7 +253,9 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     * @param i
+     * Handles the user's response to saving item filters.
+     *
+     * @param i The ItemFilter containing filter criteria.
      */
     @Override
     public void onFiltersSaved(ItemFilter i) {
@@ -261,10 +266,16 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Handles the user's response to saving the selected radio button for sorting.
+     *
+     * @param tag       The tag associated with the selected radio button.
+     * @param tagString The tag string associated with the selected radio button (if applicable).
+     */
     @Override
     public void onRadioButtonSaved(Object tag, String tagString) {
         sortRadioTag = tag;
-        switch(tag.toString()) {
+        switch (tag.toString()) {
             case "DATE_OLDEST":
                 sortByDate(true);
                 break;
@@ -299,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     *
+     * Handles the user's request to clear item filters.
      */
     @Override
     public void onFiltersCleared() {
@@ -311,11 +322,13 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     /**
-     * @param item
+     * Handles the user's response to editing a specific item.
+     *
+     * @param item The item to be edited.
      */
     @Override
     public void onItemEdited(Item item) {
-        //interfaces can't have same named methods
+        // Interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
         db.editItem(item);
     }
@@ -325,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      */
     @Override
     public void updateTotalCostAfterEdit() {
-        //interfaces can't have same named methods
+        // Interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
         updateTotalCost();
     }
@@ -344,50 +357,71 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
         itemAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * Sorts the items by date in either ascending or descending order.
+     *
+     * @param ascending True for ascending order, false for descending order.
+     */
     public void sortByDate(boolean ascending) {
         Collections.sort(items, new Comparator<Item>() {
             @Override
             public int compare(Item item1, Item item2) {
-                return ascending
-                    ? item1.getPurchaseDate().compareTo(item2.getPurchaseDate())
-                    : item2.getPurchaseDate().compareTo(item1.getPurchaseDate());
+                return ascending ? item1.getPurchaseDate().compareTo(item2.getPurchaseDate()) : item2.getPurchaseDate().compareTo(item1.getPurchaseDate());
             }
         });
         itemAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Sorts the items by price in either ascending or descending order.
+     *
+     * @param ascending True for ascending order, false for descending order.
+     */
     public void sortByPrice(boolean ascending) {
         Collections.sort(items, new Comparator<Item>() {
             @Override
             public int compare(Item item1, Item item2) {
-                return ascending
-                    ? item1.getValue().compareTo(item2.getValue())
-                    : item2.getValue().compareTo(item1.getValue());
+                return ascending ? item1.getValue().compareTo(item2.getValue()) : item2.getValue().compareTo(item1.getValue());
             }
         });
         itemAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Sorts the items by make in either ascending or descending order.
+     *
+     * @param ascending True for ascending order, false for descending order.
+     */
     public void sortByMake(boolean ascending) {
         Collections.sort(items, new Comparator<Item>() {
             @Override
             public int compare(Item item1, Item item2) {
-                return ascending
-                    ? item1.getMake().compareTo(item2.getMake())
-                    : item2.getMake().compareTo(item1.getMake());
+                return ascending ? item1.getMake().compareTo(item2.getMake()) : item2.getMake().compareTo(item1.getMake());
             }
         });
         itemAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Sorts the items by description in either ascending or descending order.
+     *
+     * @param ascending True for ascending order, false for descending order.
+     */
     public void sortByDescription(boolean ascending) {
         Collections.sort(items, new Comparator<Item>() {
             @Override
             public int compare(Item item1, Item item2) {
-                return ascending
-                    ? item1.getDescription().compareTo(item2.getDescription())
-                    : item2.getDescription().compareTo(item1.getDescription());
+                return ascending ? item1.getDescription().compareTo(item2.getDescription()) : item2.getDescription().compareTo(item1.getDescription());
             }
         });
         itemAdapter.notifyDataSetChanged();
     }
+
+    /**
+     * Sorts the items by a specified tag.
+     *
+     * @param tagString The tag string to be used for sorting.
+     */
     public void sortByTag(String tagString) {
         System.out.println("test");
         System.out.println(tagString);

@@ -6,7 +6,6 @@
  * user interactions, including setting and clearing filters, and invokes the listener accordingly.
  */
 
-
 package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;
@@ -25,15 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
-import com.example.cmput301project.itemClasses.Tag;
-import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 /**
  * Dialog fragment displayed when the sort button is clicked. Allows users to sort items
  * based on criteria such as tags. Provides input fields for users to enter tag values
@@ -58,11 +50,11 @@ public class SortItemsFragment extends DialogFragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             listener = (OnFragmentInteractionListener) context;
-        }
-        else {
+        } else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
         }
     }
+
     /**
      * Interface for communication between this fragment and the hosting activity.
      * Defines a method to notify the activity when a sorting option is selected.
@@ -72,7 +64,7 @@ public class SortItemsFragment extends DialogFragment {
          * Called when a sorting option is selected. Passes the selected sorting option (tag or other)
          * and the tag value if applicable.
          *
-         * @param tag      The selected sorting option.
+         * @param tag       The selected sorting option.
          * @param tagString The tag value if the sorting option is "TAG," otherwise null.
          */
         void onRadioButtonSaved(Object tag, String tagString);
@@ -103,13 +95,13 @@ public class SortItemsFragment extends DialogFragment {
                 String tagString = args.getString("tagString");
                 tagEditText.setText(tagString);
             }
-            RadioButton radioButton =  radioGroup.findViewWithTag(tag);
+            RadioButton radioButton = radioGroup.findViewWithTag(tag);
             radioButton.setChecked(true);
         }
 
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("OK",null)
+                .setPositiveButton("OK", null)
                 .create();
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
