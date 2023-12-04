@@ -50,6 +50,14 @@ public class Database {
         userManager = UserManager.getInstance();
     }
 
+    public interface OnEditCompleteListener {
+        void onEditComplete();
+    }
+
+    public interface OnAddCompleteListener {
+        void onAddComplete();
+    }
+
     /**
      * Singleton for the firestore database. Holds the database instance and provides all methods
      * for interacting with the database
@@ -82,18 +90,40 @@ public class Database {
      *
      * @param item item to add
      */
-    public void addItem(Item item) {
-        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Added!", item.getName())));
+    public void addItem(Item item, OnAddCompleteListener listener) {
+        itemsRef.document(item.getUniqueId().toString())
+                .set(item)
+                .addOnSuccessListener(unused -> {
+                    Log.d("Firestore", String.format("Item %s Added!", item.getName()));
+                    listener.onAddComplete(); // Assuming you have a corresponding method in your listener
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if necessary
+                    Log.e("Firestore", "Error adding item", e);
+                });
     }
+
 
     /**
      * Edits item in a firebase collection for authenticated user
      *
      * @param item item to edit
      */
-    public void editItem(Item item) {
-        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
+    public void editItem(Item item, OnEditCompleteListener listener) {
+        itemsRef.document(item.getUniqueId().toString())
+                .set(item)
+                .addOnSuccessListener(unused -> {
+                    Log.d("Firestore", String.format("Item %s Edited!", item.getName()));
+                    listener.onEditComplete();
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if necessary
+                    Log.e("Firestore", "Error editing item", e);
+                });
     }
+
+
+
 
     /**
      * Deletes item from a firebase collection for authenticated user
