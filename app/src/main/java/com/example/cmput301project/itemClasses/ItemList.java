@@ -126,6 +126,7 @@ public class ItemList {
      */
     private void filterByTag(String tag) {
         List<Item> f = filteredItems.stream().filter(item -> {
+                    if(item.getTags() == null) {return false;}
                     for (int i = 0; i < item.getTags().size(); i++) {
                         if (item.getTags().size() == 0) {
                             return false;
