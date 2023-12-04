@@ -129,6 +129,8 @@ public class AddItemFragment extends DialogFragment {
     private Button cameraButton;
     private Button galleryButton;
 
+    private Button deletePicture;
+
     private Uri cameraUri;
 
     private void takePhotoCamera(){
@@ -177,6 +179,7 @@ public class AddItemFragment extends DialogFragment {
                                         newItem = new Item();
                                     }
                                     newItem.addPhotograph(photo);
+                                    deletePicture.setVisibility(View.VISIBLE);
                                 }
                             }
                         });
@@ -216,6 +219,7 @@ public class AddItemFragment extends DialogFragment {
                                     newItem = new Item();
                                 }
                                 newItem.addPhotograph(photo);
+                                deletePicture.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -287,6 +291,17 @@ public class AddItemFragment extends DialogFragment {
         galleryButton = view.findViewById(R.id.gallery_button);
         cameraButton = view.findViewById(R.id.camera_button);
         itemPicture = view.findViewById(R.id.image_view);
+        deletePicture = view.findViewById(R.id.delete_photo_button);
+        deletePicture.setVisibility(View.GONE);
+
+        deletePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newItem.setPhotographs(null);
+                deletePicture.setVisibility(View.GONE);
+                Glide.with(getActivity()).load("").into(itemPicture);
+            }
+        });
         galleryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
