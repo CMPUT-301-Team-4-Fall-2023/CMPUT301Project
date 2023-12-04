@@ -71,9 +71,9 @@ public class MainActivityTest {
         onView(withId(R.id.serial_edit_text)).perform(ViewActions.typeText("12345"));
         onView(withId(R.id.model_edit_text)).perform(ViewActions.typeText("House Model"));
         onView(withId(R.id.make_edit_text)).perform(ViewActions.typeText("House Make"));
-        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
-        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
-        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
+//        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
+//        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
+//        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
         onView(withId(R.id.input_tag_edit_text)).perform(ViewActions.typeText("My Tag"));
         onView(withId(R.id.add_tags_button)).perform(click());
         onView(withId(R.id.price_edit_text)).perform(ViewActions.typeText("1234.56"));
@@ -105,9 +105,9 @@ public class MainActivityTest {
         onView(withId(R.id.serial_edit_text)).perform(ViewActions.typeText("12345"));
         onView(withId(R.id.model_edit_text)).perform(ViewActions.typeText("House Model"));
         onView(withId(R.id.make_edit_text)).perform(ViewActions.typeText("House Make"));
-        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
-        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
-        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
+//        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
+//        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
+//        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
         onView(withId(R.id.input_tag_edit_text)).perform(ViewActions.typeText("My Tag"));
         onView(withId(R.id.add_tags_button)).perform(click());
         onView(withId(R.id.price_edit_text)).perform(ViewActions.typeText("1234.56"));
@@ -142,9 +142,9 @@ public class MainActivityTest {
         onView(withId(R.id.serial_edit_text)).perform(ViewActions.typeText("12345"));
         onView(withId(R.id.model_edit_text)).perform(ViewActions.typeText("House Model"));
         onView(withId(R.id.make_edit_text)).perform(ViewActions.typeText("House Make"));
-        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
-        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
-        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
+//        onView(withId(R.id.item_day_edit_text)).perform(ViewActions.typeText("12"));
+//        onView(withId(R.id.item_month_edit_text)).perform(ViewActions.typeText("06"));
+//        onView(withId(R.id.item_year_edit_text)).perform(ViewActions.typeText("2023"));
         onView(withId(R.id.input_tag_edit_text)).perform(ViewActions.typeText("My Tag"));
         onView(withId(R.id.add_tags_button)).perform(click());
         onView(withId(R.id.price_edit_text)).perform(ViewActions.typeText("1234.56"));
