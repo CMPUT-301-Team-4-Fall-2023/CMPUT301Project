@@ -34,17 +34,25 @@ import com.google.android.material.chip.ChipGroup;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+/**
+ * Dialog fragment displayed when the sort button is clicked. Allows users to sort items
+ * based on criteria such as tags. Provides input fields for users to enter tag values
+ * and select sorting options using radio buttons. Utilizes a listener interface to
+ * communicate with the hosting activity, notifying it when sorting criteria are selected.
+ * Handles user interactions, including selecting sorting options and invoking the listener accordingly.
+ */
 public class SortItemsFragment extends DialogFragment {
     private RadioGroup radioGroup;
     private EditText tagEditText;
     private Object tag;
     private OnFragmentInteractionListener listener;
 
-    public SortItemsFragment(){
-
-    }
-
+    /**
+     * Called when the fragment is attached to an activity. Sets the listener if the activity
+     * implements the OnFragmentInteractionListener interface.
+     *
+     * @param context The context in which the fragment is attached.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -55,12 +63,30 @@ public class SortItemsFragment extends DialogFragment {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
         }
     }
-
+    /**
+     * Interface for communication between this fragment and the hosting activity.
+     * Defines a method to notify the activity when a sorting option is selected.
+     */
     public interface OnFragmentInteractionListener {
+        /**
+         * Called when a sorting option is selected. Passes the selected sorting option (tag or other)
+         * and the tag value if applicable.
+         *
+         * @param tag      The selected sorting option.
+         * @param tagString The tag value if the sorting option is "TAG," otherwise null.
+         */
         void onRadioButtonSaved(Object tag, String tagString);
 
     }
 
+    /**
+     * Creates the dialog with the specified layout and initializes UI elements.
+     * Sets up radio button listeners and handles user interactions.
+     *
+     * @param savedInstanceState If the fragment is being re-created from a previous saved state,
+     *                           this is the state.
+     * @return The created dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

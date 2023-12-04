@@ -44,10 +44,12 @@ public class ItemFiltersFragment extends DialogFragment {
     private EditText editMake;
     private OnFragmentInteractionListener listener;
 
-    public ItemFiltersFragment(){
-
-    }
-
+    /**
+     * Called when the fragment is attached to an activity. Sets the listener if the activity
+     * implements the OnFragmentInteractionListener interface.
+     *
+     * @param context The context in which the fragment is attached.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -59,11 +61,31 @@ public class ItemFiltersFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Interface for communication between this fragment and the hosting activity.
+     * Defines methods to notify the activity when filters are saved or cleared.
+     */
     public interface OnFragmentInteractionListener {
+        /**
+         * Called when filters are saved. Passes the applied filters as an ItemFilter object.
+         *
+         * @param itemFilter The object containing the applied filters.
+         */
         void onFiltersSaved(ItemFilter itemFilter);
+        /**
+         * Called when filters are cleared.
+         */
         void onFiltersCleared();
     }
 
+    /**
+     * Creates the dialog with the specified layout and initializes UI elements.
+     * Sets up button click listeners and handles user interactions.
+     *
+     * @param savedInstanceState If the fragment is being re-created from a previous saved state,
+     *                           this is the state.
+     * @return The created dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -216,7 +238,12 @@ public class ItemFiltersFragment extends DialogFragment {
         return dialog;
     }
 
-    // Add a helper method to validate the date format
+    /**
+     * Helper method to validate the date format (MM/dd/yyyy).
+     *
+     * @param date The date string to be validated.
+     * @return True if the date has a valid format, false otherwise.
+     */
     private boolean isValidDateFormat(String date) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
