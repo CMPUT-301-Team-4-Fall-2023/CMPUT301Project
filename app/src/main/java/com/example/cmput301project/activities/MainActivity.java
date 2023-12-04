@@ -212,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     @Override
     public void onOKPressed(Item item) {
         db.addItem(item);
+        onFiltersCleared();
     }
 
     /**
@@ -250,6 +251,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     @Override
     public void onDeletePressed(Item item) { //delete selected expense, update display
         db.deleteItem(item);
+        onFiltersCleared();
     }
 
     /**
