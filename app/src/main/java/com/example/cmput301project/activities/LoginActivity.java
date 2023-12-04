@@ -60,8 +60,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkUserLoggedOn(){
-        userManager.setLoggedInUser(userAuth.getCurrentUser());
-        if(userManager.getLoggedInUser() != null){
+        if (userAuth.getCurrentUser() != null){
+            userManager.setLoggedInUser(userAuth.getCurrentUser());
             navigateToMainPage();
         }
     }
