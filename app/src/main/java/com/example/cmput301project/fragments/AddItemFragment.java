@@ -14,6 +14,7 @@ package com.example.cmput301project.fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -68,8 +69,11 @@ import com.google.mlkit.vision.common.InputImage;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -88,9 +92,6 @@ public class AddItemFragment extends DialogFragment {
     private EditText itemDescription;
     private EditText itemSerial;
     private EditText itemModel;
-    private EditText itemDay;
-    private EditText itemMonth;
-    private EditText itemYear;
     private EditText itemComments;
     private EditText itemPrice;
     private EditText itemMake;
@@ -99,6 +100,7 @@ public class AddItemFragment extends DialogFragment {
     private EditText inputTagEditText;
     private ChipGroup chipGroupTags;
     private ImageView itemPicture;
+    private TextView dateAdded;
     private Database db = Database.getInstance();
     private Button addTagButton;
     private Button scannerButton;
@@ -268,9 +270,10 @@ public class AddItemFragment extends DialogFragment {
         itemSerial = view.findViewById(R.id.serial_edit_text);
         itemModel = view.findViewById(R.id.model_edit_text);
         itemMake = view.findViewById(R.id.make_edit_text);
-        itemDay = view.findViewById(R.id.item_day_edit_text);
-        itemMonth = view.findViewById(R.id.item_month_edit_text);
-        itemYear = view.findViewById(R.id.item_year_edit_text);
+        dateAdded = view.findViewById(R.id.date_added);
+//        itemDay = view.findViewById(R.id.item_day_edit_text);
+//        itemMonth = view.findViewById(R.id.item_month_edit_text);
+//        itemYear = view.findViewById(R.id.item_year_edit_text);
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
         title = view.findViewById(R.id.add_item_title);
@@ -286,6 +289,8 @@ public class AddItemFragment extends DialogFragment {
         itemPicture = view.findViewById(R.id.image_view);
         deletePicture = view.findViewById(R.id.delete_photo_button);
         deletePicture.setVisibility(View.GONE);
+
+        dateAdded.setOnClickListener(this::displayCalendar);
 
         deletePicture.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -381,14 +386,13 @@ public class AddItemFragment extends DialogFragment {
                         String serialText = itemSerial.getText().toString().trim();
                         String model = itemModel.getText().toString().trim();
                         String make = itemMake.getText().toString().trim();
-                        String day = itemDay.getText().toString().trim();
-                        String month = itemMonth.getText().toString().trim();
-                        String year = itemYear.getText().toString().trim();
+
                         String priceText = itemPrice.getText().toString().trim();
                         String comments = itemComments.getText().toString().trim();
 
                         // Check if any field is empty
-                        boolean anyFieldsEmpty = name.isEmpty() || description.isEmpty() || model.isEmpty() || make.isEmpty() || day.isEmpty() || month.isEmpty() || year.isEmpty() || priceText.isEmpty() || comments.isEmpty();
+                        boolean anyFieldsEmpty = name.isEmpty() || description.isEmpty() ||
+                                model.isEmpty() || make.isEmpty() || priceText.isEmpty() || comments.isEmpty();
 
                         // Set serial number to 0 if non provided
                         String serial;
@@ -399,11 +403,17 @@ public class AddItemFragment extends DialogFragment {
                         }
 
                         // Validate all fields
-                        boolean isValidFields = isValidName(name) && isValidDescription(description) && isValidModel(model) && isValidMake(make) && isValidPrice(priceText) && isValidComment(comments) && isValidDay(day) && isValidMonth(month) && isValidYear(year);
+
+                        boolean isValidFields = isValidName(name) && isValidDescription(description) && isValidModel(model) && isValidMake(make) &&
+                                isValidPrice(priceText) && isValidComment(comments);
+
+                        if(dateAdded.getText().toString().equals("MM/DD/YYYY")){
+                            dateAdded.setError("Please enter a date");
+                        }
 
                         // Add new item if fields valid
                         if (isValidFields && !anyFieldsEmpty) {
-                            String date = month + "/" + day + "/" + year;
+                            String date = dateAdded.getText().toString();
                             DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
                             Date parsedDate;
                             try {
@@ -460,15 +470,6 @@ public class AddItemFragment extends DialogFragment {
                             if (!isValidComment(comments)) {
                                 itemComments.setError("Max 25 characters");
                             }
-                            if (!isValidDay(day)) {
-                                itemDay.setError(("Invalid day"));
-                            }
-                            if (!isValidMonth(month)) {
-                                itemMonth.setError(("Invalid month"));
-                            }
-                            if (!isValidYear(year)) {
-                                itemYear.setError(("Invalid year"));
-                            }
                             if (name.isEmpty()) {
                                 itemName.setError("Item name required");
                             }
@@ -486,15 +487,6 @@ public class AddItemFragment extends DialogFragment {
                             }
                             if (comments.isEmpty()) {
                                 itemComments.setError("Item comments required");
-                            }
-                            if (day.isEmpty()) {
-                                itemDay.setError("Date required");
-                            }
-                            if (month.isEmpty()) {
-                                itemMonth.setError("Month required");
-                            }
-                            if (year.isEmpty()) {
-                                itemYear.setError("Year required");
                             }
                         }
                     }
@@ -705,6 +697,45 @@ public class AddItemFragment extends DialogFragment {
             String rawValue = barcode.getRawValue();
             Log.d(TAG, "extractBarCodeQRCodeInfo: rawValue: " + rawValue);
             itemSerial.setText(barcode.getDisplayValue());
+        }
+    }
+
+    /**
+     * This will display the calendar widget set to the correct date if the user has chosen one
+     * previously
+     * @param v the textview that the user clicked on
+     */
+    private void displayCalendar(View v) {
+        Calendar cal = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = (fromView, year, month, day) -> {
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+        };
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), date, cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            updateLabel(v, year, month, dayOfMonth);
+        });
+        dialog.show();
+    }
+
+    /**
+     * This will update the textview v with the new date (formatted properly)
+     * @param v The textview that the new date will be put into
+     * @param year The new year
+     * @param month The new month
+     * @param day The new day
+     */
+    private void updateLabel(View v, int year, int month, int day) {
+        if (v instanceof TextView){
+            TextView textView = (TextView) v;
+            String myFormat = "MM/dd/yyyy";
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, day);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.US);
+            textView.setText(dateFormat.format(cal.getTime()));
+            dateAdded.setError(null);
         }
     }
 }

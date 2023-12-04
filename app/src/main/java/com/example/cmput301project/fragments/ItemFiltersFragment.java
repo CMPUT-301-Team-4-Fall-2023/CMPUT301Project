@@ -29,9 +29,12 @@ import com.example.cmput301project.itemClasses.ItemFilter;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -118,8 +121,12 @@ public class ItemFiltersFragment extends DialogFragment {
             String make = args.getString("make");
             String tag = args.getString("tag");
             builder.setNeutralButton("Clear", null);
-            editFromDate.setText(fromString);
-            editToDate.setText(toString);
+            if(fromString != null) {
+                editFromDate.setText(fromString);
+            }
+            if(toString != null) {
+                editToDate.setText(toString);
+            }
             editMake.setText(make);
             editTag.setText(tag);
             if (keywords != null) {
@@ -173,26 +180,9 @@ public class ItemFiltersFragment extends DialogFragment {
                         String makeString = editMake.getText().toString().trim();
                         String tagString = editTag.getText().toString().trim();
 
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 
-                        // Check if both date fields are empty
-                        if (!fromDateString.isEmpty() || !toDateString.isEmpty()) {
-
-                            // Validate date format
-                            if (!isValidDateFormat(fromDateString) || !isValidDateFormat(toDateString)) {
-
-                                if (!isValidDateFormat(fromDateString)) {
-                                    editFromDate.setError("Invalid date format");
-                                }
-                                if (!isValidDateFormat(toDateString)) {
-                                    editToDate.setError("Invalid date format");
-                                }
-                                return;
-                            }
-
-                        }
-
-                        if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+                        if (!fromDateString.equals("MM/DD/YYYY") && !toDateString.equals("MM/DD/YYYY")) {
                             try {
                                 Date fromDate = dateFormat.parse(fromDateString);
                                 Date toDate = dateFormat.parse(toDateString);
@@ -202,7 +192,26 @@ public class ItemFiltersFragment extends DialogFragment {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } else if (!fromDateString.equals("MM/DD/YYYY")){
+                            try{
+                                Date fromDate = dateFormat.parse(fromDateString);
+                                itemFilter.setFrom(fromDate);
+                                itemFilter.setTo(new Date());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else if (!toDateString.equals("MM/DD/YYYY")){
+                            try{
+                                Date toDate = dateFormat.parse(toDateString);
+                                itemFilter.setFrom(new Date(0));
+                                itemFilter.setTo(toDate);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
+
+
+
                         if (!makeString.isEmpty()) {
                             itemFilter.setMake(makeString);
                         }
@@ -246,13 +255,33 @@ public class ItemFiltersFragment extends DialogFragment {
         return dialog;
     }
 
+    /**
+     * This will display the calendar widget set to the correct date if the user has chosen one
+     * previously
+     * @param v the textview that the user clicked on
+     */
     private void displayCalendar(View v) {
         Calendar cal = Calendar.getInstance();
-        DatePickerDialog.OnDateSetListener date = (fromView, year, month, day) -> {
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month);
-            cal.set(Calendar.DAY_OF_MONTH, day);
-        };
+        TextView textView = (TextView) v;
+        DatePickerDialog.OnDateSetListener date;
+        if (!textView.getText().toString().equals("MM/DD/YYYY")) {
+            String[] oldDate = textView.getText().toString().split("/");
+            // THE MONTHS HAVE -1 BECAUSE WHOEVER MADE THIS JAVA LIBRARY STARTS THE MONTHS AT 0??????
+            cal.set(Calendar.MONTH, Integer.parseInt(oldDate[0]) - 1);
+            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(oldDate[1]));
+            cal.set(Calendar.YEAR, Integer.parseInt(oldDate[2]));
+            date = (fromView, year, month, day) -> {
+                cal.set(Calendar.MONTH, Integer.parseInt(oldDate[0]) - 1);
+                cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(oldDate[1]));
+                cal.set(Calendar.YEAR, Integer.parseInt(oldDate[2]));
+            };
+        }else {
+            date = (fromView, year, month, day) -> {
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month);
+                cal.set(Calendar.DAY_OF_MONTH, day);
+            };
+        }
         DatePickerDialog dialog = new DatePickerDialog(getContext(), date, cal.get(Calendar.YEAR),
                 cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
         dialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
@@ -261,6 +290,13 @@ public class ItemFiltersFragment extends DialogFragment {
         dialog.show();
     }
 
+    /**
+     * This will update the textview v with the new date (formatted properly)
+     * @param v The textview that the new date will be put into
+     * @param year The new year
+     * @param month The new month
+     * @param day The new day
+     */
     private void updateLabel(View v, int year, int month, int day) {
         if (v instanceof TextView) {
             TextView textView = (TextView) v;
@@ -271,23 +307,4 @@ public class ItemFiltersFragment extends DialogFragment {
             textView.setText(dateFormat.format(cal.getTime()));
         }
     }
-
-
-    /**
-     * Helper method to validate the date format (MM/dd/yyyy).
-     *
-     * @param date The date string to be validated.
-     * @return True if the date has a valid format, false otherwise.
-     */
-    private boolean isValidDateFormat(String date) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-            dateFormat.setLenient(false);
-            dateFormat.parse(date);
-            return true;
-        } catch (ParseException e) {
-            return false;
-        }
-    }
-
 }

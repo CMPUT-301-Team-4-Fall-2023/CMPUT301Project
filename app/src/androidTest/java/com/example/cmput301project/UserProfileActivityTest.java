@@ -51,12 +51,22 @@ public class UserProfileActivityTest {
     @Test
     public void testBackAndroidUI(){
         Espresso.pressBackUnconditionally();
+        try{
+            Thread.sleep(3000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         assertSame(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 
     @Test
     public void testBackAppUI(){
         onView(withId(R.id.back_button)).perform(click());
+        try{
+            Thread.sleep(3000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         assertSame(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 }

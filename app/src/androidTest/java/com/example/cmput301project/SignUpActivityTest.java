@@ -37,6 +37,11 @@ public class SignUpActivityTest {
     @Test
     public void testActivityReturns(){
         onView(withId(R.id.accountLoginTextView)).perform(click());
+        try{
+            Thread.sleep(3000);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         assertSame(Lifecycle.State.DESTROYED, activityRule.getScenario().getState());
     }
 
