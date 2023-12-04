@@ -40,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
 import android.widget.Toast;
 
@@ -128,6 +129,63 @@ public class AddItemFragment extends DialogFragment {
     private Button cameraButton;
     private Button galleryButton;
 
+    private Uri cameraUri;
+
+    private void takePhotoCamera(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.TITLE, "New Photo");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Item Photo");
+
+        cameraUri = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,cameraUri);
+        capturingImageResultLauncher.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> capturingImageResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Log.d(TAG, "onActivityResult: cameraUri: " + cameraUri);
+                    if (cameraUri != null) {
+                        Photograph photo = new Photograph(cameraUri.toString());
+                        photo.setName(UUID.randomUUID().toString());
+                        UploadTask uploadTask = db.addImage(photo.getName(), cameraUri);
+
+                        uploadTask.continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+
+                            // Continue with the task to get the download URL
+                            return db.getImage(photo.getName());
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    Uri downloadUri = task.getResult();
+                                    Glide.with(getActivity())
+                                            .load(downloadUri)
+                                            .apply(new RequestOptions()
+                                                    .placeholder(R.drawable.defaultuser)
+                                                    .error(R.drawable.defaultuser))
+                                            .into(itemPicture);
+                                    itemPicture.invalidate();
+                                    if (newItem == null) {
+                                        newItem = new Item();
+                                    }
+                                    newItem.addPhotograph(photo);
+                                }
+                            }
+                        });
+                    } else {
+                        Log.d(TAG, "error taking picture with Camera");
+                    }
+                }
+            }
+    );
     private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
                 if (imageUri != null) {
@@ -154,12 +212,10 @@ public class AddItemFragment extends DialogFragment {
                                                 .error(R.drawable.defaultuser))
                                         .into(itemPicture);
                                 itemPicture.invalidate();
-                                ArrayList pictures = new ArrayList<Photograph>();
-                                pictures.add(photo);
                                 if (newItem == null){
                                     newItem = new Item();
                                 }
-                                newItem.setPhotographs(pictures);
+                                newItem.addPhotograph(photo);
                             }
                         }
                     });
@@ -237,6 +293,18 @@ public class AddItemFragment extends DialogFragment {
                 pickMedia.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                         .build());
+            }
+        });
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    takePhotoCamera();
+                }
+                else{
+                    requestCameraPermission();
+                }
             }
         });
 
@@ -557,7 +625,6 @@ public class AddItemFragment extends DialogFragment {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT,imageURI);
         cameraActivityResultLauncher.launch(intent);
-
     }
 
     private final ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(

@@ -92,7 +92,7 @@ public class ViewItemFragment extends DialogFragment {
         itemTags = view.findViewById(R.id.view_item_tags);
         itemPicture = view.findViewById(R.id.image_view);
 
-        if(!viewedItem.getPhotographs().isEmpty()){
+        if(viewedItem.getPhotographs() != null && !viewedItem.getPhotographs().isEmpty()){
             db.getImage(viewedItem.getPhotographs().get(0).getName()).addOnSuccessListener(
                     new OnSuccessListener<Uri>() {
                         @Override
@@ -123,13 +123,14 @@ public class ViewItemFragment extends DialogFragment {
 
         // Assuming the Item class has a method getTags() that returns a List of Tag objects
         StringBuilder tagsBuilder = new StringBuilder();
-        for (Tag tag : viewedItem.getTags()) {
-            if (tagsBuilder.length() > 0) {
-                tagsBuilder.append(" | "); // Separator for multiple tags
+        if(viewedItem.getTags() != null){
+            for (Tag tag : viewedItem.getTags()) {
+                if (tagsBuilder.length() > 0) {
+                    tagsBuilder.append(" | "); // Separator for multiple tags
+                }
+                tagsBuilder.append(tag.getName()); // Append the tag name to the builder
             }
-            tagsBuilder.append(tag.getName()); // Append the tag name to the builder
         }
-
         // Set the tags text from the StringBuilder
         itemTags.setText("Tags: " + tagsBuilder.toString());
 

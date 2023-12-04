@@ -13,6 +13,7 @@ package com.example.cmput301project.itemClasses;
 
 import com.example.cmput301project.itemClasses.Photograph;
 
+import org.checkerframework.checker.units.qual.A;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
@@ -129,8 +130,9 @@ public class Item {
         this.tags.remove(tag);
     }
     public void clearTags() {
-        // Clear current tags
-        this.tags.clear();
+        if (tags != null) {
+            tags.clear();
+        }
     }
     public ArrayList<Photograph> getPhotographs() {
         return photographs;
@@ -138,6 +140,13 @@ public class Item {
 
     public void setPhotographs(ArrayList<Photograph> photographs) {
         this.photographs = photographs;
+    }
+
+    public void addPhotograph(Photograph pic){
+        if(this.photographs == null){
+            this.photographs = new ArrayList<Photograph>();
+        }
+        this.photographs.add(pic);
     }
 
     public boolean isSelected() {
