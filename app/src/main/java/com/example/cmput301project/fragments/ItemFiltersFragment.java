@@ -10,6 +10,7 @@
 package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,7 +18,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,25 +28,25 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
-import com.example.cmput301project.itemClasses.Tag;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ItemFiltersFragment extends DialogFragment {
-    private EditText editFromDate;
-    private EditText editToDate;
+    private TextView editFromDate;
+    private TextView editToDate;
     private Button addKeywordButton;
     private EditText editKeyword;
     private ChipGroup chipGroupKeywords;
     private EditText editTag;
     private EditText editMake;
     private OnFragmentInteractionListener listener;
-
     public ItemFiltersFragment(){
 
     }
@@ -70,8 +73,11 @@ public class ItemFiltersFragment extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_filters, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        editFromDate = view.findViewById(R.id.from_date_edit_text);
-        editToDate = view.findViewById(R.id.to_date_edit_text);
+        editFromDate = view.findViewById(R.id.from_date_text_view);
+        editToDate = view.findViewById(R.id.to_date_text_view);
+
+        editFromDate.setOnClickListener(this::displayCalendar);
+        editToDate.setOnClickListener(this::displayCalendar);
 
         addKeywordButton = view.findViewById(R.id.add_keyword_button);
         editKeyword = view.findViewById(R.id.filter_keywords_edit_text);
@@ -80,7 +86,7 @@ public class ItemFiltersFragment extends DialogFragment {
         editTag = view.findViewById(R.id.filter_tag_edit_text);
 
         Bundle args = getArguments();
-        if (args != null) {
+        if (!args.isEmpty()) {
             String fromString = args.getString("from");
             String toString = args.getString("to");
             String[] keywords = args.getStringArray("keywords");
@@ -110,6 +116,7 @@ public class ItemFiltersFragment extends DialogFragment {
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Apply",null)
+                .setNeutralButton("Clear", null)
                 .create(); //create a dialog with buttons and title
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -121,8 +128,8 @@ public class ItemFiltersFragment extends DialogFragment {
                 clearButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        editFromDate.setText("");
-                        editToDate.setText("");
+                        editFromDate.setText("MM/DD/YYYY");
+                        editToDate.setText("MM/DD/YYYY");
                         chipGroupKeywords.removeAllViews();
                         editMake.setText("");
                         editTag.setText("");
@@ -214,6 +221,32 @@ public class ItemFiltersFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    private void displayCalendar(View v) {
+        Calendar cal = Calendar.getInstance();
+        DatePickerDialog.OnDateSetListener date = (fromView, year, month, day) -> {
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, day);
+        };
+        DatePickerDialog dialog = new DatePickerDialog(getContext(), date, cal.get(Calendar.YEAR),
+                cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+        dialog.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+            updateLabel(v, year, month, dayOfMonth);
+        });
+        dialog.show();
+    }
+
+    private void updateLabel(View v, int year, int month, int day) {
+        if (v instanceof TextView){
+            TextView textView = (TextView) v;
+            String myFormat = "MM/dd/yyyy";
+            Calendar cal = Calendar.getInstance();
+            cal.set(year, month, day);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.US);
+            textView.setText(dateFormat.format(cal.getTime()));
+        }
     }
 
     // Add a helper method to validate the date format
