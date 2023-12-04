@@ -6,7 +6,6 @@
  * user interactions, including setting and clearing filters, and invokes the listener accordingly.
  */
 
-
 package com.example.cmput301project.fragments;
 
 import android.app.AlertDialog;
@@ -26,8 +25,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.R;
+
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -61,8 +60,7 @@ public class ItemFiltersFragment extends DialogFragment {
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             listener = (OnFragmentInteractionListener) context;
-        }
-        else {
+        } else {
             throw new RuntimeException(context.toString() + "OnFragmentInteractionListener is not implemented");
         }
     }
@@ -78,6 +76,7 @@ public class ItemFiltersFragment extends DialogFragment {
          * @param itemFilter The object containing the applied filters.
          */
         void onFiltersSaved(ItemFilter itemFilter);
+
         /**
          * Called when filters are cleared.
          */
@@ -138,6 +137,7 @@ public class ItemFiltersFragment extends DialogFragment {
             }
         }
 
+
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Apply",null)
@@ -189,9 +189,6 @@ public class ItemFiltersFragment extends DialogFragment {
                             }
 
                         }
-
-
-
 
                         if (!fromDateString.isEmpty() && !toDateString.isEmpty()) {
                             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

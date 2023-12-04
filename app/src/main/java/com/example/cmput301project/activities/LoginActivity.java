@@ -8,8 +8,9 @@
  */
 
 
-
 package com.example.cmput301project.activities;
+
+// Import statements
 
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
@@ -29,15 +30,13 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.example.cmput301project.Database;
 import com.example.cmput301project.R;
 import com.example.cmput301project.UserManager;
-import com.example.cmput301project.activities.MainActivity;
-import com.example.cmput301project.activities.SignUpActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // Member variables declaration
     private EditText emailField;
     private EditText passwordField;
     private Button signInButton;
@@ -48,6 +47,11 @@ public class LoginActivity extends AppCompatActivity {
     private Database db;
     private final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
 
+    /**
+     * Initializes and assigns values to UI elements from the layout file.
+     * Sets up references to emailField, passwordField, signInButton,
+     * createAccountTextView, errorTextView, and initializes their states.
+     */
     private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
         passwordField = findViewById(R.id.passwordEntry);
@@ -58,24 +62,37 @@ public class LoginActivity extends AppCompatActivity {
         errorTextView.setVisibility(View.GONE);
     }
 
+    /**
+     * Displays a short-lived toast message on the screen.
+     *
+     * @param msg The message to be displayed.
+     */
     private void showToast(String msg) {
         Toast.makeText(LoginActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void checkUserLoggedOn(){
-        if (userAuth.getCurrentUser() != null){
+    /**
+     * Checks if a user is already logged in. If so, sets the logged-in user
+     * in the UserManager and navigates to the main activity.
+     */
+    private void checkUserLoggedOn() {
+        if (userAuth.getCurrentUser() != null) {
             userManager.setLoggedInUser(userAuth.getCurrentUser());
             navigateToMainPage();
         }
     }
 
+    /**
+     * Validates user input for email and password fields.
+     *
+     * @return True if inputs are invalid; false otherwise.
+     */
     private boolean checkForInvalidInputs() {
-        if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()){
+        if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()) {
             errorTextView.setText(R.string.emailFieldError);
             errorTextView.setVisibility(View.VISIBLE);
             return true;
-        }
-        else if (passwordField.getText().toString().equals("")){
+        } else if (passwordField.getText().toString().equals("")) {
             errorTextView.setText(R.string.passwordFieldError);
             errorTextView.setVisibility(View.VISIBLE);
             return true;
@@ -83,44 +100,59 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
+    /**
+     * Navigates to the sign-up activity.
+     *
+     * @param view The current view.
+     */
     private void navigateToSignUp(View view) {
         Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
         startActivity(i);
     }
 
-    private void navigateToMainPage(){
-        Intent i  = new Intent(LoginActivity.this, MainActivity.class);
+    /**
+     * Navigates to the main activity after a successful login attempt.
+     */
+    private void navigateToMainPage() {
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
         db.setItemCollection();
         startActivity(i);
         finish();
     }
 
+    /**
+     * Adds listeners to UI elements, such as the sign-in button and
+     * create account text view, for user interactions.
+     */
     private void addListeners() {
         signInButton.setOnClickListener(this::attemptLogin);
         createAccountTextView.setOnClickListener(this::navigateToSignUp);
     }
 
-
-    private void attemptLogin(View v){
-
+    /**
+     * Attempts to log in the user using Firebase authentication.
+     * Validates inputs, performs the login, and handles success and failure cases.
+     *
+     * @param v The current view.
+     */
+    private void attemptLogin(View v) {
         if (checkForInvalidInputs()) return;
 
         String userEmail = emailField.getText().toString();
         String userPassword = passwordField.getText().toString();
 
-        userAuth.signInWithEmailAndPassword(userEmail, userPassword)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
-                        Log.d(TAG, "createUserWithEmail:success");
-                        userManager.setLoggedInUser(userAuth.getCurrentUser());
-                        navigateToMainPage();
-                    } else {
-                        // If sign in fails, display a message to the user.
-                        Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                        showToast(task.getException().getLocalizedMessage());
-                    }
-                });
+        userAuth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(this, task -> {
+            if (task.isSuccessful()) {
+                // Sign in success, update UI with the signed-in user's information
+                Log.d(TAG, "createUserWithEmail:success");
+                userManager.setLoggedInUser(userAuth.getCurrentUser());
+                navigateToMainPage();
+            } else {
+                // If sign in fails, display a message to the user.
+                Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                showToast(task.getException().getLocalizedMessage());
+            }
+        });
     }
 
     /**

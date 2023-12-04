@@ -7,8 +7,9 @@
  * details view. The hosting activity is notified of user actions through the listener interface.
  */
 
-
 package com.example.cmput301project.fragments;
+
+// Import statements
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -28,18 +29,17 @@ import androidx.fragment.app.DialogFragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.cmput301project.Database;
-import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
-import com.example.cmput301project.itemClasses.Photograph;
+import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.Tag;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Objects;
 
 public class ViewItemFragment extends DialogFragment {
+
+    // Membership function declaration
     private TextView itemName;
     private TextView itemDescription;
     private TextView itemPrice;
@@ -50,16 +50,25 @@ public class ViewItemFragment extends DialogFragment {
     private TextView itemTags;
     private TextView itemComment;
     private Item viewedItem;
-
     private ImageView itemPicture;
-
     private Database db = Database.getInstance();
-
     private OnFragmentInteractionListener listener;
-    public ViewItemFragment(Item item){
+
+    /**
+     * Constructor for the ViewItemFragment class.
+     *
+     * @param item The item to be viewed.
+     */
+    public ViewItemFragment(Item item) {
         this.viewedItem = item;
     }
 
+    /**
+     * Called when the fragment is attached to an activity.
+     *
+     * @param context The context to which the fragment is attached.
+     * @throws RuntimeException If the hosting activity does not implement OnFragmentInteractionListener.
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -70,12 +79,36 @@ public class ViewItemFragment extends DialogFragment {
         }
     }
 
+    /**
+     * Interface for communication with the hosting activity.
+     */
     public interface OnFragmentInteractionListener {
+        /**
+         * Called when the user requests to edit the item.
+         *
+         * @param item The item to be edited.
+         */
         void editItem(Item item);
+
+        /**
+         * Called when the user requests to delete the item.
+         *
+         * @param item The item to be deleted.
+         */
         void onDeletePressed(Item item);
+
+        /**
+         * Called when the total cost needs to be updated.
+         */
         void updateTotalCost();
     }
 
+    /**
+     * Creates and returns an AlertDialog for the fragment.
+     *
+     * @param savedInstanceState The saved instance state, if any.
+     * @return The created dialog.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -92,38 +125,31 @@ public class ViewItemFragment extends DialogFragment {
         itemTags = view.findViewById(R.id.view_item_tags);
         itemPicture = view.findViewById(R.id.image_view);
 
-        if(viewedItem.getPhotographs() != null && !viewedItem.getPhotographs().isEmpty()){
-            db.getImage(viewedItem.getPhotographs().get(0).getName()).addOnSuccessListener(
-                    new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide.with(getActivity())
-                                    .load(uri)
-                                    .apply(new RequestOptions()
-                                            .placeholder(R.drawable.defaultuser)
-                                            .error(R.drawable.defaultuser))
-                                    .into(itemPicture);
-                            itemPicture.invalidate();
-                        }
-                    }
-            );
+        if (viewedItem.getPhotographs() != null && !viewedItem.getPhotographs().isEmpty()) {
+            db.getImage(viewedItem.getPhotographs().get(0).getName()).addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Glide.with(getActivity()).load(uri).apply(new RequestOptions().placeholder(R.drawable.defaultuser).error(R.drawable.defaultuser)).into(itemPicture);
+                    itemPicture.invalidate();
+                }
+            });
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        itemName.setText("Name: "+ viewedItem.getName());
-        itemDescription.setText("Description: "+ viewedItem.getDescription());
-        itemPrice.setText("Price: "+ viewedItem.getValue().toString());
-        itemModel.setText("Model: "+ viewedItem.getModel());
-        itemSerial.setText("Serial #: "+ viewedItem.getSerialNumber().toString());
-        itemMake.setText("Make: "+ viewedItem.getMake());
+        itemName.setText("Name: " + viewedItem.getName());
+        itemDescription.setText("Description: " + viewedItem.getDescription());
+        itemPrice.setText("Price: " + viewedItem.getValue().toString());
+        itemModel.setText("Model: " + viewedItem.getModel());
+        itemSerial.setText("Serial #: " + viewedItem.getSerialNumber().toString());
+        itemMake.setText("Make: " + viewedItem.getMake());
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-        itemDate.setText("Date: "+ df.format(viewedItem.getPurchaseDate()));
-        itemComment.setText("Comments: "+ viewedItem.getComment());
+        itemDate.setText("Date: " + df.format(viewedItem.getPurchaseDate()));
+        itemComment.setText("Comments: " + viewedItem.getComment());
 
         // Assuming the Item class has a method getTags() that returns a List of Tag objects
         StringBuilder tagsBuilder = new StringBuilder();
-        if(viewedItem.getTags() != null){
+        if (viewedItem.getTags() != null) {
             for (Tag tag : viewedItem.getTags()) {
                 if (tagsBuilder.length() > 0) {
                     tagsBuilder.append(" | "); // Separator for multiple tags
@@ -134,24 +160,19 @@ public class ViewItemFragment extends DialogFragment {
         // Set the tags text from the StringBuilder
         itemTags.setText("Tags: " + tagsBuilder.toString());
 
-        Dialog dialog = builder //set dialog buttons and perform methods defined on MainActivity
-                .setView(view)
-                .setTitle("Item Details")
-                .setPositiveButton("Done", null)
-                .setNeutralButton("Edit", new DialogInterface.OnClickListener() {
+        Dialog dialog = builder // Set dialog buttons and perform methods defined on MainActivity
+                .setView(view).setTitle("Item Details").setPositiveButton("Done", null).setNeutralButton("Edit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         listener.editItem(viewedItem);
                     }
-                })
-                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         listener.onDeletePressed(viewedItem);
                         listener.updateTotalCost();
                     }
-                })
-                .create();
+                }).create();
 
         return dialog;
     }
