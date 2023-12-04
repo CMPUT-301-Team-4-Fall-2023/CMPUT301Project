@@ -42,6 +42,7 @@ import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.itemClasses.ItemAdapter;
 import com.example.cmput301project.itemClasses.ItemFilter;
 import com.example.cmput301project.itemClasses.ItemList;
+import com.example.cmput301project.itemClasses.Tag;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     private Button filtersButton;
     private Button sortButton;
     private Object sortRadioTag;
+    private String sortTagString;
     private TotalListener totalListener;
     private ArrayAdapter<Item> itemAdapter;
     private Button deleteButton;
@@ -185,7 +187,12 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 if (sortRadioTag != null) {
                     Bundle args = new Bundle();
                     args.putSerializable("tagObject", (Serializable) sortRadioTag);
+                    if (sortRadioTag.toString().equals("TAG")) {
+                        args.putString("tagString", sortTagString);
+                    }
+
                     sortItemsFragment.setArguments(args);
+
                 }
 
                 sortItemsFragment.show(getSupportFragmentManager(), "SORT_ITEMS");
@@ -255,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     }
 
     @Override
-    public void onRadioButtonSaved(Object tag) {
+    public void onRadioButtonSaved(Object tag, String tagString) {
         sortRadioTag = tag;
         switch(tag.toString()) {
             case "DATE_OLDEST":
@@ -281,6 +288,10 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 break;
             case "DESCRIPTION_ZtoA":
                 sortByDescription(false);
+                break;
+            case "TAG":
+                sortTagString = tagString;
+                sortByTag(tagString);
                 break;
             default:
                 break;
@@ -373,6 +384,38 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
                 return ascending
                     ? item1.getDescription().compareTo(item2.getDescription())
                     : item2.getDescription().compareTo(item1.getDescription());
+            }
+        });
+        itemAdapter.notifyDataSetChanged();
+    }
+    public void sortByTag(String tagString) {
+        System.out.println("test");
+        System.out.println(tagString);
+        Collections.sort(items, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1, Item item2) {
+                boolean hasTag1 = false;
+                for (Tag t : item1.getTags()) {
+                    if (t.getName().equals(tagString)) {
+                        hasTag1 = true;
+                    }
+                }
+
+                boolean hasTag2 = false;
+                for (Tag t : item2.getTags()) {
+                    if (t.getName().equals(tagString)) {
+                        hasTag2 = true;
+                    }
+                }
+                // Put items with the specified tag at the top
+                if (hasTag1 && !hasTag2) {
+                    return -1; // item1 comes first
+                } else if (!hasTag1 && hasTag2) {
+                    return 1;  // item2 comes first
+                } else {
+                    // For items with the same tag status, maintain their original order
+                    return 0;
+                }
             }
         });
         itemAdapter.notifyDataSetChanged();

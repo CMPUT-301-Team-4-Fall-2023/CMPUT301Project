@@ -37,6 +37,7 @@ import java.util.Date;
 
 public class SortItemsFragment extends DialogFragment {
     private RadioGroup radioGroup;
+    private EditText tagEditText;
     private Object tag;
     private OnFragmentInteractionListener listener;
 
@@ -56,7 +57,7 @@ public class SortItemsFragment extends DialogFragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onRadioButtonSaved(Object tag);
+        void onRadioButtonSaved(Object tag, String tagString);
 
     }
 
@@ -67,10 +68,15 @@ public class SortItemsFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
         radioGroup = view.findViewById(R.id.sort_radio_group);
+        tagEditText = view.findViewById(R.id.radio_tag_edit);
 
         Bundle args = getArguments();
         if (args != null) {
             Object tag = args.getSerializable("tagObject");
+            if (tag.toString().equals("TAG")) {
+                String tagString = args.getString("tagString");
+                tagEditText.setText(tagString);
+            }
             RadioButton radioButton =  radioGroup.findViewWithTag(tag);
             radioButton.setChecked(true);
         }
@@ -89,10 +95,18 @@ public class SortItemsFragment extends DialogFragment {
                     public void onClick(View view) {
                         int selectedID = radioGroup.getCheckedRadioButtonId();
                         RadioButton radioButton = radioGroup.findViewById(selectedID);
-
+                        String tagString = null;
                         if (radioButton != null) {
                             String tag = radioButton.getTag().toString();
-                            listener.onRadioButtonSaved(tag);
+                            if (tag.equals("TAG")) {
+                                if (tagEditText.getText().toString().trim().isEmpty()) {
+                                    tagEditText.setError("No tag given");
+                                    return;
+                                } else {
+                                    tagString = tagEditText.getText().toString().trim();
+                                }
+                            }
+                            listener.onRadioButtonSaved(tag, tagString);
                             dialog.dismiss();
                         }
                     }
