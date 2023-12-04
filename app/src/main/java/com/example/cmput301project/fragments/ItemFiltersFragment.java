@@ -17,7 +17,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -26,7 +25,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301project.R;
-
+import com.example.cmput301project.itemClasses.ItemFilter;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -46,9 +45,11 @@ public class ItemFiltersFragment extends DialogFragment {
     private EditText editTag;
     private EditText editMake;
     private OnFragmentInteractionListener listener;
-    public ItemFiltersFragment(){
+
+    public ItemFiltersFragment() {
 
     }
+
     /**
      * Called when the fragment is attached to an activity. Sets the listener if the activity
      * implements the OnFragmentInteractionListener interface.
@@ -140,7 +141,7 @@ public class ItemFiltersFragment extends DialogFragment {
 
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("Apply",null)
+                .setPositiveButton("Apply", null)
                 .setNeutralButton("Clear", null)
                 .create(); //create a dialog with buttons and title
 
@@ -261,7 +262,7 @@ public class ItemFiltersFragment extends DialogFragment {
     }
 
     private void updateLabel(View v, int year, int month, int day) {
-        if (v instanceof TextView){
+        if (v instanceof TextView) {
             TextView textView = (TextView) v;
             String myFormat = "MM/dd/yyyy";
             Calendar cal = Calendar.getInstance();
