@@ -407,6 +407,10 @@ public class AddItemFragment extends DialogFragment {
                         boolean isValidFields = isValidName(name) && isValidDescription(description) && isValidModel(model) && isValidMake(make) &&
                                 isValidPrice(priceText) && isValidComment(comments);
 
+                        if(dateAdded.getText().toString().equals("MM/DD/YYYY")){
+                            dateAdded.setError("Please enter a date");
+                        }
+
                         // Add new item if fields valid
                         if (isValidFields && !anyFieldsEmpty) {
                             String date = dateAdded.getText().toString();
@@ -719,6 +723,7 @@ public class AddItemFragment extends DialogFragment {
             cal.set(year, month, day);
             SimpleDateFormat dateFormat = new SimpleDateFormat(myFormat, Locale.US);
             textView.setText(dateFormat.format(cal.getTime()));
+            dateAdded.setError(null);
         }
     }
 }
