@@ -330,7 +330,12 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
     public void onItemEdited(Item item) {
         // Interfaces can't have same named methods
         //TODO: change way of passing state to the main activity
-        db.editItem(item);
+        db.editItem(item, () -> {
+            // This code will run after the item is successfully edited
+            if (itemFilter.isFilterActive()) {
+                onFiltersSaved(itemFilter);
+            }
+        });
     }
 
     /**
@@ -423,8 +428,6 @@ public class MainActivity extends AppCompatActivity implements AddItemFragment.O
      * @param tagString The tag string to be used for sorting.
      */
     public void sortByTag(String tagString) {
-        System.out.println("test");
-        System.out.println(tagString);
         Collections.sort(items, new Comparator<Item>() {
             @Override
             public int compare(Item item1, Item item2) {

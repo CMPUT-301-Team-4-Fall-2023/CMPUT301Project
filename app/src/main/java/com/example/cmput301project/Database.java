@@ -50,6 +50,10 @@ public class Database {
         userManager = UserManager.getInstance();
     }
 
+    public interface OnEditCompleteListener {
+        void onEditComplete();
+    }
+
     /**
      * Singleton for the firestore database. Holds the database instance and provides all methods
      * for interacting with the database
@@ -83,7 +87,15 @@ public class Database {
      * @param item item to add
      */
     public void addItem(Item item) {
-        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Added!", item.getName())));
+        itemsRef.document(item.getUniqueId().toString())
+                .set(item)
+                .addOnSuccessListener(unused -> {
+                    Log.d("Firestore", String.format("Item %s Added!", item.getName()));
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if necessary
+                    Log.e("Firestore", "Error adding item", e);
+                });
     }
 
     /**
@@ -91,8 +103,17 @@ public class Database {
      *
      * @param item item to edit
      */
-    public void editItem(Item item) {
-        itemsRef.document(item.getUniqueId().toString()).set(item).addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
+    public void editItem(Item item, OnEditCompleteListener listener) {
+        itemsRef.document(item.getUniqueId().toString())
+                .set(item)
+                .addOnSuccessListener(unused -> {
+                    Log.d("Firestore", String.format("Item %s Edited!", item.getName()));
+                    listener.onEditComplete();
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure if necessary
+                    Log.e("Firestore", "Error editing item", e);
+                });
     }
 
     /**

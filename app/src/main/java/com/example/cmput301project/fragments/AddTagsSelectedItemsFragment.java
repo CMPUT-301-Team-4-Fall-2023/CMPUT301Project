@@ -161,7 +161,7 @@ public class AddTagsSelectedItemsFragment extends DialogFragment {
                                 item.addTag(tag);
                             }
 
-                            db.editItem(item);
+                            db.editItem(item, () -> {});
                         }
                         itemAdapter.clearSelectedItems();
                         dialog.dismiss(); // Add this line to dismiss the dialog
