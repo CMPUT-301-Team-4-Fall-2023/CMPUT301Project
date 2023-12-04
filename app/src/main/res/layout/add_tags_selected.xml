@@ -38,6 +38,7 @@
             android:id="@+id/selected_items_add_tags_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#2196F3"
             android:text="Add Tag" />
     </LinearLayout>
     <LinearLayout
