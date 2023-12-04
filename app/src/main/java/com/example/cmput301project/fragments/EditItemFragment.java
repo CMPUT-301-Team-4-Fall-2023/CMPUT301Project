@@ -35,26 +35,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.example.cmput301project.Database;
 import com.example.cmput301project.itemClasses.Item;
 import com.example.cmput301project.R;
+import com.example.cmput301project.itemClasses.Photograph;
 import com.example.cmput301project.itemClasses.Tag;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.storage.UploadTask;
 import com.google.mlkit.vision.barcode.BarcodeScanner;
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions;
 import com.google.mlkit.vision.barcode.BarcodeScanning;
@@ -66,6 +74,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 
 public class EditItemFragment extends DialogFragment {
@@ -88,6 +97,7 @@ public class EditItemFragment extends DialogFragment {
     private Button addTagButton;
     private Button scannerButton;
     private Uri imageURI = null;
+    private Database db = Database.getInstance();
     public static final String TAG = "MAIN_TAG";
 
     private Button parseButton;
@@ -97,6 +107,8 @@ public class EditItemFragment extends DialogFragment {
     private BarcodeScannerOptions barcodeScannerOptions;
     private BarcodeScanner barcodeScanner;
 
+    private ImageView itemPicture;
+    private Button deletePicture;
 
     public EditItemFragment(Item item) { //if called with an item passed in, we assume that we want to edit the item
         this.editItem = item;
@@ -112,6 +124,97 @@ public class EditItemFragment extends DialogFragment {
         }
         return false;
     }
+    private Button cameraButton;
+    private Button galleryButton;
+
+    private Uri cameraUri;
+
+    private void takePhotoCamera(){
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.TITLE, "New Photo");
+        contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Item Photo");
+
+        cameraUri = getActivity().getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,contentValues);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT,cameraUri);
+        capturingImageResultLauncher.launch(intent);
+    }
+
+    private final ActivityResultLauncher<Intent> capturingImageResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    Log.d(TAG, "onActivityResult: cameraUri: " + cameraUri);
+                    if (cameraUri != null) {
+                        Photograph photo = new Photograph(cameraUri.toString());
+                        photo.setName(UUID.randomUUID().toString());
+                        UploadTask uploadTask = db.addImage(photo.getName(), cameraUri);
+
+                        uploadTask.continueWithTask(task -> {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+
+                            // Continue with the task to get the download URL
+                            return db.getImage(photo.getName());
+                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Uri> task) {
+                                if (task.isSuccessful()) {
+                                    Uri downloadUri = task.getResult();
+                                    Glide.with(getActivity())
+                                            .load(downloadUri)
+                                            .apply(new RequestOptions()
+                                                    .placeholder(R.drawable.defaultuser)
+                                                    .error(R.drawable.defaultuser))
+                                            .into(itemPicture);
+                                    itemPicture.invalidate();
+                                    editItem.addPhotograph(photo);
+                                    deletePicture.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+                    } else {
+                        Log.d(TAG, "error taking picture with Camera");
+                    }
+                }
+            }
+    );
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), imageUri -> {
+                if (imageUri != null) {
+                    Photograph photo = new Photograph(imageUri.toString());
+                    photo.setName(UUID.randomUUID().toString());
+                    UploadTask uploadTask = db.addImage(photo.getName(), imageUri);
+
+                    uploadTask.continueWithTask(task -> {
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        // Continue with the task to get the download URL
+                        return db.getImage(photo.getName());
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Uri downloadUri = task.getResult();
+                                Glide.with(getActivity())
+                                        .load(downloadUri)
+                                        .apply(new RequestOptions()
+                                                .placeholder(R.drawable.defaultuser)
+                                                .error(R.drawable.defaultuser))
+                                        .into(itemPicture);
+                                itemPicture.invalidate();
+                                editItem.addPhotograph(photo);
+                                deletePicture.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
+                }
+            });
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -146,6 +249,28 @@ public class EditItemFragment extends DialogFragment {
         itemYear = view.findViewById(R.id.item_year_edit_text);
         itemPrice = view.findViewById(R.id.price_edit_text);
         itemComments = view.findViewById(R.id.comments_edit_text);
+        itemPicture = view.findViewById(R.id.image_view);
+        deletePicture = view.findViewById(R.id.delete_photo_button);
+        deletePicture.setVisibility(View.GONE);
+
+        if(editItem.getPhotographs() != null && !editItem.getPhotographs().isEmpty()){
+            db.getImage(editItem.getPhotographs().get(0).getName()).addOnSuccessListener(
+                    new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Glide.with(getActivity())
+                                    .load(uri)
+                                    .apply(new RequestOptions()
+                                            .placeholder(R.drawable.defaultuser)
+                                            .error(R.drawable.defaultuser))
+                                    .into(itemPicture);
+                            itemPicture.invalidate();
+                            deletePicture.setVisibility(View.VISIBLE);
+                        }
+                    }
+            );
+        }
+
         title = view.findViewById(R.id.add_item_title);
         inputTagEditText = view.findViewById(R.id.input_tag_edit_text); // Initialize inputTagEditText
         chipGroupTags = view.findViewById(R.id.chip_group_tags); // Initialize chipGroupTags
@@ -154,6 +279,29 @@ public class EditItemFragment extends DialogFragment {
         parseButton = view.findViewById(R.id.parse_barcode_button);
         barcodeScannerOptions = new BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_ALL_FORMATS).build();
         barcodeScanner = BarcodeScanning.getClient(barcodeScannerOptions);
+        galleryButton = view.findViewById(R.id.gallery_button);
+        cameraButton = view.findViewById(R.id.camera_button);
+        itemPicture = view.findViewById(R.id.image_view);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
+        });
+
+        cameraButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if (ContextCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED){
+                    takePhotoCamera();
+                }
+                else{
+                    requestCameraPermission();
+                }
+            }
+        });
 
         itemName.setText(editItem.getName()); //take data from item if constructed with item passes
         itemDescription.setText(editItem.getDescription());
@@ -192,6 +340,14 @@ public class EditItemFragment extends DialogFragment {
 
                 Button addButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE); // This is your existing OK button logic
 
+                deletePicture.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        editItem.setPhotographs(null);
+                        deletePicture.setVisibility(View.GONE);
+                        Glide.with(getActivity()).load("").into(itemPicture);
+                    }
+                });
                 scannerButton.setOnClickListener(new View.OnClickListener(){
                     @Override
                     public void onClick(View v){
