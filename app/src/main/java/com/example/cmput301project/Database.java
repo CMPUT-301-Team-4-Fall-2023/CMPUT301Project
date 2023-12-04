@@ -98,7 +98,6 @@ public class Database {
                 });
     }
 
-
     /**
      * Edits item in a firebase collection for authenticated user
      *
@@ -116,9 +115,6 @@ public class Database {
                     Log.e("Firestore", "Error editing item", e);
                 });
     }
-
-
-
 
     /**
      * Deletes item from a firebase collection for authenticated user
