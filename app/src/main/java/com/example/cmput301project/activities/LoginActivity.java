@@ -34,6 +34,8 @@ import com.example.cmput301project.activities.SignUpActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.util.regex.Pattern;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailField;
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth userAuth;
     private UserManager userManager;
     private Database db;
+    private final Pattern emailPattern = Pattern.compile("^(.+)@(.+)$");
 
     private void grabUIElements() {
         emailField = findViewById(R.id.emailEntry);
@@ -67,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean checkForInvalidInputs() {
-        if (emailField.getText().toString().equals("")){
+        if (emailField.getText().toString().equals("") || !emailPattern.matcher(emailField.getText().toString()).matches()){
             errorTextView.setText(R.string.emailFieldError);
             errorTextView.setVisibility(View.VISIBLE);
             return true;
