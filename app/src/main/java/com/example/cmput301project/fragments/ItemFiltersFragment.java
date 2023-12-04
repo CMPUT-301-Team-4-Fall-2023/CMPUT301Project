@@ -109,7 +109,7 @@ public class ItemFiltersFragment extends DialogFragment {
 
         Dialog dialog = builder.setView(view)
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("OK",null)
+                .setPositiveButton("Apply",null)
                 .create(); //create a dialog with buttons and title
 
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
