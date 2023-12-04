@@ -13,8 +13,11 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.example.cmput301project.itemClasses.Item;
+import com.example.cmput301project.itemClasses.Photograph;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.EventListener;
@@ -98,6 +101,13 @@ public class Database {
      * @param item item to delete
      */
     public void deleteItem(Item item){
+        if(item.getPhotographs() != null){
+            for(Photograph ph : item.getPhotographs()){
+                itemImageRef.child("/"+ph.getName()).delete().addOnFailureListener(
+                        e -> Log.d("Firestore-Images", String.format("Failure when deleting photo: %s", ph.getName()))
+                );
+            }
+        }
         itemsRef.document(item.getUniqueId().toString()).delete().addOnSuccessListener(unused -> Log.d("Firestore", String.format("Item %s Edited!", item.getName())));
     }
 

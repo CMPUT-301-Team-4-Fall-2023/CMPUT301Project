@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         userManager = UserManager.getInstance();
         db = Database.getInstance();
 
-        checkUserLoggedOn();
+        //checkUserLoggedOn();
 
         grabUIElements();
         addListeners();
