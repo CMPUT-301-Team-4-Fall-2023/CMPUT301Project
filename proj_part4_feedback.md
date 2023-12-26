@@ -20,10 +20,10 @@ Good pacing, the demo seems well rehearsed, decent eye contact with the audience
 Excellent (3/3)
 
 ## Code Base
- 
+ Can structure the controller better. But all requirements satisfied (3/3)
 
 ## Code Documentation
-
+Missing documentation for model Photograph and Item. Did not generate Javadocs. (2/3)
 
 ## Product Backlog
 - feedbacks not addressed
@@ -36,7 +36,7 @@ Excellent (3/3)
 ## Object-Oriented Design
 Excellent, well layout, covers all the requirements, and follows proper OO design paradigms (3/3)
 
-## Total = 10.83
+## Total = 16.83
 
 
 
